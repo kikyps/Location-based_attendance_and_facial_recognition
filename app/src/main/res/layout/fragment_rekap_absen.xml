@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.rekap.RekapAbsen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rekap"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingTop="15dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="15dp">
+
+                <EditText
+                    android:id="@+id/filter_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_filter"
+                    android:hint="Cari"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="10dp"
+                    android:textSize="17dp"
+                    android:drawableRight="@drawable/ic_search"
+                    android:drawableTint="@color/white"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/date_rekap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rekap_ttgl"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp">
+
+            <ImageButton
+                android:id="@+id/previous"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_previous"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tanggal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="Date"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_next"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/admin_user_rekap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rekap data"
+            android:textSize="18dp" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:id="@+id/admin_user"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swiper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

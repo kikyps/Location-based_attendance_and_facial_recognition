@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".user.DataDiriOne"
+    android:padding="30dp"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="Isi Data Diri"
+            android:textAllCaps="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="36sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1/3"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="60dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/myname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="Nama"
+                    android:textColorHint="@color/black"
+                    app:boxStrokeErrorColor="@color/red"
+                    app:boxStrokeColor="@color/black"
+                    app:hintTextColor="@color/black"
+                    app:startIconDrawable="@drawable/ic_baseline_drive_file_rename_outline_24"
+                    app:startIconTint="@color/black"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/black"
+                        android:inputType="textCapWords"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp"
+                    android:padding="10dp"
+                    android:background="@drawable/back_border">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jabatan"
+                    android:textSize="15dp"
+                    android:textColor="@color/black"
+                    />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/jabatan"/>
+
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/myalamat"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="Alamat"
+                    android:textColorHint="@color/black"
+                    app:boxStrokeErrorColor="@color/red"
+                    app:boxStrokeColor="@color/black"
+                    app:hintTextColor="@color/black"
+                    app:startIconDrawable="@drawable/ic_baseline_location_on_24"
+                    app:startIconTint="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/black"
+                        android:inputType="textLongMessage"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/next2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="80dp"
+                    android:textColor="@color/white"
+                    android:text="Lanjut" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</ScrollView>

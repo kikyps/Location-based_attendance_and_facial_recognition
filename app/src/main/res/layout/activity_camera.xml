@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".camera.CameraActivity"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="297dp"
+                android:layout_height="279dp"
+                android:layout_gravity="center">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewCamera"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </androidx.camera.view.PreviewView>
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:text="Deskripsi"
+                android:id="@+id/deskripsi"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:text="daftar"
+                android:id="@+id/daftardulu"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

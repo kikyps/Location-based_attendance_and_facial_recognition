@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/avd_done.xml" value="0.1" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/bg_rekap.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/bg_rekap_ttgl.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/ic_baseline_delete_forever_24.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/ic_next.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable-v24/ic_search.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/back_border.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/circle.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/custom_bg_progressbar.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_absen.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_account.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1575" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_assignment_24.xml" value="0.1575" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_dashboard_24.xml" value="0.1685" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_local_phone_24.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1575" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_menu_gallery.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_menu_slideshow.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_uidesign.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/ic_uidesignv2.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/img.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/drawable/side_nav_bar.xml" value="0.191" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_camera.xml" value="0.2212962962962963" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_data_diri.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_data_diri_one.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_data_diri_three.xml" value="0.2359375" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_data_diri_two.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_detail_absen.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_login.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_tambah_jabatan.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_update_jabatan.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_user.xml" value="0.264" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/activity_verify_otp.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/android_toolbar.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/app_bar_user.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/content_user.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/cutom_progress_bar.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/form_izin.xml" value="0.24895833333333334" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_absen.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_account_info.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_data_pegawai.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_gallery.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_jabatan.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_pengajuan_libur.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_rekap_absen.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/fragment_settings_location.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/item_absensi.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/item_jabatan.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/item_pegawai.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/nav_header_user.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/layout/spinner_data.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/menu/activity_main_drawer.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/menu/jabatan_menu.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/menu/profile_menu.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/menu/update_jabatan_menu.xml" value="0.25" />
+        <entry key="..\:/Android-Project/AbsensiWajah/app/src/main/res/menu/user.xml" value="0.25" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Absensi Wajah</string>
+    <string name="signin">Sign in</string>
+    <string name="press_exit">Tekan 2 kali untuk keluar</string>
+    <string name="title_activity_user">UserActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_absen">Absen</string>
+    <string name="ket_hadir">Anda sudah absen hari ini!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

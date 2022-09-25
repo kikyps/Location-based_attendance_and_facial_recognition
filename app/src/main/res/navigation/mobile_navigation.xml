@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_absen">
+
+    <fragment
+        android:id="@+id/nav_akun"
+        android:name="com.absensi.inuraini.user.account.AccountInfo"
+        android:label="Akun Saya"
+        tools:layout="@layout/fragment_account_info" />
+
+    <fragment
+        android:id="@+id/nav_absen"
+        android:name="com.absensi.inuraini.user.absen.AbsenFragment"
+        android:label="@string/menu_absen"
+        tools:layout="@layout/fragment_absen" />
+
+    <fragment
+        android:id="@+id/nav_pengajuan_libur"
+        android:name="com.absensi.inuraini.user.pengajuan.PengajuanLibur"
+        android:label="Pengajuan Libur"
+        tools:layout="@layout/fragment_pengajuan_libur" />
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.absensi.inuraini.admin.dashboard.Dashboard"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/nav_data_pegawai"
+        android:name="com.absensi.inuraini.admin.datapegawai.DataPegawai"
+        android:label="Data Pegawai"
+        tools:layout="@layout/fragment_data_pegawai" />
+
+    <fragment
+        android:id="@+id/nav_rekap_absen"
+        android:name="com.absensi.inuraini.admin.rekap.RekapAbsen"
+        android:label="Rekap Absen"
+        tools:layout="@layout/fragment_rekap_absen" />
+
+    <fragment
+        android:id="@+id/nav_data_pengajuan"
+        android:name="com.absensi.inuraini.admin.datapengajuan.DataPengajuan"
+        android:label="Data Pengajuan"
+        tools:layout="@layout/fragment_data_pengajuan" />
+
+    <fragment
+        android:id="@+id/nav_lokasi"
+        android:name="com.absensi.inuraini.admin.location.SettingsLocation"
+        android:label="Pengaturan Lokasi"
+        tools:layout="@layout/fragment_settings_location" />
+
+    <fragment
+        android:id="@+id/nav_jabatan"
+        android:name="com.absensi.inuraini.admin.jabatan.JabatanFragment"
+        android:label="Tambah Jabatan"
+        tools:layout="@layout/fragment_jabatan" />
+
+</navigation>

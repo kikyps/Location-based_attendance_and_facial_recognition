@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="8dp"
+    android:backgroundTint="@color/colorPrimary"
+    android:id="@+id/card_view"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="10dp"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/white">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Jabatan"
+            style="@style/text_style_title"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:id="@+id/sJabatan"
+            android:text="Jabatan"
+            android:textSize="20dp"
+            style="@style/text_style"/>
+
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
