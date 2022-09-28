@@ -61,6 +61,7 @@ public class Preferences {
     public static final int REQUEST_PERMISSION_CODE = 111;
     public static FirebaseUser firebaseUser = mAuth.getCurrentUser();
     private static long mLastClickTime = 0;
+    public static AlertDialog myAlertDialog;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -248,6 +249,7 @@ public class Preferences {
                                   DialogInterface.OnClickListener neutralClick,
                                   boolean cancelable) {
 
+        if(myAlertDialog != null && myAlertDialog.isShowing()) return;
         AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.my_dialog_theme);
         dialog.setIcon(icon);
         dialog.setTitle(title);
@@ -256,7 +258,8 @@ public class Preferences {
         dialog.setNegativeButton(negativeText, negativClick);
         dialog.setNeutralButton(neutralText, neutralClick);
         dialog.setCancelable(cancelable);
-        dialog.show();
+        myAlertDialog = dialog.create();
+        myAlertDialog.show();
     }
 
     public static void downloadUpdate(Context context) {
