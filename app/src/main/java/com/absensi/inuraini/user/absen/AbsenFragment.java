@@ -13,6 +13,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 public class AbsenFragment extends Fragment {
 
@@ -97,6 +101,9 @@ public class AbsenFragment extends Fragment {
     Calendar calendar = Calendar.getInstance();
 
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -308,14 +315,20 @@ public class AbsenFragment extends Fragment {
 
     private void setJam(){
         //this method is used to refresh Time every Second
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask(){
-            @Override
-            public void run(){
-                jam.setText(jamFormat.format(new Date().getTime()));
-            }
+//        Timer timer = new Timer();
+//        TimerTask timerTask = new TimerTask(){
+//            @Override
+//            public void run(){
+//                jam.setText(jamFormat.format(new Date().getTime()));
+//            }
+//        };
+//        timer.schedule(timerTask, 0, 1000);
+
+        runnable = () -> {
+            jam.setText(jamFormat.format(new Date().getTime()));
+            handler.postDelayed(runnable, 1000);
         };
-        timer.schedule(timerTask, 0, 1000);
+        handler.postDelayed(runnable, 1000);
     }
 
 

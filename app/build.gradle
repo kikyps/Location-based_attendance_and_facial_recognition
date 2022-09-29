@@ -10,13 +10,13 @@ android {
         debug {
             keyAlias 'mykey'
             keyPassword 'kipan12345'
-            storeFile file('../Keystore/mykey.jks')
+            storeFile file('D:\\Android-Project\\AbsensiWajah\\Keystore\\mykey.jks')
             storePassword 'kipan12345'
         }
         release {
             keyAlias 'mykey'
             keyPassword 'kipan12345'
-            storeFile file('../Keystore/mykey.jks')
+            storeFile file('D:\\Android-Project\\AbsensiWajah\\Keystore\\mykey.jks')
             storePassword 'kipan12345'
         }
     }
@@ -25,8 +25,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 80280922
-        versionName '8.0'
+        versionCode 110300922
+        versionName '1.1.0'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +40,28 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        // add the code from below line.
+//        applicationVariants.all{
+//                // this method is use to rename your release apk only
+//            variant ->
+//                variant.outputs.each{
+//                        // on below line we are setting a name to our apk
+//                    output->
+//                        // on below line we are specifying our app name.
+//                        project.ext { appName = 'Absensi-Wajah' }
+//                        def versionName = variant.versionName
+//                        // on below line we are adding the formatted date to our apk file name.
+//                        def formattedDate = new Date().format('yyyy-MM-dd-HH-mm-ss')
+//                        // on below line we are creating a new name for our apk.
+//                        def newName = output.outputFile.name
+//                        // on below line we are replacing our previous name with our app name.
+//                        newName = newName.replace("app-", "$project.ext.appName-")
+//                        // on below line we are replacing -release with our formatted date.
+//                        newName = newName.replace("-release", "_v" + versionName)
+//                        // at last we are setting our apk name to it.
+//                        output.outputFileName  = newName
+//                }
+//        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -83,6 +105,7 @@ dependencies {
     implementation 'com.hbb20:ccp:2.6.1'
     implementation 'io.github.chaosleung:pinview:1.4.4'
 //    implementation 'com.google.firebase:firebase-admin:9.0.0'
+    implementation 'cat.ereza:customactivityoncrash:2.4.0'
 
     annotationProcessor 'androidx.room:room-compiler:2.4.3'
     implementation 'com.google.mlkit:face-detection:16.1.5'

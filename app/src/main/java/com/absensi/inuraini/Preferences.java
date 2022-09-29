@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -205,7 +207,26 @@ public class Preferences {
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
     }
 
-    private static void showUpdateDialog(Context context, Activity activity){
+    public static void dialogNetwork(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            builder.setMessage("Tidak ada koneksi internet, silahkan hubungkan ke internet!")
+                    .setTitle("No Internet!")
+                    .setCancelable(true)
+                    .setPositiveButton("Connect", (dialog, which) ->
+                            context.startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS))).create().show();
+        }
+    }
+
+    public static boolean isConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobileConn = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        return (wifiConn != null && wifiConn.isConnected()) || (mobileConn != null && mobileConn.isConnected());
+    }
+
+    public static void showUpdateDialog(Context context, Activity activity){
         databaseReference.child("data").child("updateURL").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -263,23 +284,16 @@ public class Preferences {
     }
 
     public static void downloadUpdate(Context context) {
-        currentVersionCode = getCurrentVersionCode(context);
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(5)
-                .build();
-        remoteConfig.setConfigSettingsAsync(configSettings);
         StorageReference reference = storageReference.child("app-release.apk");
-        remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String urlUpdate = uri.toString();
-                    new DownloadTask(context).execute(urlUpdate);
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(context.getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
+        reference.getDownloadUrl().addOnSuccessListener(uri -> {
+            String urlUpdate = uri.toString();
+            new DownloadTask(context).execute(urlUpdate);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(context.getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
+
 
     public static int getCurrentVersionCode(Context context){
         PackageInfo packageInfo = new PackageInfo();

@@ -67,15 +67,14 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
 
             // download the file
             String rootPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
-            String fileName = mContext.getResources().getString(R.string.app_name);
+            String fileName = "Absensi Wajah";
             String fileType = ".apk";
             fileApk = new File(rootPath + fileName + fileType);
             if (fileApk.exists()) {
                 fileApk.delete();
             }
-
             input = connection.getInputStream();
-            output = new FileOutputStream(fileApk,false);
+            output = new FileOutputStream(fileApk, false);
 
             byte[] data = new byte[4096];
             long total = 0;
@@ -83,7 +82,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             while ((count = input.read(data)) != -1) {
                 // allow canceling with back button
                 if (isCancelled()) {
-                    Log.i("DownloadTask","Cancelled");
+                    Log.i("DownloadTask", "Cancelled");
                     input.close();
                     return null;
                 }
@@ -147,12 +146,16 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
             Toast.makeText(mContext, "Download error: " + result, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(mContext, "File Downloaded : " + fileApk.toString(), Toast.LENGTH_SHORT).show();
-            Intent installAppIntent = new Intent(Intent.ACTION_VIEW)
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .setDataAndType(getUriFromFile(fileApk), "application/vnd.android.package-archive")
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
-            mContext.startActivity(installAppIntent);
+            installDownloadedApk();
         }
+    }
+
+    private void installDownloadedApk() {
+        Intent installAppIntent = new Intent(Intent.ACTION_VIEW)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .setDataAndType(getUriFromFile(fileApk), "application/vnd.android.package-archive")
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+        mContext.startActivity(installAppIntent);
     }
 }
