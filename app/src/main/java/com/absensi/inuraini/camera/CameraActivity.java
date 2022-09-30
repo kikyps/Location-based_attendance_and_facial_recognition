@@ -105,6 +105,7 @@ public class CameraActivity extends AppCompatActivity {
     String myname;
     HashMap<String, SimilarityClassifier.Recognition> retrievedMap;
 
+    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     private HashMap<String, SimilarityClassifier.Recognition> registered = new HashMap<>(); //saved Faces
@@ -116,6 +117,7 @@ public class CameraActivity extends AppCompatActivity {
         camera_view = findViewById(R.id.previewCamera);
         namaface = findViewById(R.id.deskripsi);
         daftar = findViewById(R.id.daftardulu);
+        firebaseUser = Preferences.mAuth.getCurrentUser();
         registered = readFromSP();
 //        loadFaceData(registered);
 
@@ -144,7 +146,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void actionListeners() {
-        databaseReference.child(Preferences.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -384,7 +386,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void recognizeImage(Face face) {
-        databaseReference.child(Preferences.currentUser.getUid()).child("faceID").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(firebaseUser.getUid()).child("faceID").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -413,7 +415,7 @@ public class CameraActivity extends AppCompatActivity {
                                     finish();
                                 }
                             } else {
-                                databaseReference.child(Preferences.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+                                databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         if (snapshot.exists()){
@@ -470,7 +472,7 @@ public class CameraActivity extends AppCompatActivity {
         String hadir = "hadir";
 
         AbsenData absenData = new AbsenData(hadir, jamAbsen, ketHadir);
-        databaseReference.child(Preferences.currentUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+        databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
     }
 
     //Compare Faces by distance between face embeddings
@@ -667,13 +669,13 @@ public class CameraActivity extends AppCompatActivity {
         if (Preferences.getFaceId(context) != null) {
             Map<String, Object> updatesFaceID = new HashMap<>();
             updatesFaceID.put("faceID", jsonString);
-            databaseReference.child(Preferences.currentUser.getUid()).updateChildren(updatesFaceID).addOnSuccessListener(unused -> {
+            databaseReference.child(firebaseUser.getUid()).updateChildren(updatesFaceID).addOnSuccessListener(unused -> {
                 Toast.makeText(context, "Recognitions Saved", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(context, "Cant saved data, Something error!", Toast.LENGTH_SHORT).show();
             });
         } else {
-            databaseReference.child(Preferences.currentUser.getUid()).child("faceID").setValue(jsonString).addOnSuccessListener(unused -> {
+            databaseReference.child(firebaseUser.getUid()).child("faceID").setValue(jsonString).addOnSuccessListener(unused -> {
                 Toast.makeText(context, "Recognitions Saved", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(context, "Cant saved data, Something error!", Toast.LENGTH_SHORT).show();

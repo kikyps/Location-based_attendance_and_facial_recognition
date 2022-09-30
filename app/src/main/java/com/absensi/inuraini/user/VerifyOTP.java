@@ -45,6 +45,7 @@ public class VerifyOTP extends AppCompatActivity {
     AnimatedVectorDrawableCompat avd;
     AnimatedVectorDrawable avd2;
     Context context = this;
+    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     @Override
@@ -55,6 +56,7 @@ public class VerifyOTP extends AppCompatActivity {
         done = findViewById(R.id.icon_done);
         progressBar = findViewById(R.id.progresbar);
         changeNumber = findViewById(R.id.change_number);
+        firebaseUser = Preferences.mAuth.getCurrentUser();
         String nohh = getIntent().getStringExtra("nomor");
         nomorku.setText(nohh);
         sendOTP(nohh);
@@ -96,7 +98,7 @@ public class VerifyOTP extends AppCompatActivity {
                 if (updatePhone) {
                     Map<String, Object> postValues = new HashMap<>();
                     postValues.put("sPhone", nomorku.getText().toString());
-                    databaseReference.child(Preferences.currentUser.getUid()).updateChildren(postValues)
+                    databaseReference.child(firebaseUser.getUid()).updateChildren(postValues)
                             .addOnSuccessListener(unused -> {
                                 finish();
                                 Toast.makeText(context, "Alamat berhasil di ubah", Toast.LENGTH_SHORT).show();
@@ -104,7 +106,7 @@ public class VerifyOTP extends AppCompatActivity {
                             .addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
                 } else {
                     String namasaya = DataDiriOne.getName;
-                    String myemail = Preferences.currentUser.getEmail();
+                    String myemail = firebaseUser.getEmail();
                     String alamatku = DataDiriOne.getAlamat;
                     String gendersaya = DataDiriTwo.gender;
                     String ttlku = DataDiriTwo.ttlku;
@@ -121,7 +123,7 @@ public class VerifyOTP extends AppCompatActivity {
                     postValues.put("sPhone", noku);
                     postValues.put("sJabatan", jabatan);
                     postValues.put("sStatus", status);
-                    databaseReference.child(Preferences.currentUser.getUid()).updateChildren(postValues).addOnSuccessListener(unused -> {
+                    databaseReference.child(firebaseUser.getUid()).updateChildren(postValues).addOnSuccessListener(unused -> {
                         Intent i = new Intent(VerifyOTP.this, UserActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK |

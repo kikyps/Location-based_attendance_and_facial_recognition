@@ -64,7 +64,6 @@ public class Preferences {
     private static long mLastClickTime = 0;
     public static AlertDialog myAlertDialog;
     public static boolean start = true;
-    public static FirebaseUser currentUser;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -137,7 +136,6 @@ public class Preferences {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-                        currentUser = mAuth.getCurrentUser();
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
                     } else {
