@@ -43,7 +43,6 @@ public class DataDiriOne extends AppCompatActivity {
     private ArrayList<String> jabatanSpin = new ArrayList<>();
     private ArrayList<StoreJabatan> jabatanData = new ArrayList<>();
     Context context = this;
-    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
     @Override
@@ -54,13 +53,12 @@ public class DataDiriOne extends AppCompatActivity {
         alamat = findViewById(R.id.myalamat);
         next = findViewById(R.id.next2);
         jabatanSpinner = findViewById(R.id.jabatan);
-        firebaseUser = Preferences.mAuth.getCurrentUser();
         showSpinnerJabatan();
         contentListeners();
     }
 
     private void contentListeners() {
-        nama.getEditText().setText(firebaseUser.getDisplayName());
+        nama.getEditText().setText(Preferences.currentUser.getDisplayName());
 
         next.setOnClickListener(v -> {
             if (!validateName() | !validateAlamat()){

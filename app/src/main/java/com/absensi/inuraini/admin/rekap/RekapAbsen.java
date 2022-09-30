@@ -56,12 +56,11 @@ public class RekapAbsen extends Fragment {
     TextView tanggal;
     private Spinner rekapSpinner;
     String getSelectedRekap;
-    public static String eventDate, userLogin;
+    public static String eventDate;
     public static DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
     DateFormat dateRekap = new SimpleDateFormat("ddMMyyyy");
     public static Calendar calendar = Calendar.getInstance();
     private Context mContext;
-    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     @Override
@@ -77,8 +76,6 @@ public class RekapAbsen extends Fragment {
     }
 
     private void layoutbinding(View root) {
-        firebaseUser = Preferences.mAuth.getCurrentUser();
-        userLogin = firebaseUser.getUid();
         Preferences.customProgresBar(getContext());
         recyclerView = root.findViewById(R.id.rv_view);
         recyclerView.setHasFixedSize(true);

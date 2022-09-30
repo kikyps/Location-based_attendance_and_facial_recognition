@@ -52,7 +52,6 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        firebaseUser = Preferences.mAuth.getCurrentUser();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -124,7 +123,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void readUserData() {
-        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(Preferences.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){

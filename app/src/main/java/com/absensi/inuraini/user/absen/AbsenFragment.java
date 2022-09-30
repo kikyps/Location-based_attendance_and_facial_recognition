@@ -75,9 +75,8 @@ public class AbsenFragment extends Fragment {
 
     private Context mContext;
 
-    String userLogin, eventDate;
+    String eventDate;
 
-    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     LocationManager locationManager;
@@ -109,8 +108,6 @@ public class AbsenFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_absen, container, false);
         layoutBinding(root);
-        firebaseUser = Preferences.mAuth.getCurrentUser();
-        userLogin = firebaseUser.getUid();
         locationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
         setJam();
         setTanggal();
@@ -298,7 +295,7 @@ public class AbsenFragment extends Fragment {
                 Toast.makeText(mContext, "Isi Keterangan Terlebih Dahulu!", Toast.LENGTH_SHORT).show();
             } else {
                 AbsenData absenData = new AbsenData(stathadir, jamAbsen, keterangan);
-                databaseReference.child(userLogin).child("sAbsensi").child(eventDate).setValue(absenData).addOnSuccessListener(unused -> validIzin()).addOnFailureListener(e -> Toast.makeText(requireContext(), "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+                databaseReference.child(Preferences.currentUser.getUid()).child("sAbsensi").child(eventDate).setValue(absenData).addOnSuccessListener(unused -> validIzin()).addOnFailureListener(e -> Toast.makeText(requireContext(), "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
@@ -385,7 +382,7 @@ public class AbsenFragment extends Fragment {
     }
 
     private void showAbsenToday(){
-        databaseReference.child(userLogin).child("sAbsensi").child(eventDate).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(Preferences.currentUser.getUid()).child("sAbsensi").child(eventDate).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){

@@ -61,9 +61,10 @@ public class Preferences {
     private static final String FACE_ID = "face_id",
             DATA_STATUS = "status", DATA_DIALOG = "dialog_show";
     public static final int REQUEST_PERMISSION_CODE = 111;
-    public static FirebaseUser firebaseUser = mAuth.getCurrentUser();
     private static long mLastClickTime = 0;
     public static AlertDialog myAlertDialog;
+    public static boolean start = true;
+    public static FirebaseUser currentUser;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -136,6 +137,7 @@ public class Preferences {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
+                        currentUser = mAuth.getCurrentUser();
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
                     } else {
@@ -238,17 +240,20 @@ public class Preferences {
                     }
                     mLastClickTime = SystemClock.elapsedRealtime();
 
-                    showDialog(context, null, "Pembaruan Aplikasi", deskripsi, "Update", null, "Ingat nanti",
-                            (dialog, which) -> {
-                                if (!isPermissionGranted(context)) {
-                                    takePermissions(context, activity);
-                                } else {
-                                    downloadUpdate(context);
-                                }
-                            },
-                            (dialog, which) -> dialog.cancel(),
-                            (dialog, which) -> setUpdateDialog(context, true),
-                            true);
+                    if (start) {
+                        showDialog(context, null, "Pembaruan Aplikasi", deskripsi, "Update", null, "Ingat nanti",
+                                (dialog, which) -> {
+                                    start = false;
+                                    if (!isPermissionGranted(context)) {
+                                        takePermissions(context, activity);
+                                    } else {
+                                        downloadUpdate(context);
+                                    }
+                                },
+                                (dialog, which) -> dialog.cancel(),
+                                (dialog, which) -> setUpdateDialog(context, true),
+                                true);
+                    }
                 }
             }
             @Override

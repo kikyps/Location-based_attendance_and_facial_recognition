@@ -142,6 +142,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         Log.i("DownloadTask", "Work Done! PostExecute");
         mWakeLock.release();
         mPDialog.dismiss();
+        Preferences.start = true;
         if (result != null) {
             Toast.makeText(mContext, "Download error: " + result, Toast.LENGTH_LONG).show();
         } else {

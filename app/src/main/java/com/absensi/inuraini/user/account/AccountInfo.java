@@ -51,7 +51,6 @@ public class AccountInfo extends Fragment {
     TextView nama, ttl, email, gender, jabatan, alamat, phone;
     LinearLayout updateNama, updateTtl, updateGender, updateJabatan, updateAlamat, updatePhone;
     String mynama, upgender, keyJabatan, myalamat, myphone;
-    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private Context mContext;
     Calendar calendar = Calendar.getInstance();
@@ -76,7 +75,6 @@ public class AccountInfo extends Fragment {
     }
 
     private void layoutBinding(View root) {
-        firebaseUser = Preferences.mAuth.getCurrentUser();
         nama = root.findViewById(R.id.id_nama);
         ttl = root.findViewById(R.id.id_ttl);
         email = root.findViewById(R.id.id_email);
@@ -203,7 +201,7 @@ public class AccountInfo extends Fragment {
                 String alamatsaya = ket.getEditText().getText().toString();
                 Map<String, Object> postValues = new HashMap<>();
                 postValues.put("sAlamat", alamatsaya);
-                databaseReference.child("user").child(Preferences.firebaseUser.getUid()).updateChildren(postValues)
+                databaseReference.child("user").child(Preferences.currentUser.getUid()).updateChildren(postValues)
                         .addOnSuccessListener(unused -> Toast.makeText(mContext, "Alamat berhasil di ubah", Toast.LENGTH_SHORT).show())
                         .addOnFailureListener(e -> Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
             });
@@ -242,7 +240,7 @@ public class AccountInfo extends Fragment {
         builder.setPositiveButton("Update", (dialog, which) -> {
             Map<String, Object> postValues = new HashMap<>();
             postValues.put("sJabatan", keyJabatan);
-            databaseReference.child("user").child(Preferences.firebaseUser.getUid()).updateChildren(postValues)
+            databaseReference.child("user").child(Preferences.currentUser.getUid()).updateChildren(postValues)
                     .addOnSuccessListener(unused -> Toast.makeText(mContext, "Jabatan anda berhasil di ubah", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
@@ -274,7 +272,7 @@ public class AccountInfo extends Fragment {
             }
             Map<String, Object> postValues = new HashMap<>();
             postValues.put("sGender", upgender);
-            databaseReference.child("user").child(Preferences.firebaseUser.getUid()).updateChildren(postValues)
+            databaseReference.child("user").child(Preferences.currentUser.getUid()).updateChildren(postValues)
                     .addOnSuccessListener(unused -> Toast.makeText(mContext, "Jenis kelamin berhasil di ubah", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
@@ -288,13 +286,13 @@ public class AccountInfo extends Fragment {
         String curentDate = dateFormat.format(calendar.getTime());
         Map<String, Object> postValues = new HashMap<>();
         postValues.put("sTtl", curentDate);
-        databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues)
+        databaseReference.child("user").child(Preferences.currentUser.getUid()).updateChildren(postValues)
                 .addOnSuccessListener(unused -> Toast.makeText(mContext, "Tanggal lahir berhasil di ubah", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
     }
 
     private void showMyIdentity() {
-        databaseReference.child("user").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("user").child(Preferences.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -349,7 +347,7 @@ public class AccountInfo extends Fragment {
             String namasaya = ket.getEditText().getText().toString();
             Map<String, Object> postValues = new HashMap<>();
             postValues.put("sNama", namasaya);
-            databaseReference.child("user").child(Preferences.firebaseUser.getUid()).updateChildren(postValues)
+            databaseReference.child("user").child(Preferences.currentUser.getUid()).updateChildren(postValues)
                     .addOnSuccessListener(unused -> Toast.makeText(mContext, "Nama berhasil di ubah", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });

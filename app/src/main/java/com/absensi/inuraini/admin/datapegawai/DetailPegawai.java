@@ -21,7 +21,6 @@ public class DetailPegawai extends AppCompatActivity {
 
     TextView nama, ttl, email, gender, jabatan, alamat, phone, status;
     String idPegawai;
-    FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     @Override
@@ -38,7 +37,6 @@ public class DetailPegawai extends AppCompatActivity {
     }
 
     private void contentListeners() {
-        firebaseUser = Preferences.mAuth.getCurrentUser();
         nama = findViewById(R.id.id_nama);
         ttl = findViewById(R.id.id_ttl);
         email = findViewById(R.id.id_email);
