@@ -29,13 +29,40 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_absensi"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
+        <activity
+            android:name=".common.SplashScreenActivity"
+            android:exported="true"
+            android:theme="@style/SplashScreenTheme">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".common.EmailVerificationActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".common.RegisterActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".common.CollectorActivity"
             android:exported="false">
@@ -62,16 +89,16 @@
             android:name=".admin.rekap.DetailAbsen"
             android:exported="false" />
         <activity
-            android:name=".user.VerifyOTP"
+            android:name=".common.VerifyOTP"
             android:exported="false" />
         <activity
-            android:name=".user.DataDiriThree"
+            android:name=".common.DataDiriThree"
             android:exported="false" />
         <activity
-            android:name=".user.DataDiriTwo"
+            android:name=".common.DataDiriTwo"
             android:exported="false" />
         <activity
-            android:name=".user.DataDiriOne"
+            android:name=".common.DataDiriOne"
             android:exported="false" />
         <activity
             android:name=".camera.CameraActivity"
@@ -83,12 +110,7 @@
             android:theme="@style/Theme.AbsensiWajah.NoActionBar" />
         <activity
             android:name=".common.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
 
         <meta-data

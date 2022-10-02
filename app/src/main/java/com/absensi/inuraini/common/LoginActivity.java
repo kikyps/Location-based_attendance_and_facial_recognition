@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.absensi.inuraini.Preferences;
@@ -22,13 +23,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
+    TextInputLayout emailValid, passwordValid;
+    Button login, register;
     boolean doubleBackToExitPressedOnce;
     SignInButton signinGoogle;
     FirebaseAuth firebaseAuth;
@@ -44,7 +46,27 @@ public class LoginActivity extends AppCompatActivity {
 
     private void contentlisteners() {
         firebaseAuth = Preferences.mAuth;
+        emailValid = findViewById(R.id.login_email);
+        passwordValid = findViewById(R.id.login_password);
+        login = findViewById(R.id.login_button);
+        register = findViewById(R.id.register_akun);
         signinGoogle = findViewById(R.id.login_google);
+
+        register.setOnClickListener(v -> startActivity(new Intent(context, RegisterActivity.class)));
+
+        login.setOnClickListener(v -> {
+            if (!validateEmail() || !validatePassword()) {
+            } else {
+                if (!Preferences.isConnected(this)) {
+                    Preferences.dialogNetwork(this);
+                } else {
+                    String input1 = emailValid.getEditText().getText().toString();
+                    String input2 = passwordValid.getEditText().getText().toString();
+                    Preferences.emailAndPasswordLogin(context, input1, input2, UserActivity.class);
+                }
+            }
+        });
+
         signinGoogle.setOnClickListener(v -> {
             turnLoginGoogle();
         });
@@ -63,8 +85,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = Preferences.mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(context, UserActivity.class));
-            finish();
+            if (currentUser.isEmailVerified()) {
+                startActivity(new Intent(context, UserActivity.class));
+                finish();
+            }
         } else {
             if (!Preferences.getUpdateDialog(context)){
                 Preferences.checkUpdate(context, this);
@@ -106,6 +130,48 @@ public class LoginActivity extends AppCompatActivity {
                 Preferences.firebaseAuthWithGoogle(account.getIdToken(), this, UserActivity.class);
             } catch (ApiException ignored) {
             }
+        }
+    }
+
+    private boolean validateEmail(){
+        String val = emailValid.getEditText().getText().toString().trim();
+        String email = "[a-zA-Z0-9._-]+@[a-z]+\\.[a-z]+";  //email validate
+
+        if (val.isEmpty()){
+            emailValid.setError("Email tidak boleh kosong!");
+            return false;
+        } else if (!val.matches(email)){
+            emailValid.setError("Format email tidak sesuai");
+            return false;
+        } else {
+            emailValid.setError(null);
+            emailValid.setErrorEnabled(false);
+            return true;
+        }
+    }
+
+    private boolean validatePassword(){
+        String val = passwordValid.getEditText().getText().toString().trim();
+        String checkPassword = "^" +
+                "(?=.*[0-9])" +          //at least 1 digit
+                //"(?=.*[a-z])" +          //at least 1 lower case letter
+                //"(?=.*[A-Z])" +          //at least 1 upper case letter
+                "(?=.*[a-zA-Z])" +       //any letter
+                //"(?=.*[@#$%^&+=-])" +    //at least 1 special character
+                "(?=\\S+$)" +            //no white spaces
+                //".{4,}" +                //at least 4 characters
+                "$";
+
+        if (val.isEmpty()){
+            passwordValid.setError("Username tidak boleh kosong!");
+            return false;
+        } else if (val.matches(checkPassword)){
+            passwordValid.setError("Kata sandi harus memiliki 1 angka atau lebih mis:(katasandi12)");
+            return false;
+        } else {
+            passwordValid.setError(null);
+            passwordValid.setErrorEnabled(false);
+            return true;
         }
     }
 

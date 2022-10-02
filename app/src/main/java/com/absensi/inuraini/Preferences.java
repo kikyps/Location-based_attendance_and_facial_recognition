@@ -27,12 +27,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.absensi.inuraini.camera.SimilarityClassifier;
+import com.absensi.inuraini.common.EmailVerificationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -122,6 +122,54 @@ public class Preferences {
         }
     }
 
+    public static void emailAndPasswordLogin(Context context, String email, String password, Class activity) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (mAuth.getCurrentUser().isEmailVerified()){
+                            // Sign in success, update UI with the signed-in user's information
+                            Intent intent = new Intent(context, activity);
+                            context.startActivity(intent);
+                        } else {
+                            Toast.makeText(context, "Email anda belum di verifikasi silahkan verifikasi email anda", Toast.LENGTH_LONG).show();
+                            mAuth.getCurrentUser().sendEmailVerification()
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()){
+                                            Intent intent = new Intent(context, EmailVerificationActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(intent);
+                                        }
+                                    });
+                        }
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(context, "Email atau password salah", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public static void emailAndPasswordRegister(Context context, String email, String password, Class activity){
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                   if (task.isSuccessful()){
+                       mAuth.getCurrentUser().sendEmailVerification()
+                               .addOnCompleteListener(task1 -> {
+                                   if (task1.isSuccessful()){
+                                       Intent intent = new Intent(context, activity);
+                                       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                               Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                               Intent.FLAG_ACTIVITY_NEW_TASK);
+                                       context.startActivity(intent);
+                                   }
+                               });
+                   } else {
+                       Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                   }
+                });
+    }
+
     public static void googleInitialize(Context context){
         String web_id = "t92YuQnblRnbvNmclNXdlx2Zv92ZuMHcwFmLx0mZuFDMhhmMmdmYuVWdvBTcjJTO2QjYx52ZvdDc0ATLzgDNwMDM4QDNzYjM";
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -139,7 +187,7 @@ public class Preferences {
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
                     } else {
-                        Toast.makeText(context, "Login Gagal!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

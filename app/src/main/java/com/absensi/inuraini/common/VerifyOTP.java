@@ -1,21 +1,18 @@
-package com.absensi.inuraini.user;
+package com.absensi.inuraini.common;
 
 import static com.absensi.inuraini.Preferences.mAuth;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +20,7 @@ import android.widget.Toast;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
+import com.absensi.inuraini.user.UserActivity;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -101,7 +99,7 @@ public class VerifyOTP extends AppCompatActivity {
                     databaseReference.child(firebaseUser.getUid()).updateChildren(postValues)
                             .addOnSuccessListener(unused -> {
                                 finish();
-                                Toast.makeText(context, "Alamat berhasil di ubah", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Nomor Hp berhasil di ubah", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
                 } else {

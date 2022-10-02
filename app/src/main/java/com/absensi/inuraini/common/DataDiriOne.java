@@ -1,4 +1,4 @@
-package com.absensi.inuraini.user;
+package com.absensi.inuraini.common;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,10 +18,10 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.admin.jabatan.StoreJabatan;
-import com.absensi.inuraini.common.LoginActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -70,6 +70,13 @@ public class DataDiriOne extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), DataDiriTwo.class);
                 startActivity(intent);
+            }
+        });
+
+        next.setOnTouchListener(new MyLongClickListener(5000) {
+            @Override
+            public void onLongClick() {
+                Preferences.signOut(context, LoginActivity.class);
             }
         });
     }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".common.VerifyOTP"
+    tools:context=".common.EmailVerificationActivity"
     android:padding="30dp"
     android:background="@color/white">
 
@@ -17,8 +17,8 @@
             android:layout_marginTop="40dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="kode"
-            android:textSize="100dp"
+            android:text="Email"
+            android:textSize="80dp"
             android:textColor="@color/black"
             android:textAllCaps="true"
             android:layout_gravity="center"/>
@@ -32,14 +32,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kode verifikasi sudah di kirim ke nomor"
+            android:text="Link verifikasi sudah di kirim ke email anda"
             android:layout_gravity="center"
             android:textAlignment="center"
             android:layout_marginTop="50dp"
             android:textColor="@color/black"/>
 
         <TextView
-            android:id="@+id/getour_nomor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cara Verifikasi:\n1. Buka Web/Aplikasi Gmail pada smartphone anda\n2. Pada menu inbox lihat email dari absensiinur\n3. Klik link pada email tersebut untuk memverifikasi\n4. Setelah berhasil diverifikasi login kembali menggunakan email yg sudah di daftarkan sebelumnya"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/getour_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -71,12 +81,12 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/change_number"
+            android:id="@+id/back_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="40dp"
-            android:text="Ganti Nomor"
+            android:text="Kembali Ke login"
             android:background="@android:color/transparent"
             android:textColor="@color/black"/>
 

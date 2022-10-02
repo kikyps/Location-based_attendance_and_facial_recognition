@@ -26,7 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.admin.jabatan.StoreJabatan;
-import com.absensi.inuraini.user.VerifyOTP;
+import com.absensi.inuraini.common.VerifyOTP;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

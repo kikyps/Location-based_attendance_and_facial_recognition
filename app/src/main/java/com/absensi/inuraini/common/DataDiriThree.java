@@ -1,4 +1,4 @@
-package com.absensi.inuraini.user;
+package com.absensi.inuraini.common;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,15 +8,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.absensi.inuraini.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.hbb20.CountryCodePicker;
 
 public class DataDiriThree extends AppCompatActivity {

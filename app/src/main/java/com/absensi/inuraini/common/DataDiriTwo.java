@@ -1,4 +1,4 @@
-package com.absensi.inuraini.user;
+package com.absensi.inuraini.common;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +17,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class DataDiriTwo extends AppCompatActivity {
 

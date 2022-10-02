@@ -29,6 +29,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
+import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
