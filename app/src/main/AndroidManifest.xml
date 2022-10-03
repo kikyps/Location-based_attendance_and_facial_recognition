@@ -37,12 +37,20 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".common.ResetPasswordActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.SplashScreenActivity"
             android:exported="true"
             android:theme="@style/SplashScreenTheme">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -110,8 +118,7 @@
             android:theme="@style/Theme.AbsensiWajah.NoActionBar" />
         <activity
             android:name=".common.LoginActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"

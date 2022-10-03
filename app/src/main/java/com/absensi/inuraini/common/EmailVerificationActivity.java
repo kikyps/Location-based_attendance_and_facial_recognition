@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
@@ -19,6 +20,7 @@ import com.absensi.inuraini.R;
 public class EmailVerificationActivity extends AppCompatActivity {
 
     Button backLogin;
+    TextView getEmail;
     AnimatedVectorDrawableCompat avd;
     AnimatedVectorDrawable avd2;
     ImageView done;
@@ -30,7 +32,10 @@ public class EmailVerificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_email_verification);
         backLogin = findViewById(R.id.back_login);
         done = findViewById(R.id.icon_done);
+        getEmail = findViewById(R.id.getour_email);
+        String emailReg = getIntent().getStringExtra("emailReg");
         validOtp();
+        getEmail.setText(emailReg);
         backLogin.setOnClickListener(v -> {
             Preferences.signOut(context, LoginActivity.class);
             finish();

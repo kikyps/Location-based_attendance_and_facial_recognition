@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
 
     TextInputLayout emailValid, passwordValid;
-    Button login, register;
+    Button login, register, resetPass;
     boolean doubleBackToExitPressedOnce;
     SignInButton signinGoogle;
     FirebaseAuth firebaseAuth;
@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.login_button);
         register = findViewById(R.id.register_akun);
         signinGoogle = findViewById(R.id.login_google);
+        resetPass = findViewById(R.id.reset_password);
 
         register.setOnClickListener(v -> startActivity(new Intent(context, RegisterActivity.class)));
 
@@ -69,6 +70,10 @@ public class LoginActivity extends AppCompatActivity {
 
         signinGoogle.setOnClickListener(v -> {
             turnLoginGoogle();
+        });
+
+        resetPass.setOnClickListener(v -> {
+            startActivity(new Intent(context, ResetPasswordActivity.class));
         });
 
         //Google Signin Initialized
