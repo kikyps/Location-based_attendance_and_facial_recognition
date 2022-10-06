@@ -83,6 +83,7 @@ public class DetailPegawai extends AppCompatActivity {
 
                     nama.setText(mynama);
                     email.setText(myemail);
+                    ttl.setText(myttl);
                     gender.setText(mygender);
                     alamat.setText(myalamat);
                     phone.setText(myphone);

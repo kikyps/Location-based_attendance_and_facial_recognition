@@ -28,8 +28,18 @@ public class ResetPasswordActivity extends AppCompatActivity {
         myemail = findViewById(R.id.my_email);
         sent = findViewById(R.id.sent_email);
         sent.setOnClickListener(v -> {
-            Preferences.resetLoginPassword(context, myemail.getEditText().getText().toString());
-            new Handler().postDelayed(this::finish, 3000);
+            if (!Preferences.isConnected(context)){
+                Preferences.dialogNetwork(context);
+            } else {
+                Preferences.resetLoginPassword(context, myemail.getEditText().getText().toString());
+                new Handler().postDelayed(this::finish, 3000);
+            }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

@@ -79,7 +79,6 @@ public class RekapAbsen extends Fragment {
     private void layoutbinding(View root) {
         firebaseUser = Preferences.mAuth.getCurrentUser();
         userLogin = firebaseUser.getUid();
-        Preferences.customProgresBar(getContext());
         recyclerView = root.findViewById(R.id.rv_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(mContext);

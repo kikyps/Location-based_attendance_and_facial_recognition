@@ -37,6 +37,13 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".common.ChangePasswordActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.ResetPasswordActivity"
             android:exported="false">
             <meta-data
@@ -79,13 +86,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".user.account.UpdatePhone"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".admin.datapegawai.DetailPegawai"
             android:exported="false"
             android:label="Detail Pegawai"
@@ -118,7 +118,7 @@
             android:theme="@style/Theme.AbsensiWajah.NoActionBar" />
         <activity
             android:name=".common.LoginActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"

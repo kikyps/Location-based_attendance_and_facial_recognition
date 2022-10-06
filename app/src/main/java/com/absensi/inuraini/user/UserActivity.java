@@ -125,68 +125,72 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void readUserData() {
-        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()){
-                    String myId = snapshot.child("faceID").getValue(String.class);
-                    String namaku = snapshot.child("sNama").getValue(String.class);
-                    String getstatus = snapshot.child("sStatus").getValue(String.class);
-                    boolean wajahid = snapshot.hasChild("faceID");
-                    boolean nohp = snapshot.hasChild("sPhone");
+        if (!Preferences.isConnected(context)) {
+            Preferences.dialogNetwork(context);
+        } else {
+            databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String myId = snapshot.child("faceID").getValue(String.class);
+                        String namaku = snapshot.child("sNama").getValue(String.class);
+                        String getstatus = snapshot.child("sStatus").getValue(String.class);
+                        boolean wajahid = snapshot.hasChild("faceID");
+                        boolean nohp = snapshot.hasChild("sPhone");
 
-                    nama.setText(namaku);
-                    if (myId != null){
-                        Preferences.setFaceId(context, myId);
-                    }
-
-                    if (getstatus != null){
-                        if (Preferences.getDataStatus(context).isEmpty()) {
-                            Preferences.setDataStatus(context, getstatus);
+                        nama.setText(namaku);
+                        if (myId != null) {
+                            Preferences.setFaceId(context, myId);
                         }
-                    }
 
-                    if (Preferences.getDataStatus(context).equals("admin")){
-                        Menu menu = navigationView.getMenu();
-                        MenuItem nav_admin = menu.findItem(R.id.admin_akses);
-                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                        nav_user.setVisible(false);
-                        nav_admin.setVisible(true);
+                        if (getstatus != null) {
+                            if (Preferences.getDataStatus(context).isEmpty()) {
+                                Preferences.setDataStatus(context, getstatus);
+                            }
+                        }
+
+                        if (Preferences.getDataStatus(context).equals("admin")) {
+                            Menu menu = navigationView.getMenu();
+                            MenuItem nav_admin = menu.findItem(R.id.admin_akses);
+                            MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
+                            nav_user.setVisible(false);
+                            nav_admin.setVisible(true);
+                        } else {
+                            Menu menu = navigationView.getMenu();
+                            MenuItem nav_dashboard = menu.findItem(R.id.admin_akses);
+                            MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
+                            nav_user.setVisible(true);
+                            nav_dashboard.setVisible(false);
+                        }
+
+                        if (!wajahid) {
+                            Intent intent = new Intent(context, CameraActivity.class);
+                            intent.putExtra("faceid", true);
+                            startActivity(intent);
+                        }
+
+                        if (!nohp) {
+                            Intent intent = new Intent(context, DataDiriOne.class);
+                            intent.putExtra("faceid", true);
+                            startActivity(intent);
+                        } else {
+                            if (!Preferences.getUpdateDialog(context)) {
+                                Preferences.checkUpdate(context, UserActivity.this);
+                            }
+                        }
                     } else {
-                        Menu menu = navigationView.getMenu();
-                        MenuItem nav_dashboard = menu.findItem(R.id.admin_akses);
-                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                        nav_user.setVisible(true);
-                        nav_dashboard.setVisible(false);
-                    }
-
-                    if (!wajahid){
-                        Intent intent = new Intent(context, CameraActivity.class);
-                        intent.putExtra("faceid", true);
-                        startActivity(intent);
-                    }
-
-                    if (!nohp){
                         Intent intent = new Intent(context, DataDiriOne.class);
                         intent.putExtra("faceid", true);
                         startActivity(intent);
-                    } else {
-                        if (!Preferences.getUpdateDialog(context)){
-                            Preferences.checkUpdate(context, UserActivity.this);
-                        }
                     }
-                } else {
-                    Intent intent = new Intent(context, DataDiriOne.class);
-                    intent.putExtra("faceid", true);
-                    startActivity(intent);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override

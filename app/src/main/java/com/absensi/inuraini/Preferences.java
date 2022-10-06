@@ -34,7 +34,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -124,7 +126,14 @@ public class Preferences {
         }
     }
 
+    public static void setProgressDialog(){
+        progressDialog.setMessage("Proses...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
     public static void emailAndPasswordLogin(Context context, String email, String password, Class activity) {
+        setProgressDialog();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -145,14 +154,17 @@ public class Preferences {
                                         }
                                     });
                         }
+                        progressDialog.dismiss();
                     } else {
                         // If sign in fails, display a message to the user.
+                        progressDialog.dismiss();
                         Toast.makeText(context, "Email atau password salah", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     public static void emailAndPasswordRegister(Context context, String email, String password, Class activity){
+        setProgressDialog();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                    if (task.isSuccessful()){
@@ -167,9 +179,36 @@ public class Preferences {
                                        context.startActivity(intent);
                                    }
                                });
+                       progressDialog.dismiss();
                    } else {
+                       progressDialog.dismiss();
                        Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                    }
+                });
+    }
+
+    public static void tryChangePassword(Context context, FirebaseUser user, String passLama, String passBaru){
+        setProgressDialog();
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(user.getEmail(), passLama);
+
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        user.updatePassword(passBaru)
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(context, "Password anda berhasil di ubah", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                        progressDialog.dismiss();
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(context, "Password lama anda salah!", Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 
@@ -192,13 +231,16 @@ public class Preferences {
     }
 
     public static void firebaseAuthWithGoogle(String idToken, Context context, Class activity) {
+        setProgressDialog();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
+                        progressDialog.dismiss();
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
                     } else {
+                        progressDialog.dismiss();
                         Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -268,14 +310,28 @@ public class Preferences {
     }
 
     public static void dialogNetwork(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            builder.setMessage("Tidak ada koneksi internet, silahkan hubungkan ke internet!")
-                    .setTitle("No Internet!")
-                    .setCancelable(true)
-                    .setPositiveButton("Connect", (dialog, which) ->
-                            context.startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS))).create().show();
-        }
+        showDialog(context,
+                null,
+                "No Internet!",
+                "Aplikasi ini membutuhkan akses internet\nAktifkan wifi atau mobile data anda terlebih dahulu!!",
+                "Okey",
+                null,
+                null,
+                (dialog, which) -> {
+                    // Positive Button
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        context.startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));
+                    }
+                },
+                (dialog, which) -> {
+                    // Negative Button
+                    dialog.cancel();
+                },
+                (dialog, which) -> {
+                    // Neutral Button
+                    dialog.cancel();
+                },
+                false);
     }
 
     public static boolean isConnected(Context context) {
@@ -355,8 +411,6 @@ public class Preferences {
             Toast.makeText(context.getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
-
-
 
     public static int getCurrentVersionCode(Context context){
         PackageInfo packageInfo = new PackageInfo();

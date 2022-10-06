@@ -78,6 +78,11 @@
         <item name="colorOnSecondary">@color/white</item>
     </style>
 
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/purple_500</item>
+        <item name="android:textColor">@color/purple_500</item>
+    </style>
+
     <style name="Theme.Penggajian.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Penggajian.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

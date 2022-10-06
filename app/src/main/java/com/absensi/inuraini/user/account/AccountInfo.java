@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.admin.jabatan.StoreJabatan;
+import com.absensi.inuraini.common.ChangePasswordActivity;
 import com.absensi.inuraini.common.VerifyOTP;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,7 +50,7 @@ import java.util.Map;
 public class AccountInfo extends Fragment {
     TextInputLayout ket;
     TextView nama, ttl, email, gender, jabatan, alamat, phone;
-    LinearLayout updateNama, updateTtl, updateGender, updateJabatan, updateAlamat, updatePhone;
+    LinearLayout updateNama, updateTtl, updateGender, updateJabatan, updateAlamat, updatePhone, updatePassword;
     String mynama, upgender, keyJabatan, myalamat, myphone;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -90,6 +91,7 @@ public class AccountInfo extends Fragment {
         updateJabatan = root.findViewById(R.id.layout_jabatan);
         updateAlamat = root.findViewById(R.id.layout_alamat);
         updatePhone = root.findViewById(R.id.layout_phone);
+        updatePassword = root.findViewById(R.id.change_password);
 
         contentListeners();
         showMyIdentity();
@@ -144,6 +146,10 @@ public class AccountInfo extends Fragment {
 
         updatePhone.setOnClickListener(v -> {
             updatePhoneToDb();
+        });
+
+        updatePassword.setOnClickListener(v -> {
+            startActivity(new Intent(mContext, ChangePasswordActivity.class));
         });
     }
 

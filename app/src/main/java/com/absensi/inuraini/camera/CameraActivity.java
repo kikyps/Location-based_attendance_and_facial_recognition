@@ -17,6 +17,7 @@ import android.graphics.RectF;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Pair;
 import android.util.Size;
 import android.widget.TextView;
@@ -72,6 +73,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class CameraActivity extends AppCompatActivity {
+    boolean doubleBackToExitPressedOnce;
     DateFormat dateRekap = new SimpleDateFormat("ddMMyyyy");
     DateFormat jamAbsen = new SimpleDateFormat("HH:mm");
     FaceDetector detector;
@@ -711,5 +713,26 @@ public class CameraActivity extends AppCompatActivity {
         }
 //        System.out.println("OUTPUT"+ Arrays.deepToString(outut));
         return retrievedMap;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Preferences.isConnected(context)){
+            Preferences.dialogNetwork(context);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            finishAffinity();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, getString(R.string.press_exit), Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 }

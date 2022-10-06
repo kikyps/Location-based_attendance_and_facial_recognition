@@ -34,12 +34,16 @@ public class RegisterActivity extends AppCompatActivity {
         backlogin = findViewById(R.id.login_button);
 
         register.setOnClickListener(v -> {
-            if (!validateEmail() || !validatePassword()){
-
+            if (!Preferences.isConnected(context)){
+                Preferences.dialogNetwork(context);
             } else {
-                String sEmail = emailValid.getEditText().getText().toString().trim();
-                String sPassword = confirmPassword.getEditText().getText().toString().trim();
-                Preferences.emailAndPasswordRegister(context, sEmail, sPassword, EmailVerificationActivity.class);
+                if (!validateEmail() || !validatePassword()) {
+
+                } else {
+                    String sEmail = emailValid.getEditText().getText().toString().trim();
+                    String sPassword = confirmPassword.getEditText().getText().toString().trim();
+                    Preferences.emailAndPasswordRegister(context, sEmail, sPassword, EmailVerificationActivity.class);
+                }
             }
         });
 
@@ -100,5 +104,11 @@ public class RegisterActivity extends AppCompatActivity {
             confirmPassword.setErrorEnabled(false);
             return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

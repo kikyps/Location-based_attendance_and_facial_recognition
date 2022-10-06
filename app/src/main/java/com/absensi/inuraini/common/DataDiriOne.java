@@ -136,7 +136,9 @@ public class DataDiriOne extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!Preferences.getUpdateDialog(context)){
+        if (!Preferences.isConnected(context)){
+            Preferences.dialogNetwork(context);
+        } else if (!Preferences.getUpdateDialog(context)){
             Preferences.checkUpdate(context, this);
         }
     }

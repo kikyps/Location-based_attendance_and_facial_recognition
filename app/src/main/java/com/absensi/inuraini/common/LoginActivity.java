@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.user.UserActivity;
@@ -45,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void contentlisteners() {
+        Preferences.progressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
         firebaseAuth = Preferences.mAuth;
         emailValid = findViewById(R.id.login_email);
         passwordValid = findViewById(R.id.login_password);
@@ -56,20 +59,28 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(v -> startActivity(new Intent(context, RegisterActivity.class)));
 
         login.setOnClickListener(v -> {
-            if (!validateEmail() || !validatePassword()) {
+            if (!Preferences.isConnected(context)){
+                Preferences.dialogNetwork(context);
             } else {
-                if (!Preferences.isConnected(this)) {
-                    Preferences.dialogNetwork(this);
+                if (!validateEmail() || !validatePassword()) {
                 } else {
-                    String input1 = emailValid.getEditText().getText().toString();
-                    String input2 = passwordValid.getEditText().getText().toString();
-                    Preferences.emailAndPasswordLogin(context, input1, input2, UserActivity.class);
+                    if (!Preferences.isConnected(this)) {
+                        Preferences.dialogNetwork(this);
+                    } else {
+                        String input1 = emailValid.getEditText().getText().toString();
+                        String input2 = passwordValid.getEditText().getText().toString();
+                        Preferences.emailAndPasswordLogin(context, input1, input2, UserActivity.class);
+                    }
                 }
             }
         });
 
         signinGoogle.setOnClickListener(v -> {
-            turnLoginGoogle();
+            if (!Preferences.isConnected(context)){
+                Preferences.dialogNetwork(context);
+            } else {
+                turnLoginGoogle();
+            }
         });
 
         resetPass.setOnClickListener(v -> {
@@ -95,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         } else {
-            if (!Preferences.getUpdateDialog(context)){
+            if (!Preferences.getUpdateDialog(context)) {
                 Preferences.checkUpdate(context, this);
             }
         }
