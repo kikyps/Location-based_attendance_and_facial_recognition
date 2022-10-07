@@ -28,11 +28,10 @@ import androidx.core.content.ContextCompat;
 
 import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.EmailVerificationActivity;
+import com.absensi.inuraini.common.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +50,7 @@ import com.google.gson.Gson;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Preferences {
     public static int currentVersionCode;
@@ -127,7 +127,7 @@ public class Preferences {
     }
 
     public static void setProgressDialog(){
-        progressDialog.setMessage("Proses...");
+        progressDialog.setMessage("Sedang Memproses...");
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
@@ -137,30 +137,26 @@ public class Preferences {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (mAuth.getCurrentUser().isEmailVerified()){
+                        if (mAuth.getCurrentUser().isEmailVerified()) {
                             // Sign in success, update UI with the signed-in user's information
                             Intent intent = new Intent(context, activity);
                             context.startActivity(intent);
                         } else {
                             Toast.makeText(context, "Email anda belum di verifikasi silahkan verifikasi email anda", Toast.LENGTH_LONG).show();
-                            mAuth.getCurrentUser().sendEmailVerification()
-                                    .addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()){
-                                            Intent intent = new Intent(context, EmailVerificationActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            context.startActivity(intent);
-                                        }
-                                    });
+                            Intent intent = new Intent(context, EmailVerificationActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("emailReg", email);
+                            intent.putExtra("reVerif", true);
+                            context.startActivity(intent);
                         }
-                        progressDialog.dismiss();
                     } else {
                         // If sign in fails, display a message to the user.
-                        progressDialog.dismiss();
                         Toast.makeText(context, "Email atau password salah", Toast.LENGTH_SHORT).show();
                     }
                 });
+        progressDialog.dismiss();
     }
 
     public static void emailAndPasswordRegister(Context context, String email, String password, Class activity){
@@ -171,20 +167,24 @@ public class Preferences {
                        mAuth.getCurrentUser().sendEmailVerification()
                                .addOnCompleteListener(task1 -> {
                                    if (task1.isSuccessful()){
+                                       FirebaseUser user = mAuth.getCurrentUser();
+                                       String uid = user.getUid();
+                                       NewUser newUser = new NewUser("user", false);
+                                       databaseReference.child("user").child(uid).setValue(newUser);
                                        Intent intent = new Intent(context, activity);
                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                                Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                                Intent.FLAG_ACTIVITY_NEW_TASK);
                                        intent.putExtra("emailReg", email);
+                                       intent.putExtra("reVerif", false);
                                        context.startActivity(intent);
                                    }
                                });
-                       progressDialog.dismiss();
                    } else {
-                       progressDialog.dismiss();
                        Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                    }
                 });
+        progressDialog.dismiss();
     }
 
     public static void tryChangePassword(Context context, FirebaseUser user, String passLama, String passBaru){
@@ -236,9 +236,35 @@ public class Preferences {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-                        progressDialog.dismiss();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        String uid = user.getUid();
+                        databaseReference.child("user").child(uid).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    boolean hasVerif = snapshot.hasChild("sVerified");
+                                    String getstatus = snapshot.child("sStatus").getValue(String.class);
+                                    if (!hasVerif) {
+                                        if (getstatus.equals("admin")){
+                                            databaseReference.child("user").child(uid).child("sVerified").setValue(true);
+                                        } else {
+                                            databaseReference.child("user").child(uid).child("sVerified").setValue(false);
+                                        }
+                                    }
+                                } else {
+                                    NewUser newUser = new NewUser("user", false);
+                                    databaseReference.child("user").child(uid).setValue(newUser);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
+                        progressDialog.dismiss();
                     } else {
                         progressDialog.dismiss();
                         Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
@@ -422,3 +448,4 @@ public class Preferences {
         return packageInfo.versionCode;
     }
 }
+

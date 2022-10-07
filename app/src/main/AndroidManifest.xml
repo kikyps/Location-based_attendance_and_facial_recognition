@@ -37,6 +37,20 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".common.EmailVerificationActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".common.DoVerifActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.ChangePasswordActivity"
             android:exported="false">
             <meta-data
@@ -63,13 +77,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".common.EmailVerificationActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
         <activity
             android:name=".common.RegisterActivity"
