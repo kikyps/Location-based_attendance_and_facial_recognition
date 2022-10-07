@@ -69,7 +69,12 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         String input1 = emailValid.getEditText().getText().toString();
                         String input2 = passwordValid.getEditText().getText().toString();
-                        Preferences.emailAndPasswordLogin(context, input1, input2, UserActivity.class);
+                        if (lastXChars(input1, 10).equals("@gmail.com")){
+                            Preferences.emailAndPasswordLogin(context, input1, input2, UserActivity.class);
+                        } else {
+                            String getEmail = input1 + "@gmail.com";
+                            Preferences.emailAndPasswordLogin(context, getEmail, input2, UserActivity.class);
+                        }
                     }
                 }
             }
@@ -89,6 +94,10 @@ public class LoginActivity extends AppCompatActivity {
 
         //Google Signin Initialized
         Preferences.googleInitialize(context);
+    }
+
+    public static String lastXChars(String v, int x) {
+        return v.length() <= x ? v : v.substring(v.length() - x);
     }
 
     private void turnLoginGoogle() {
@@ -155,9 +164,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (val.isEmpty()){
             emailValid.setError("Email tidak boleh kosong!");
-            return false;
-        } else if (!val.matches(email)){
-            emailValid.setError("Format email tidak sesuai");
             return false;
         } else {
             emailValid.setError(null);
