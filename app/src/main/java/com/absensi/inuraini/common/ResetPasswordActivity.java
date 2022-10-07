@@ -31,10 +31,30 @@ public class ResetPasswordActivity extends AppCompatActivity {
             if (!Preferences.isConnected(context)){
                 Preferences.dialogNetwork(context);
             } else {
-                Preferences.resetLoginPassword(context, myemail.getEditText().getText().toString());
-                new Handler().postDelayed(this::finish, 3000);
+                if (!validateEmail()){
+                } else {
+                    Preferences.resetLoginPassword(context, myemail.getEditText().getText().toString());
+                    new Handler().postDelayed(this::finish, 3000);
+                }
             }
         });
+    }
+
+    private boolean validateEmail(){
+        String val = myemail.getEditText().getText().toString().trim();
+        String email = "[a-zA-Z0-9._-]+@[a-z]+\\.[a-z]+";  //email validate
+
+        if (val.isEmpty()){
+            myemail.setError("Email tidak boleh kosong!");
+            return false;
+        } else if (!val.matches(email)){
+            myemail.setError("Format email tidak sesuai");
+            return false;
+        } else {
+            myemail.setError(null);
+            myemail.setErrorEnabled(false);
+            return true;
+        }
     }
 
     @Override

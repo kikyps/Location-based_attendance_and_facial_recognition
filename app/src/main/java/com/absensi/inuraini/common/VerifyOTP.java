@@ -120,7 +120,6 @@ public class VerifyOTP extends AppCompatActivity {
                     postValues.put("sTtl", ttlku);
                     postValues.put("sPhone", noku);
                     postValues.put("sJabatan", jabatan);
-                    postValues.put("sStatus", status);
                     databaseReference.child(firebaseUser.getUid()).updateChildren(postValues).addOnSuccessListener(unused -> {
                         Intent i = new Intent(VerifyOTP.this, UserActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |

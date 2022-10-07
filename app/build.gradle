@@ -26,8 +26,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 116031022
-        versionName '1.1.6'
+        versionCode 117081022
+        versionName '1.1.7'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

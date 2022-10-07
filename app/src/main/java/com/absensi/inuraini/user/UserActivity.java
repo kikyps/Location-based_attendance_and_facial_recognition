@@ -26,10 +26,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.absensi.inuraini.NewUser;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.common.DataDiriOne;
+import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -132,6 +134,7 @@ public class UserActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
+                        boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
                         String myId = snapshot.child("faceID").getValue(String.class);
                         String namaku = snapshot.child("sNama").getValue(String.class);
                         String getstatus = snapshot.child("sStatus").getValue(String.class);
@@ -163,25 +166,57 @@ public class UserActivity extends AppCompatActivity {
                             nav_dashboard.setVisible(false);
                         }
 
-                        if (!wajahid) {
-                            Intent intent = new Intent(context, CameraActivity.class);
-                            intent.putExtra("faceid", true);
-                            startActivity(intent);
-                        }
-
-                        if (!nohp) {
-                            Intent intent = new Intent(context, DataDiriOne.class);
-                            intent.putExtra("faceid", true);
-                            startActivity(intent);
+                        if (!checkVerif){
+                            startActivity(new Intent(context, DoVerifActivity.class));
+                            finish();
                         } else {
-                            if (!Preferences.getUpdateDialog(context)) {
-                                Preferences.checkUpdate(context, UserActivity.this);
+                            if (!nohp) {
+                                Intent intent = new Intent(context, DataDiriOne.class);
+                                intent.putExtra("faceid", true);
+                                startActivity(intent);
+                            } else if (!wajahid) {
+                                Intent intent = new Intent(context, CameraActivity.class);
+                                intent.putExtra("faceid", true);
+                                startActivity(intent);
+                            } else {
+                                if (!Preferences.getUpdateDialog(context)) {
+                                    Preferences.checkUpdate(context, UserActivity.this);
+                                }
                             }
                         }
+
                     } else {
-                        Intent intent = new Intent(context, DataDiriOne.class);
-                        intent.putExtra("faceid", true);
-                        startActivity(intent);
+                        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean hasVerif = snapshot.hasChild("sVerified");
+                                if (snapshot.exists()){
+                                    String getstatus = snapshot.child("sStatus").getValue(String.class);
+                                    if (!hasVerif) {
+                                        if (getstatus.equals("admin")){
+                                            databaseReference.child(firebaseUser.getUid()).child("sVerified").setValue(true);
+                                        } else {
+                                            databaseReference.child(firebaseUser.getUid()).child("sVerified").setValue(false);
+                                        }
+                                    } else {
+                                        if (getstatus.equals("admin")){
+                                            databaseReference.child(firebaseUser.getUid()).child("sVerified").setValue(true);
+                                        } else {
+                                            databaseReference.child(firebaseUser.getUid()).child("sVerified").setValue(false);
+                                        }
+                                    }
+                                } else {
+                                    NewUser newUser = new NewUser("user", false);
+                                    databaseReference.child(firebaseUser.getUid()).setValue(newUser);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        readUserData();
                     }
                 }
 

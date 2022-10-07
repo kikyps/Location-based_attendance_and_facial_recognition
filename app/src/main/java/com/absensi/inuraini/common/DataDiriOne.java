@@ -40,8 +40,7 @@ public class DataDiriOne extends AppCompatActivity {
     Button next;
     public static String getName, getAlamat, keyJabatan;
     private Spinner jabatanSpinner;
-    private ArrayList<String> jabatanSpin = new ArrayList<>();
-    private ArrayList<StoreJabatan> jabatanData = new ArrayList<>();
+    private final ArrayList<String> jabatanSpin = new ArrayList<>();
     Context context = this;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -77,6 +76,7 @@ public class DataDiriOne extends AppCompatActivity {
             @Override
             public void onLongClick() {
                 Preferences.signOut(context, LoginActivity.class);
+                finish();
             }
         });
     }

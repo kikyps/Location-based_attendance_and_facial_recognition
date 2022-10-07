@@ -288,7 +288,7 @@ public class CameraActivity extends AppCompatActivity {
                                     imgProcess(scaled);
 
                                     if(start) {
-                                        boolean wajahid = getIntent().getExtras().getBoolean("faceid");
+                                        boolean wajahid = getIntent().getBooleanExtra("faceid", false);
                                         if (wajahid){
                                             scanWajah(face);
                                         } else {

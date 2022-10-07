@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -54,6 +55,14 @@ public class CollectorActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             CaocConfig config = CustomActivityOnCrash.getConfigFromIntent(getIntent());
             CustomActivityOnCrash.restartApplicationWithIntent(this, intent, config);
+        });
+
+        restart.setOnTouchListener(new MyLongClickListener(6000) {
+            @Override
+            public void onLongClick() {
+                Preferences.signOut(context, LoginActivity.class);
+                finish();
+            }
         });
 
         update.setOnClickListener(v -> {
