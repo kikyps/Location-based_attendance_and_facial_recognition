@@ -3,15 +3,6 @@ package com.absensi.inuraini.admin.rekap;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,7 +15,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
@@ -42,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class RekapAbsen extends Fragment {
@@ -214,18 +213,19 @@ public class RekapAbsen extends Fragment {
     }
 
     private void showData(){
-        databaseReference.orderByChild("sStatus").equalTo(getSelectedRekap).addValueEventListener(new ValueEventListener() {
+        databaseReference.orderByChild("sVerified").equalTo(true).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listUser = new ArrayList<>();
                 if (snapshot.exists()) {
                     for (DataSnapshot item : snapshot.getChildren()) {
-                        DataStore storeUser = item.getValue(DataStore.class);
-                        if (storeUser != null) {
-                            storeUser.setKey(item.getKey());
+                        DataStore rekap = item.getValue(DataStore.class);
+                        if (rekap != null) {
+                            if (rekap.getsStatus().toLowerCase().equals(getSelectedRekap)) {
+                                rekap.setKey(item.getKey());
+                                listUser.add(rekap);
+                            }
                         }
-
-                        listUser.add(storeUser);
                         Preferences.progressDialog.dismiss();
                     }
                 } else {

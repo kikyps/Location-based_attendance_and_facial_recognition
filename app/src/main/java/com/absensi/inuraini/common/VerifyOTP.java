@@ -26,8 +26,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +113,6 @@ public class VerifyOTP extends AppCompatActivity {
                     String ttlku = DataDiriTwo.ttlku;
                     String noku = nomorku.getText().toString();
                     String jabatan = DataDiriOne.keyJabatan;
-                    String status = "user";
                     validOtp();
                     Map<String, Object> postValues = new HashMap<>();
                     postValues.put("sNama", namasaya);
@@ -120,8 +122,23 @@ public class VerifyOTP extends AppCompatActivity {
                     postValues.put("sTtl", ttlku);
                     postValues.put("sPhone", noku);
                     postValues.put("sJabatan", jabatan);
-                    databaseReference.child(firebaseUser.getUid()).updateChildren(postValues).addOnSuccessListener(unused -> {
-                        Intent i = new Intent(VerifyOTP.this, UserActivity.class);
+                    postValues.put("sStatus", "user");
+                    postValues.put("sVerified", false);
+                    databaseReference.child(firebaseUser.getUid()).setValue(postValues).addOnSuccessListener(unused -> {
+                        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                        Intent i = new Intent(VerifyOTP.this, DoVerifActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                 Intent.FLAG_ACTIVITY_NEW_TASK);

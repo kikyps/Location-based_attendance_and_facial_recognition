@@ -26,8 +26,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 117081022
-        versionName '1.1.7'
+        versionCode 118091022
+        versionName '1.1.8'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
-    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+    implementation platform('com.google.firebase:firebase-bom:30.5.0')
     implementation 'com.google.firebase:firebase-auth:21.0.8'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.firebase:firebase-database:20.0.6'
@@ -109,13 +109,13 @@ dependencies {
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
     annotationProcessor 'androidx.room:room-compiler:2.4.3'
     implementation 'com.google.mlkit:face-detection:16.1.5'
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
 //    implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
 
     // CameraX core library using the camera2 implementation
-    def camerax_version = "1.1.0-beta01"
+    def camerax_version = "1.2.0-beta02"
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-lifecycle:${camerax_version}"
@@ -123,5 +123,5 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
 
-    implementation('org.tensorflow:tensorflow-lite:2.4.0') { changing = true }
+    implementation('org.tensorflow:tensorflow-lite:2.10.0') { changing = true }
 }

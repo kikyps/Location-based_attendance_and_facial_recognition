@@ -74,7 +74,7 @@ public class DataPegawai extends Fragment {
     }
 
     private void showData() {
-        databaseReference.child("user").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("user").orderByChild("sVerified").equalTo(true).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listPegawai = new ArrayList<>();

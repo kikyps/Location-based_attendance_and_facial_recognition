@@ -167,10 +167,6 @@ public class Preferences {
                        mAuth.getCurrentUser().sendEmailVerification()
                                .addOnCompleteListener(task1 -> {
                                    if (task1.isSuccessful()){
-                                       FirebaseUser user = mAuth.getCurrentUser();
-                                       String uid = user.getUid();
-                                       NewUser newUser = new NewUser("user", false);
-                                       databaseReference.child("user").child(uid).setValue(newUser);
                                        Intent intent = new Intent(context, activity);
                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                                Intent.FLAG_ACTIVITY_CLEAR_TASK |
@@ -204,12 +200,11 @@ public class Preferences {
                                         Toast.makeText(context, task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
-                        progressDialog.dismiss();
                     } else {
-                        progressDialog.dismiss();
                         Toast.makeText(context, "Password lama anda salah!", Toast.LENGTH_LONG).show();
                     }
                 });
+        progressDialog.dismiss();
     }
 
     public static void resetLoginPassword(Context context, String email){
@@ -236,40 +231,13 @@ public class Preferences {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        String uid = user.getUid();
-                        databaseReference.child("user").child(uid).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()){
-                                    boolean hasVerif = snapshot.hasChild("sVerified");
-                                    String getstatus = snapshot.child("sStatus").getValue(String.class);
-                                    if (!hasVerif) {
-                                        if (getstatus.equals("admin")){
-                                            databaseReference.child("user").child(uid).child("sVerified").setValue(true);
-                                        } else {
-                                            databaseReference.child("user").child(uid).child("sVerified").setValue(false);
-                                        }
-                                    }
-                                } else {
-                                    NewUser newUser = new NewUser("user", false);
-                                    databaseReference.child("user").child(uid).setValue(newUser);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
                         Intent intent = new Intent(context, activity);
                         context.startActivity(intent);
-                        progressDialog.dismiss();
                     } else {
-                        progressDialog.dismiss();
                         Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
                     }
                 });
+        progressDialog.dismiss();
     }
 
     public static void signOut(Context context, Class activity){

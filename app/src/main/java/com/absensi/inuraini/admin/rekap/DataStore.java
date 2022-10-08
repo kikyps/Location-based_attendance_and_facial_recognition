@@ -6,10 +6,12 @@ public class DataStore {
 
     String key;
     String sNama;
+    String sStatus;
 
-    public DataStore(String key, String sNama) {
+    public DataStore(String key, String sNama, String sStatus) {
         this.key = key;
         this.sNama = sNama;
+        this.sStatus = sStatus;
     }
 
     public DataStore() {
@@ -27,5 +29,13 @@ public class DataStore {
 
     public String getsNama() {
         return sNama;
+    }
+
+    public String getsStatus() {
+        return sStatus;
+    }
+
+    public void setsStatus(String sStatus) {
+        this.sStatus = sStatus;
     }
 }
