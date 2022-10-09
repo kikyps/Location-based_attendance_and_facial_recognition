@@ -1,12 +1,21 @@
 package com.absensi.inuraini.admin.datapegawai;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
@@ -17,12 +26,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 public class DetailPegawai extends AppCompatActivity {
 
     TextView nama, ttl, email, gender, jabatan, alamat, phone, status;
+    LinearLayout updateStatus;
     String idPegawai;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+    Context context = this;
+    private Spinner statusUserSpinner;
+    String getSelectedRekap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +56,7 @@ public class DetailPegawai extends AppCompatActivity {
 
     private void contentListeners() {
         firebaseUser = Preferences.mAuth.getCurrentUser();
+        idPegawai = getIntent().getStringExtra("idPegawai");
         nama = findViewById(R.id.id_nama);
         ttl = findViewById(R.id.id_ttl);
         email = findViewById(R.id.id_email);
@@ -47,12 +65,55 @@ public class DetailPegawai extends AppCompatActivity {
         alamat = findViewById(R.id.id_alamat);
         phone = findViewById(R.id.id_phone);
         status = findViewById(R.id.id_status);
+        updateStatus = findViewById(R.id.layout_status);
+
+        updateStatus.setOnClickListener(v -> {
+            updateStatususerToDb();
+        });
 
         showDataPegawai();
     }
 
+    private void updateStatususerToDb() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.view_user_status, null);
+        builder.setView(dialogView);
+        builder.setTitle("Update Jabatan");
+        statusUserSpinner = dialogView.findViewById(R.id.spin_status);
+        String[] rekapData = getResources().getStringArray(R.array.pilih_rekap);
+        ArrayAdapter<String> pilihRekap = new ArrayAdapter<>(context, R.layout.spinner_data, rekapData);
+        statusUserSpinner.setAdapter(pilihRekap);
+        String myStatus = status.getText().toString().substring(0, 1).toUpperCase() + status.getText().toString().substring(1).toLowerCase();;
+        int spinnerPosition = pilihRekap.getPosition(myStatus);
+        statusUserSpinner.setSelection(spinnerPosition);
+
+        statusUserSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getSelectedRekap = statusUserSpinner.getSelectedItem().toString().toLowerCase(Locale.ROOT);
+                showDataPegawai();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        builder.setPositiveButton("Update", (dialog, which) -> {
+            Map<String, Object> postValues = new HashMap<>();
+            postValues.put("sStatus", getSelectedRekap);
+            databaseReference.child(idPegawai).updateChildren(postValues)
+                    .addOnSuccessListener(unused -> Toast.makeText(context, "Status dengan nama akun " + nama.getText().toString() + " berhasil di ubah", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+    }
+
     private void showDataPegawai() {
-        idPegawai = getIntent().getStringExtra("idPegawai");
         databaseReference.child(idPegawai).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -20,6 +20,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Base64;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -295,12 +296,12 @@ public class Preferences {
         });
     }
 
-    public static void customProgresBar(Context context){
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+    public static void customProgresBar(View view){
+        progressDialog = new ProgressDialog(view.getContext());
         progressDialog.setContentView(R.layout.cutom_progress_bar);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     public static void dialogNetwork(Context context) {

@@ -422,7 +422,7 @@ public class CameraActivity extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         if (snapshot.exists()){
                                             String namasaya = snapshot.child("sNama").getValue(String.class);
-                                            namaface.setText("Ini wukan wajah "+ namasaya);
+                                            namaface.setText("Ini bukan wajah "+ namasaya);
                                         }
                                     }
 

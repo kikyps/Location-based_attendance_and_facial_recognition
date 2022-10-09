@@ -49,6 +49,10 @@
                     android:icon="@drawable/ic_list_alt_24"
                     android:title="Data Pengajuan" />
                 <item
+                    android:id="@+id/nav_verif_akun"
+                    android:icon="@drawable/ic_list_alt_24"
+                    android:title="Verifikasi Akun Pegawai" />
+                <item
                     android:id="@+id/nav_lokasi"
                     android:icon="@drawable/ic_baseline_edit_location_alt_24"
                     android:title="Pengaturan Lokasi" />

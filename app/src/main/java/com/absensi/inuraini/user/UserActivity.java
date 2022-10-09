@@ -26,7 +26,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.absensi.inuraini.NewUser;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
@@ -75,7 +74,8 @@ public class UserActivity extends AppCompatActivity {
                 R.id.nav_data_pengajuan,
                 R.id.nav_lokasi,
                 R.id.nav_jabatan,
-                R.id.nav_data_pegawai)
+                R.id.nav_data_pegawai,
+                R.id.nav_verif_akun)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_user);

@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,7 +32,6 @@ public class DataPegawai extends Fragment {
     ArrayList<StoreDataPegawai> listPegawai = new ArrayList<>();
     RecyclerView recyclerView;
     SwipeRefreshLayout swipeRefreshLayout;
-    ProgressDialog progressDialog;
     private Context mContext;
 
     @Override
@@ -52,7 +52,7 @@ public class DataPegawai extends Fragment {
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        customProgresBar();
+        Preferences.customProgresBar(root);
         showData();
     }
 
@@ -63,14 +63,6 @@ public class DataPegawai extends Fragment {
             showData();
             swipeRefreshLayout.setRefreshing(false);
         });
-    }
-
-    public void customProgresBar(){
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        progressDialog.setContentView(R.layout.cutom_progress_bar);
-        progressDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
     }
 
     private void showData() {
@@ -85,10 +77,10 @@ public class DataPegawai extends Fragment {
                             pegawai.setKey(item.getKey());
                         }
                         listPegawai.add(pegawai);
-                        progressDialog.dismiss();
+                        Preferences.progressDialog.dismiss();
                     }
                 } else {
-                    progressDialog.dismiss();
+                    Preferences.progressDialog.dismiss();
                 }
                 recyclerAdapter = new PegawaiRecyclerAdapter(listPegawai, mContext);
                 recyclerView.setAdapter(recyclerAdapter);

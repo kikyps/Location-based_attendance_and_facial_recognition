@@ -46,6 +46,11 @@
         android:name="com.absensi.inuraini.admin.datapengajuan.DataPengajuan"
         android:label="Data Pengajuan"
         tools:layout="@layout/fragment_data_pengajuan" />
+    <fragment
+        android:id="@+id/nav_verif_akun"
+        android:name="com.absensi.inuraini.admin.verifyaccount.VerifyAccountFragment"
+        android:label="Verifikasi Akun Pegawai"
+        tools:layout="@layout/fragment_verif_account" />
 
     <fragment
         android:id="@+id/nav_lokasi"
