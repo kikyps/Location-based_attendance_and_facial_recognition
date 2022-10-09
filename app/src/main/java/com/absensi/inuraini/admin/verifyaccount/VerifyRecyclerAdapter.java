@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.admin.datapegawai.DetailPegawai;
 import com.absensi.inuraini.admin.datapegawai.StoreDataPegawai;
@@ -71,17 +72,29 @@ public class VerifyRecyclerAdapter extends RecyclerView.Adapter<VerifyRecyclerAd
         });
         holder.tv_nama.setText(dataVerify.getsNama());
         holder.btn_verif.setOnClickListener(v -> {
-            Map<String, Object> postValues = new HashMap<>();
-            postValues.put("sVerified", true);
-            databaseReference.child("user").child(dataVerify.getKey()).updateChildren(postValues);
-            Toast.makeText(context, dataVerify.getsNama() + " diverifikasi", Toast.LENGTH_SHORT).show();
+            Preferences.showDialog(context, null, "Verifikasi akun", "Apakah anda yakin ingin memverifikasi akun " + dataVerify.getsNama() + " ?", "Iya", "Tidak", null,
+                    (dialog, which) -> {
+                        // Positive Button
+                        Map<String, Object> postValues = new HashMap<>();
+                        postValues.put("sVerified", true);
+                        databaseReference.child("user").child(dataVerify.getKey()).updateChildren(postValues);
+                        Toast.makeText(context, dataVerify.getsNama() + " diverifikasi", Toast.LENGTH_SHORT).show();
+                    },
+                    (dialog, which) -> {
+                        // Negative Button
+                        dialog.cancel();
+                    },
+                    (dialog, which) -> {
+                        // Neutral Button
+                        dialog.cancel();
+                    },
+                    true);
         });
         holder.card_view.setOnClickListener(view -> {
-//            Toast.makeText(context, dataVerify.getsNama(), Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(context, DetailPegawai.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.putExtra("idPegawai", dataVerify.getKey());
-//            context.startActivities(new Intent[]{intent});
+            Intent intent = new Intent(context, DetailVerifAccount.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("idPegawai", dataVerify.getKey());
+            context.startActivities(new Intent[]{intent});
         });
     }
 

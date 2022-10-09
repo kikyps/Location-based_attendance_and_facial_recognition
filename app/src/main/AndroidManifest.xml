@@ -37,6 +37,13 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".admin.verifyaccount.DetailVerifAccount"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.EmailVerificationActivity"
             android:exported="false">
             <meta-data

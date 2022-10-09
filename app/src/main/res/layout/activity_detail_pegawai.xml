@@ -120,9 +120,6 @@
                         android:id="@+id/layout_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:padding="15dp"
                         android:orientation="vertical">
                         <TextView
@@ -143,9 +140,6 @@
                     android:id="@+id/layout_ttl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="15dp"
                     android:orientation="vertical">
 
@@ -167,9 +161,6 @@
                     android:id="@+id/layout_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="15dp"
                     android:orientation="vertical">
 
@@ -191,9 +182,6 @@
                     android:id="@+id/layout_jabatan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="15dp"
                     android:orientation="vertical">
 
@@ -215,9 +203,6 @@
                     android:id="@+id/layout_alamat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="15dp"
                     android:orientation="vertical">
 
@@ -240,9 +225,6 @@
                     android:id="@+id/layout_nohp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:padding="15dp"
                     android:orientation="vertical">
 
