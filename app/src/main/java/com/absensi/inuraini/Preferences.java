@@ -7,15 +7,21 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -27,12 +33,25 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.EmailVerificationActivity;
 import com.absensi.inuraini.common.LoginActivity;
+import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,8 +68,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class Preferences {
@@ -69,6 +91,12 @@ public class Preferences {
     private static long mLastClickTime = 0;
     public static AlertDialog myAlertDialog;
     public static boolean start = true;
+    public static LocationRequest locationRequest;
+    public static double latitude;
+    public static double longitude;
+    public static String myAddress;
+    public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+    public static final int REQUEST_CODE_GPS_PERMISSION = 1;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -370,6 +398,131 @@ public class Preferences {
 
             }
         });
+    }
+
+    public static Object[] getMyLocation(Context context, Activity activity) {
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (isGPSEnabled(context)) {
+                    LocationServices.getFusedLocationProviderClient(context)
+                            .requestLocationUpdates(locationRequest, new LocationCallback() {
+                                @Override
+                                public void onLocationResult(@NonNull LocationResult locationResult) {
+                                    super.onLocationResult(locationResult);
+                                    LocationServices.getFusedLocationProviderClient(context)
+                                            .removeLocationUpdates(this);
+
+                                    if (locationResult != null && locationResult.getLocations().size() > 0){
+
+                                        int index = locationResult.getLocations().size() - 1;
+                                        latitude = locationResult.getLocations().get(index).getLatitude();
+                                        longitude = locationResult.getLocations().get(index).getLongitude();
+
+                                        myAddress = getAddressFromLocation(context, latitude, longitude);
+
+                                        if (AbsenFragment.getloc) {
+                                            checkPosition(context);
+                                        }
+                                    }
+                                }
+                            }, Looper.getMainLooper());
+                } else {
+                    turnOnGPS(context, activity);
+                }
+            } else {
+                activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
+            }
+        }
+        return new Object[]{latitude, longitude, myAddress};
+    }
+
+    public static void checkPosition(Context context){
+        if (!AbsenFragment.inLocation()) {
+            AbsenFragment.izin.setEnabled(true);
+            AbsenFragment.hadir.setClickable(true);
+            AbsenFragment.hadir.setBackgroundColor(Color.RED);
+            Toast.makeText(context, "Anda tidak berada di lokasi!", Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(context, CameraActivity.class);
+            intent.putExtra("faceid", false);
+            context.startActivity(intent);
+        }
+        AbsenFragment.getloc = false;
+        AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public static String getAddressFromLocation(Context context, final double latitude, final double longitude) {
+        String straddress = "";
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+        try {
+            List<Address> addressList = geocoder.getFromLocation(
+                    latitude, longitude, 1);
+            if (addressList != null && addressList.size() > 0) {
+                Address address = addressList.get(0);
+                StringBuilder sb = new StringBuilder();
+                if(address.getAddressLine(0) !=null && address.getAddressLine(0).length()>0 && !address.getAddressLine(0).contentEquals("null"))
+                {
+                    sb.append(address.getAddressLine(0)).append("\n");
+                } else {
+
+                    sb.append(address.getLocality()).append("\n");
+                    sb.append(address.getPostalCode()).append("\n");
+                    sb.append(address.getCountryName());
+                }
+                straddress = sb.toString();
+                //Log.e("leaddress","@"+straddress);
+            }
+        } catch (IOException e) {
+            //Log.e(TAG, "Unable connect to Geocoder", e);
+        }
+        return straddress;
+    }
+
+    public static void turnOnGPS(Context context, Activity activity) {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(context)
+                .checkLocationSettings(builder.build());
+
+        result.addOnCompleteListener(task -> {
+            try {
+                LocationSettingsResponse response = task.getResult(ApiException.class);
+                Toast.makeText(context, "GPS sudah aktif", Toast.LENGTH_SHORT).show();
+            } catch (ApiException e) {
+                switch (e.getStatusCode()) {
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        try {
+                            ResolvableApiException resolvableApiException = (ResolvableApiException) e;
+                            resolvableApiException.startResolutionForResult(activity, REQUEST_CODE_GPS_PERMISSION);
+                        } catch (IntentSender.SendIntentException ex) {
+                            ex.printStackTrace();
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        //Device does not have location
+                        break;
+                }
+            }
+        });
+
+    }
+
+    public static boolean isGPSEnabled(Context context) {
+        LocationManager locationManager = null;
+        boolean isEnabled = false;
+        if (locationManager == null) {
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        }
+        isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return isEnabled;
     }
 
     public static void showDialog(Context context,

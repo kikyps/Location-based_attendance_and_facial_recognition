@@ -40,7 +40,7 @@ public class DownloadTask extends AsyncTask<String, Integer, String> {
         // reference to instance to use inside listener
         final DownloadTask me = this;
         mPDialog.setOnCancelListener(dialog -> me.cancel(true));
-        Log.i("DownloadTask","Constructor done");
+//        Log.i("DownloadTask","Constructor done");
     }
 
     @Override

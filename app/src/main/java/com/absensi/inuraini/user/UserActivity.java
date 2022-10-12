@@ -32,6 +32,7 @@ import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
+import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -219,6 +220,15 @@ public class UserActivity extends AppCompatActivity {
                 }
             }
         }
+
+        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
+            if (Preferences.isGPSEnabled(context)){
+                Preferences.getMyLocation(context, this);
+            } else {
+                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(context, "Aktifkan GPS untuk absen", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -231,6 +241,18 @@ public class UserActivity extends AppCompatActivity {
                 if (readExternalStorage && writeExternalStorage) {
 //                    Toast.makeText(this, "Permission granted in android 10 or below", Toast.LENGTH_SHORT).show();
                     Preferences.downloadUpdate(context);
+                }
+            }
+        }
+
+        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
+            if (grantResults.length > 0) {
+                boolean location = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (location) {
+                    Preferences.getMyLocation(context, this);
+                } else {
+                    AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(context, "Izinkan akses lokasi untuk absen", Toast.LENGTH_SHORT).show();
                 }
             }
         }
