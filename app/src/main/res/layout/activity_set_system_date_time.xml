@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".common.SetSystemDateTimeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/please_attantion"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opss..!"
+            android:gravity="center"
+            android:layout_marginTop="50dp"
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimary" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jam dan tanggal di ponsel anda tidak akurat, silahkan atur jam dan tanggal anda di pengaturan ponsel!!!"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
+            android:textSize="17sp"
+            android:textColor="@color/colorPrimary" />
+
+        <Button
+            android:id="@+id/go_setting_time"
+            android:layout_marginTop="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Atur waktu"/>
+
+    </LinearLayout>
+
+</LinearLayout>

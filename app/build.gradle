@@ -26,8 +26,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 120091022
-        versionName '1.2.0'
+        versionCode 123161022
+        versionName '1.2.3'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,7 +68,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '32.1.0 rc1'
+    buildToolsVersion '33.0.0'
     buildFeatures {
         viewBinding true
     }
@@ -113,6 +113,7 @@ dependencies {
 //    implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.android.volley:volley:1.2.1'
 
     // CameraX core library using the camera2 implementation
     def camerax_version = "1.2.0-beta02"

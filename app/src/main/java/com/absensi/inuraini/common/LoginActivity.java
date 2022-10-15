@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!Preferences.isConnected(context)){
                 Preferences.dialogNetwork(context);
             } else {
+                Preferences.setProgressDialog();
                 turnLoginGoogle();
             }
         });
@@ -149,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (requestCode == Preferences.RC_SIGN_IN) {
+            Preferences.progressDialog.dismiss();
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);

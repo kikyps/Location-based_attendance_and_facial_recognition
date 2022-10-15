@@ -1,6 +1,7 @@
 package com.absensi.inuraini.admin.verifyaccount;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,9 @@ public class VerifyAccountFragment extends Fragment {
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        Preferences.customProgresBar(root);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Preferences.customProgresBar(root);
+        }
         showData();
     }
 

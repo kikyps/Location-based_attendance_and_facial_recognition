@@ -29,13 +29,27 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_absensi"
+        android:icon="@mipmap/ic_absensi"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
+        <activity
+            android:name=".common.SetSystemDateTimeActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".user.pengajuan.TambahLiburActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".admin.verifyaccount.DetailVerifAccount"
             android:exported="false">
@@ -124,7 +138,8 @@
             android:exported="false" />
         <activity
             android:name=".camera.CameraActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".user.UserActivity"
             android:exported="false"

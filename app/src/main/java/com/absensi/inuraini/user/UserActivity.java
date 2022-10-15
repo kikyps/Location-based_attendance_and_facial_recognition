@@ -1,5 +1,6 @@
 package com.absensi.inuraini.user;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,9 +8,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.Preference;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,12 +29,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.absensi.inuraini.GetServerTime;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
+import com.absensi.inuraini.common.SetSystemDateTimeActivity;
+import com.absensi.inuraini.common.VerifyOTP;
 import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,15 +47,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class UserActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
     private AppBarConfiguration mAppBarConfiguration;
     NavigationView navigationView;
+    ProgressDialog progressDialog;
     TextView nama;
     LinearLayout infouser;
     Context context = this;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+    DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
+    DateFormat jamNow = new SimpleDateFormat("HH:mm");
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +148,12 @@ public class UserActivity extends AppCompatActivity {
         if (!Preferences.isConnected(context)) {
             Preferences.dialogNetwork(context);
         } else {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setContentView(R.layout.cutom_progress_bar);
+            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            GetServerTime serverTime = new GetServerTime(this);
             databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -144,24 +167,40 @@ public class UserActivity extends AppCompatActivity {
 
                         nama.setText(namaku);
 
-                        if (!nohp){
-                            Intent intent = new Intent(context, DataDiriOne.class);
-                            intent.putExtra("faceid", true);
-                            startActivity(intent);
-                        } else {
-                            if (!checkVerif) {
-                                startActivity(new Intent(context, DoVerifActivity.class));
-                                finish();
-                            } else if (!wajahid) {
-                                Intent intent = new Intent(context, CameraActivity.class);
-                                intent.putExtra("faceid", true);
-                                startActivity(intent);
-                            } else {
-                                if (!Preferences.getUpdateDialog(context)) {
-                                    Preferences.checkUpdate(context, UserActivity.this);
+                        serverTime.getDateTime((date, time) -> {
+                            String curentDate = dateNow.format(new Date().getTime());
+                            String curentTime = jamNow.format(new Date().getTime());
+                            if (date.equals(curentDate) && time.equals(curentTime)) {
+                                if (!nohp){
+                                    Intent intent = new Intent(context, DataDiriOne.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                            Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                            Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    if (!checkVerif) {
+                                        startActivity(new Intent(context, DoVerifActivity.class));
+                                        finish();
+                                    } else if (!wajahid) {
+                                        Intent intent = new Intent(context, CameraActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.putExtra("faceid", true);
+                                        startActivity(intent);
+                                    } else {
+                                        if (!Preferences.getUpdateDialog(context)) {
+                                            Preferences.checkUpdate(context, UserActivity.this);
+                                        }
+                                        progressDialog.dismiss();
+                                    }
                                 }
+                            } else {
+                                Intent i = new Intent(UserActivity.this, SetSystemDateTimeActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(i);
                             }
-                        }
+                        });
 
                         if (myId != null) {
                             Preferences.setFaceId(context, myId);
@@ -202,6 +241,8 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_user);
@@ -223,7 +264,7 @@ public class UserActivity extends AppCompatActivity {
 
         if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
             if (Preferences.isGPSEnabled(context)){
-                Preferences.getMyLocation(context, this);
+                Preferences.getMyLocation(context, UserActivity.this);
             } else {
                 AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(context, "Aktifkan GPS untuk absen", Toast.LENGTH_SHORT).show();

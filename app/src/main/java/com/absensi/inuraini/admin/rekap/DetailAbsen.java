@@ -4,14 +4,11 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -33,7 +30,7 @@ public class DetailAbsen extends AppCompatActivity {
     String idkaryawan;
     String eventDate;
     Context context = this;
-    TextView namaKar, ketHadir, jamAbsen, ketAbsen, tanggalR;
+    TextView namaKar, ketHadir, jamAbsen, ketAbsen, tanggalRek, lokAbsen;
     ImageButton nxt, prev;
 
     DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
@@ -53,11 +50,12 @@ public class DetailAbsen extends AppCompatActivity {
 
         namaKar = findViewById(R.id.nama_karyawan);
         ketHadir = findViewById(R.id.ket_hadir);
-        jamAbsen = findViewById(R.id.jam_absen);
+        jamAbsen = findViewById(R.id.jam_masuk);
         ketAbsen = findViewById(R.id.ket_absen);
         nxt = findViewById(R.id.next);
         prev = findViewById(R.id.previous);
-        tanggalR = findViewById(R.id.tanggal_rekap);
+        tanggalRek = findViewById(R.id.tanggal_rekap);
+        lokAbsen = findViewById(R.id.lokasi_absen);
 
         setTanggal();
         layoutListener();
@@ -86,7 +84,7 @@ public class DetailAbsen extends AppCompatActivity {
             setTanggal();
         };
 
-        tanggalR.setOnClickListener(v -> {
+        tanggalRek.setOnClickListener(v -> {
             calendar.setTime(Calendar.getInstance().getTime());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.my_dialog_theme, date,
                     calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
@@ -117,20 +115,23 @@ public class DetailAbsen extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    String kehadiran = snapshot.child("sKehadiran").getValue().toString();
-                    String jam = snapshot.child("sJam").getValue().toString();
-                    String Hadir = snapshot.child("sKet").getValue().toString();
+                    boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
+                    String jam = snapshot.child("sJam").getValue(String.class);
+                    String Hadir = snapshot.child("sKet").getValue(String.class);
+                    String lokasi = snapshot.child("sLokasi").getValue(String.class);
 
-                    if (kehadiran.equals("hadir")){
-                        ketHadir.setText(kehadiran);
+                    if (kehadiran) {
+                        ketHadir.setText("Hadir");
                         jamAbsen.setText(jam);
-                        ketAbsen.setText("Telah Absen");
+                        ketAbsen.setText(Hadir);
                         ketHadir.setTextColor(Color.GREEN);
-                    } else if (kehadiran.equals("izin")){
-                        ketHadir.setText(kehadiran);
+                        lokAbsen.setText(lokasi);
+                    } else {
+                        ketHadir.setText("Izin");
                         jamAbsen.setText(jam);
                         ketAbsen.setText(Hadir);
                         ketHadir.setTextColor(ContextCompat.getColor(context, R.color.orange));
+                        lokAbsen.setText("-");
                     }
                 } else {
                     seleksiAbsen();
@@ -147,7 +148,7 @@ public class DetailAbsen extends AppCompatActivity {
     private void setTanggal(){
         String curentDate = dateFormat.format(calendar.getTime());
         eventDate = dateRekap.format(calendar.getTime());
-        tanggalR.setText(curentDate);
+        tanggalRek.setText(curentDate);
         seleksiAbsen();
         showAbsen();
     }
@@ -162,6 +163,7 @@ public class DetailAbsen extends AppCompatActivity {
             ketHadir.setTextColor(ContextCompat.getColor(context, R.color.purple_500));
             jamAbsen.setText("-");
             ketAbsen.setText("-");
+            lokAbsen.setText("-");
         } else {
             nxt.setEnabled(true);
             nxt.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_next));
@@ -169,6 +171,7 @@ public class DetailAbsen extends AppCompatActivity {
             ketHadir.setTextColor(Color.RED);
             jamAbsen.setText("-");
             ketAbsen.setText("Tidak ada data absen!");
+            lokAbsen.setText("-");
         }
     }
 

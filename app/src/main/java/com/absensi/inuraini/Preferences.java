@@ -11,7 +11,6 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -33,10 +32,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.absensi.inuraini.camera.CameraActivity;
+import com.absensi.inuraini.admin.location.SettingsLocation;
 import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.EmailVerificationActivity;
-import com.absensi.inuraini.common.LoginActivity;
 import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -50,7 +48,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -73,7 +70,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Preferences {
     public static int currentVersionCode;
@@ -155,12 +153,6 @@ public class Preferences {
         }
     }
 
-    public static void setProgressDialog(){
-        progressDialog.setMessage("Sedang Memproses...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
-
     public static void emailAndPasswordLogin(Context context, String email, String password, Class activity) {
         setProgressDialog();
         mAuth.signInWithEmailAndPassword(email, password)
@@ -184,8 +176,8 @@ public class Preferences {
                         // If sign in fails, display a message to the user.
                         Toast.makeText(context, "Email atau password salah", Toast.LENGTH_SHORT).show();
                     }
+                    progressDialog.dismiss();
                 });
-        progressDialog.dismiss();
     }
 
     public static void emailAndPasswordRegister(Context context, String email, String password, Class activity){
@@ -208,8 +200,8 @@ public class Preferences {
                    } else {
                        Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                    }
+                    progressDialog.dismiss();
                 });
-        progressDialog.dismiss();
     }
 
     public static void tryChangePassword(Context context, FirebaseUser user, String passLama, String passBaru){
@@ -232,8 +224,8 @@ public class Preferences {
                     } else {
                         Toast.makeText(context, "Password lama anda salah!", Toast.LENGTH_LONG).show();
                     }
+                    progressDialog.dismiss();
                 });
-        progressDialog.dismiss();
     }
 
     public static void resetLoginPassword(Context context, String email){
@@ -265,8 +257,8 @@ public class Preferences {
                     } else {
                         Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
                     }
+                    progressDialog.dismiss();
                 });
-        progressDialog.dismiss();
     }
 
     public static void signOut(Context context, Class activity){
@@ -324,12 +316,47 @@ public class Preferences {
         });
     }
 
+    public static void setProgressDialog(){
+        progressDialog.setMessage("Sedang Memproses...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
     public static void customProgresBar(View view){
         progressDialog = new ProgressDialog(view.getContext());
         progressDialog.setContentView(R.layout.cutom_progress_bar);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         progressDialog.setCancelable(false);
         progressDialog.show();
+    }
+
+    public static String tgglFormatId (String str)
+    {
+        // Check if the string has only
+        // one character then return
+        // the string
+        if (str.length() < 2)
+            return str;
+
+        // Concatenate last character
+        // and first character between
+        // middle characters of string
+        return (str.substring(3, 5)
+                + str.substring(0, 2)
+                + str.substring(6, 10));
+    }
+
+    public static String getOnlyDigits(String s) {
+        Pattern pattern = Pattern.compile("[^0-9]");
+        Matcher matcher = pattern.matcher(s);
+        String number = matcher.replaceAll("");
+        return number;
+    }
+    public static String getOnlyStrings(String s) {
+        Pattern pattern = Pattern.compile("[^a-z A-Z]");
+        Matcher matcher = pattern.matcher(s);
+        String number = matcher.replaceAll("");
+        return number;
     }
 
     public static void dialogNetwork(Context context) {
@@ -343,7 +370,11 @@ public class Preferences {
                 (dialog, which) -> {
                     // Positive Button
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        context.startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));
+                        try {
+                            context.startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));
+                        } catch (Exception e){
+                            context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        }
                     }
                 },
                 (dialog, which) -> {
@@ -425,9 +456,16 @@ public class Preferences {
 
                                         myAddress = getAddressFromLocation(context, latitude, longitude);
 
-                                        if (AbsenFragment.getloc) {
-                                            checkPosition(context);
+                                        if (AbsenFragment.doAbsen) {
+                                            AbsenFragment.checkAbsenKantor();
+                                        } else if (AbsenFragment.doAbsenKeluar){
+                                            AbsenFragment.checkAbsenKeluar();
+                                        } else if (SettingsLocation.setloc){
+                                            SettingsLocation.updateLatLong();
                                         }
+                                        AbsenFragment.doAbsen = false;
+                                        AbsenFragment.doAbsenKeluar = false;
+                                        SettingsLocation.setloc = false;
                                     }
                                 }
                             }, Looper.getMainLooper());
@@ -437,23 +475,38 @@ public class Preferences {
             } else {
                 activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
             }
+        } else {
+            /// for android lollipop and below
+            if (isGPSEnabled(context)) {
+                LocationServices.getFusedLocationProviderClient(context)
+                        .requestLocationUpdates(locationRequest, new LocationCallback() {
+                            @Override
+                            public void onLocationResult(@NonNull LocationResult locationResult) {
+                                super.onLocationResult(locationResult);
+                                LocationServices.getFusedLocationProviderClient(context)
+                                        .removeLocationUpdates(this);
+
+                                if (locationResult != null && locationResult.getLocations().size() > 0){
+
+                                    int index = locationResult.getLocations().size() - 1;
+                                    latitude = locationResult.getLocations().get(index).getLatitude();
+                                    longitude = locationResult.getLocations().get(index).getLongitude();
+
+                                    myAddress = getAddressFromLocation(context, latitude, longitude);
+
+                                    if (AbsenFragment.atOffice) {
+                                        AbsenFragment.checkAbsenKantor();
+                                    } else if (SettingsLocation.setloc){
+                                        SettingsLocation.updateLatLong();
+                                    }
+                                }
+                            }
+                        }, Looper.getMainLooper());
+            } else {
+                turnOnGPS(context, activity);
+            }
         }
         return new Object[]{latitude, longitude, myAddress};
-    }
-
-    public static void checkPosition(Context context){
-        if (!AbsenFragment.inLocation()) {
-            AbsenFragment.izin.setEnabled(true);
-            AbsenFragment.hadir.setClickable(true);
-            AbsenFragment.hadir.setBackgroundColor(Color.RED);
-            Toast.makeText(context, "Anda tidak berada di lokasi!", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(context, CameraActivity.class);
-            intent.putExtra("faceid", false);
-            context.startActivity(intent);
-        }
-        AbsenFragment.getloc = false;
-        AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
     }
 
     public static String getAddressFromLocation(Context context, final double latitude, final double longitude) {
@@ -501,7 +554,7 @@ public class Preferences {
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
                             ResolvableApiException resolvableApiException = (ResolvableApiException) e;
-                            resolvableApiException.startResolutionForResult(activity, REQUEST_CODE_GPS_PERMISSION);
+                            resolvableApiException.startResolutionForResult(activity, REQUEST_CODE_LOCATION_PERMISSION);
                         } catch (IntentSender.SendIntentException ex) {
                             ex.printStackTrace();
                         }
@@ -516,13 +569,8 @@ public class Preferences {
     }
 
     public static boolean isGPSEnabled(Context context) {
-        LocationManager locationManager = null;
-        boolean isEnabled = false;
-        if (locationManager == null) {
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        }
-        isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return isEnabled;
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);;
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     public static void showDialog(Context context,

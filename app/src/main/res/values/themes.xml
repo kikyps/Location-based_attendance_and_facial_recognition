@@ -12,6 +12,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="MyText" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/mulish_black</item>
+    </style>
+
     <style name="Theme.AbsensiWajah.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:fontFamily">@font/mulish_black</item>

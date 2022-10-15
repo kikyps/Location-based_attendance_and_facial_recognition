@@ -231,7 +231,7 @@ public class RekapAbsen extends Fragment {
                 } else {
                     Preferences.progressDialog.dismiss();
                 }
-                absenRecyclerAdapter = new AbsenRecyclerAdapter(listUser, mContext);
+                absenRecyclerAdapter = new AbsenRecyclerAdapter(listUser, getActivity());
                 recyclerView.setAdapter(absenRecyclerAdapter);
             }
 

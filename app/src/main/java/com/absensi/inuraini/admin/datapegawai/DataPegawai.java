@@ -2,6 +2,7 @@ package com.absensi.inuraini.admin.datapegawai;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -52,7 +53,9 @@ public class DataPegawai extends Fragment {
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        Preferences.customProgresBar(root);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Preferences.customProgresBar(root);
+        }
         showData();
     }
 
@@ -82,7 +85,7 @@ public class DataPegawai extends Fragment {
                 } else {
                     Preferences.progressDialog.dismiss();
                 }
-                recyclerAdapter = new PegawaiRecyclerAdapter(listPegawai, mContext);
+                recyclerAdapter = new PegawaiRecyclerAdapter(listPegawai, getActivity());
                 recyclerView.setAdapter(recyclerAdapter);
             }
 

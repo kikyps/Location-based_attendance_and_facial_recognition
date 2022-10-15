@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.absensi.inuraini.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class PengajuanLibur extends Fragment {
+
+    FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

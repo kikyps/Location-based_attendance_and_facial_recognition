@@ -59,12 +59,12 @@ public class AbsenRecyclerAdapter extends RecyclerView.Adapter<AbsenRecyclerAdap
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-                    String kehadiran = snapshot.child("sKehadiran").getValue().toString();
+                    boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
 
-                    if (kehadiran.equals("hadir")){
+                    if (kehadiran){
                         holder.tv_hadir.setText("Hadir");
                         holder.tv_hadir.setTextColor(Color.GREEN);
-                    } else if (kehadiran.equals("izin")){
+                    } else {
                         holder.tv_hadir.setText("Izin");
                         holder.tv_hadir.setTextColor(ContextCompat.getColor(context, R.color.orange));
                     }

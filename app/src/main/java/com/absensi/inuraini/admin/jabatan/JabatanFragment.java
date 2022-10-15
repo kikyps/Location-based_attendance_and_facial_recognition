@@ -144,7 +144,7 @@ public class JabatanFragment extends Fragment {
                 } else {
                     progressDialog.dismiss();
                 }
-                recyclerAdapter = new JabatanRecyclerAdapter(listJabatan, getContext());
+                recyclerAdapter = new JabatanRecyclerAdapter(listJabatan, getActivity());
                 recyclerView.setAdapter(recyclerAdapter);
             }
 

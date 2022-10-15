@@ -33,9 +33,11 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.absensi.inuraini.GetServerTime;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.user.absen.AbsenData;
+import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
@@ -64,7 +66,7 @@ import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +78,7 @@ public class CameraActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
     DateFormat dateRekap = new SimpleDateFormat("ddMMyyyy");
     DateFormat jamAbsen = new SimpleDateFormat("HH:mm");
+    Calendar calendar = Calendar.getInstance();
     FaceDetector detector;
     Interpreter tfLite;
     private final int REQUEST_CODE_PERMISSIONS = 1001;
@@ -88,13 +91,15 @@ public class CameraActivity extends AppCompatActivity {
     private final float OPEN_THRESHOLD = 0.85f;
     private final float CLOSE_THRESHOLD = 0.4f;
 
+    private double leftEyeOpenProbability = -1.0;
+    private double rightEyeOpenProbability = -1.0;
+
     private int state = 0;
 
     float distance= 1.00f;
     boolean start=true, flipX=false;
     Context context = this;
 
-    private static final int SELECT_PICTURE = 1;
     int[] intValues;
     int inputSize=112;  //Input size for model
     boolean isModelQuantized=false;
@@ -102,6 +107,7 @@ public class CameraActivity extends AppCompatActivity {
     float IMAGE_MEAN = 128.0f;
     float IMAGE_STD = 128.0f;
     int OUTPUT_SIZE=192; //Output size of model
+    boolean wajahid;
 
     String modelFile = "mobile_face_net.tflite"; //model name
     String myname;
@@ -121,6 +127,7 @@ public class CameraActivity extends AppCompatActivity {
         daftar = findViewById(R.id.daftardulu);
         firebaseUser = Preferences.mAuth.getCurrentUser();
         registered = readFromSP();
+        wajahid = getIntent().getBooleanExtra("faceid", false);
 //        loadFaceData(registered);
 
         if(allPermissionsGranted()){
@@ -288,7 +295,6 @@ public class CameraActivity extends AppCompatActivity {
                                     imgProcess(scaled);
 
                                     if(start) {
-                                        boolean wajahid = getIntent().getBooleanExtra("faceid", false);
                                         if (wajahid){
                                             scanWajah(face);
                                         } else {
@@ -340,6 +346,27 @@ public class CameraActivity extends AppCompatActivity {
                 break;
         }
         return false;
+    }
+
+    private boolean isEyeBlinked(Face face){
+        float currentLeftEyeOpenProbability = face.getLeftEyeOpenProbability();
+        float currentRightEyeOpenProbability = face.getRightEyeOpenProbability();
+        if(currentLeftEyeOpenProbability == -1.0 || currentRightEyeOpenProbability == -1.0){
+            return false;
+        }
+        if(leftEyeOpenProbability > 0.9 || rightEyeOpenProbability > 0.9){
+            boolean blinked = false;
+            if(currentLeftEyeOpenProbability < 0.6 || rightEyeOpenProbability < 0.6){
+                blinked = true;
+            }
+            leftEyeOpenProbability = currentLeftEyeOpenProbability;
+            rightEyeOpenProbability = currentRightEyeOpenProbability;
+            return blinked;
+        } else {
+            leftEyeOpenProbability = currentLeftEyeOpenProbability;
+            rightEyeOpenProbability = currentRightEyeOpenProbability;
+            return false;
+        }
     }
 
     public void imgProcess(Bitmap bitmap){
@@ -412,8 +439,19 @@ public class CameraActivity extends AppCompatActivity {
                                 namaface.setText("Kedipkan mata anda");
                                 daftar.setText("Scan Wajah untuk absen");
                                 float value = Math.min(left, right);
+
                                 if (blink(value)){
-                                    absenRekap();
+                                    boolean getOffice = getIntent().getBooleanExtra("atOffice", false);
+                                    boolean absenOut = getIntent().getBooleanExtra("absenOut", false);
+                                    if (absenOut){
+                                        absenKeluar();
+                                    } else {
+                                        if (getOffice) {
+                                            absenKantor();
+                                        } else {
+                                            absenLuarKantor();
+                                        }
+                                    }
                                     finish();
                                 }
                             } else {
@@ -467,14 +505,47 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private void absenRekap(){
-        String tggl = CameraActivity.this.dateRekap.format(new Date().getTime());
-        String jamAbsen = CameraActivity.this.jamAbsen.format(new Date().getTime());
-        String ketHadir = getString(R.string.ket_hadir);
-        String hadir = "hadir";
+    private void absenKeluar(){
+        GetServerTime serverTime = new GetServerTime(this);
+        serverTime.getDateTime((date, time) -> {
+            String tggl = Preferences.getOnlyDigits(Preferences.tgglFormatId(date));
+            boolean lembur = getIntent().getBooleanExtra("lembur", false);
+            Map<String, Object> postValues = new HashMap<>();
+            postValues.put("sJamKeluar", time);
+            postValues.put("sLembur", lembur);
 
-        AbsenData absenData = new AbsenData(hadir, jamAbsen, ketHadir);
-        databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+            databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).updateChildren(postValues).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+        });
+    }
+
+    private void absenKantor(){
+        GetServerTime serverTime = new GetServerTime(this);
+        serverTime.getDateTime((date, time) -> {
+            String tggl = Preferences.getOnlyDigits(Preferences.tgglFormatId(date));
+            boolean absenKantor = AbsenFragment.atOffice;
+            boolean telat = getIntent().getBooleanExtra("telat", false);
+            boolean lembur = getIntent().getBooleanExtra("lembur", false);
+            boolean hadir = true;
+            String lokAbsen = "Kantor";
+
+            AbsenData absenData = new AbsenData(time, "", "", lokAbsen, absenKantor, hadir, telat, lembur);
+            databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+        });
+    }
+
+    private void absenLuarKantor(){
+        GetServerTime serverTime = new GetServerTime(this);
+        serverTime.getDateTime((date, time) -> {
+            String tggl = Preferences.getOnlyDigits(Preferences.tgglFormatId(date));
+            boolean absenKantor = AbsenFragment.atOffice;
+            boolean telat = getIntent().getBooleanExtra("telat", false);
+            boolean lembur = getIntent().getBooleanExtra("lembur", false);
+            boolean hadir = true;
+            Object[] lokAbsen = Preferences.getMyLocation(context, this);
+
+            AbsenData absenData = new AbsenData(time, "", "", (String) lokAbsen[2], absenKantor, hadir, telat, lembur);
+            databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
+        });
     }
 
     //Compare Faces by distance between face embeddings
@@ -725,14 +796,18 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            finishAffinity();
-            return;
-        }
+        if (wajahid) {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                finishAffinity();
+                return;
+            }
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, getString(R.string.press_exit), Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, getString(R.string.press_exit), Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        } else {
+            finish();
+        }
     }
 }
