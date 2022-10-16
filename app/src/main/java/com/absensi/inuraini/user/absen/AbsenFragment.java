@@ -58,7 +58,7 @@ public class AbsenFragment extends Fragment {
     AnimatedVectorDrawable avd2;
     LinearLayout absenIn, absenOut;
 
-    boolean sudahAbsen;
+    boolean sudahAbsen, isToday;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -270,11 +270,10 @@ public class AbsenFragment extends Fragment {
                 Calendar absenLembur = Calendar.getInstance();
                 absenLembur.setTime(time4);
 
-                String waktuAkhir = "23:59:00";
+                String waktuAkhir = "23:59:59";
                 Date time5 = new SimpleDateFormat("HH:mm:ss").parse(waktuAkhir);
                 Calendar absenAkhir = Calendar.getInstance();
-                absenLembur.setTime(time5);
-//                calendar4.add(Calendar.DATE, 1);
+                absenAkhir.setTime(time5);
 
                 DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 java.util.Date currenttime = dateFormat
@@ -282,12 +281,7 @@ public class AbsenFragment extends Fragment {
                 Calendar currentcal = Calendar.getInstance();
                 currentcal.setTime(currenttime);
 
-//                if (absenMasuk.after(absenLembur)) {
-//                    absenMasuk.add(Calendar.DATE, 1);
-//                }
-
                 Date x = currentcal.getTime();
-//                Toast.makeText(mContext, x.toString(), Toast.LENGTH_SHORT).show();
                 if (x.after(absenMasuk.getTime()) && x.before(absenTelat.getTime())) {
                     //checkes whether the current time is between 14:49:00 and 20:11:13.
                     absenNow.setVisibility(View.VISIBLE);
@@ -329,11 +323,17 @@ public class AbsenFragment extends Fragment {
                             absenOut.setVisibility(View.GONE);
                         }
                     } else {
-                        absenNow.setVisibility(View.VISIBLE);
-                        absenNow.setText("Anda tidak dapat absen di luar jam kerja");
-                        absenNow.setTextSize(13);
-                        absenIn.setVisibility(View.GONE);
-                        absenOut.setVisibility(View.GONE);
+                        if (isToday) {
+                            absenNow.setVisibility(View.VISIBLE);
+                            absenNow.setText("Anda tidak dapat absen di luar jam kerja");
+                            absenNow.setTextSize(13);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        } else {
+                            absenNow.setVisibility(View.GONE);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        }
                     }
                 } else if (x.after(absenLembur.getTime()) && x.before(absenAkhir.getTime())){
                     lembur = true;
@@ -349,25 +349,37 @@ public class AbsenFragment extends Fragment {
                             absenOut.setVisibility(View.GONE);
                         }
                     } else {
+                        if (isToday) {
+                            absenNow.setVisibility(View.VISIBLE);
+                            absenNow.setText("Anda tidak dapat absen di luar jam kerja");
+                            absenNow.setTextSize(13);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        } else {
+                            absenNow.setVisibility(View.GONE);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        }
+                    }
+                } else {
+                    if (isToday) {
                         absenNow.setVisibility(View.VISIBLE);
                         absenNow.setText("Anda tidak dapat absen di luar jam kerja");
                         absenNow.setTextSize(13);
                         absenIn.setVisibility(View.GONE);
                         absenOut.setVisibility(View.GONE);
+                    } else {
+                        absenNow.setVisibility(View.GONE);
+                        absenIn.setVisibility(View.GONE);
+                        absenOut.setVisibility(View.GONE);
                     }
-                } else {
-                    absenNow.setVisibility(View.VISIBLE);
-                    absenNow.setText("Anda tidak dapat absen di luar jam kerja");
-                    absenNow.setTextSize(13);
-                    absenIn.setVisibility(View.GONE);
-                    absenOut.setVisibility(View.GONE);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            handler.postDelayed(runnable, 1);
+            handler.postDelayed(runnable, 100);
         };
-        handler.postDelayed(runnable, 1);
+        handler.postDelayed(runnable, 100);
     }
 
     private void checkLokasi() {
@@ -511,7 +523,6 @@ public class AbsenFragment extends Fragment {
                             validLuarKantor();
                         }
                     } else {
-                        kehadiranTxt.setText("Izin");
                         validIzin();
                     }
                 } else {
@@ -571,6 +582,12 @@ public class AbsenFragment extends Fragment {
 
     private void validIzin(){
         done.setVisibility(View.INVISIBLE);
+        kehadiranTxt.setText("Izin");
+        absenMasuk.setText("-");
+        ketId.setText("-");
+        wktAbsenId.setText("-");
+        absenKeluar.setText("-");
+        lemburId.setText("-");
         inhere.setText(ketHadir);
         outKantor.setEnabled(true);
         outKantor.setClickable(false);
@@ -602,6 +619,7 @@ public class AbsenFragment extends Fragment {
         String curentDate = dateFormat.format(calendar.getTime());
         String tgglNow = dateFormat.format(timeNow.getTime());
         if (curentDate.equals(tgglNow)) {
+            isToday = true;
             kehadiranTxt.setText("Anda belum absen hari ini!");
             nxt.setEnabled(false);
             nxt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_next_disabled));
@@ -613,6 +631,7 @@ public class AbsenFragment extends Fragment {
             lemburId.setText("-");
             inhere.setText("-");
         } else {
+            isToday = false;
             kehadiranTxt.setText("Tidak Hadir!");
             nxt.setEnabled(true);
             nxt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_next));

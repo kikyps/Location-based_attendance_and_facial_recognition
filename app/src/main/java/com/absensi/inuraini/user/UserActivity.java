@@ -1,6 +1,6 @@
 package com.absensi.inuraini.user;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,11 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.preference.Preference;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +35,6 @@ import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
 import com.absensi.inuraini.common.SetSystemDateTimeActivity;
-import com.absensi.inuraini.common.VerifyOTP;
 import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,16 +46,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UserActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
     private AppBarConfiguration mAppBarConfiguration;
     NavigationView navigationView;
-    ProgressDialog progressDialog;
+    Dialog progressDialog = null;
     TextView nama;
     LinearLayout infouser;
     Context context = this;
@@ -66,7 +60,6 @@ public class UserActivity extends AppCompatActivity {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
     DateFormat jamNow = new SimpleDateFormat("HH:mm");
-    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,15 +137,22 @@ public class UserActivity extends AppCompatActivity {
         readUserData();
     }
 
+    private void showMyProgresDialog(){
+        hideMyProgresDialog();
+        progressDialog = Preferences.customProgresBar(context);
+    }
+
+    private void hideMyProgresDialog(){
+        if(progressDialog != null) {
+            progressDialog.cancel();
+        }
+    }
+
     private void readUserData() {
         if (!Preferences.isConnected(context)) {
             Preferences.dialogNetwork(context);
         } else {
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setContentView(R.layout.cutom_progress_bar);
-            progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            showMyProgresDialog();
             GetServerTime serverTime = new GetServerTime(this);
             databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -190,7 +190,7 @@ public class UserActivity extends AppCompatActivity {
                                         if (!Preferences.getUpdateDialog(context)) {
                                             Preferences.checkUpdate(context, UserActivity.this);
                                         }
-                                        progressDialog.dismiss();
+                                        hideMyProgresDialog();
                                     }
                                 }
                             } else {

@@ -138,7 +138,7 @@ public class VerifyOTP extends AppCompatActivity {
 
                             }
                         });
-                        Intent i = new Intent(VerifyOTP.this, DoVerifActivity.class);
+                        Intent i = new Intent(VerifyOTP.this, UserActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                 Intent.FLAG_ACTIVITY_NEW_TASK);

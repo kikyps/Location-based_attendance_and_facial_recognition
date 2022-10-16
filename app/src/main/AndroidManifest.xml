@@ -144,7 +144,7 @@
             android:name=".user.UserActivity"
             android:exported="false"
             android:label="@string/title_activity_user"
-            android:theme="@style/Theme.AbsensiWajah.NoActionBar" />
+            android:theme="@style/Theme.AbsensiWajah" />
         <activity
             android:name=".common.LoginActivity"
             android:exported="false" />

@@ -30,7 +30,7 @@ public class DetailAbsen extends AppCompatActivity {
     String idkaryawan;
     String eventDate;
     Context context = this;
-    TextView namaKar, ketHadir, jamAbsen, ketAbsen, tanggalRek, lokAbsen;
+    TextView namaKar, ketId, absenMasuk, absenKeluar, ketAbsen, tanggalRek, lokAbsen, wktAbsenId, lemburId;
     ImageButton nxt, prev;
 
     DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
@@ -49,13 +49,16 @@ public class DetailAbsen extends AppCompatActivity {
         idkaryawan = getIntent().getStringExtra("idKaryawan");
 
         namaKar = findViewById(R.id.nama_karyawan);
-        ketHadir = findViewById(R.id.ket_hadir);
-        jamAbsen = findViewById(R.id.jam_masuk);
-        ketAbsen = findViewById(R.id.ket_absen);
+        ketId = findViewById(R.id.ket_hadir);
+        absenMasuk = findViewById(R.id.jam_masuk);
+        ketAbsen = findViewById(R.id.keterangan_txt);
         nxt = findViewById(R.id.next);
         prev = findViewById(R.id.previous);
         tanggalRek = findViewById(R.id.tanggal_rekap);
         lokAbsen = findViewById(R.id.lokasi_absen);
+        wktAbsenId = findViewById(R.id.wkt_absen);
+        lemburId = findViewById(R.id.lembur_txt);
+        absenKeluar = findViewById(R.id.jam_keluar);
 
         setTanggal();
         layoutListener();
@@ -115,22 +118,53 @@ public class DetailAbsen extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+                    String jamMasuk = snapshot.child("sJamMasuk").getValue().toString();
+                    String jamKeluar = snapshot.child("sJamKeluar").getValue().toString();
+                    String ketHadir = snapshot.child("sKet").getValue().toString();
+                    boolean absenKantor = (boolean) snapshot.child("sKantor").getValue();
                     boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
-                    String jam = snapshot.child("sJam").getValue(String.class);
-                    String Hadir = snapshot.child("sKet").getValue(String.class);
-                    String lokasi = snapshot.child("sLokasi").getValue(String.class);
+                    boolean terlambatMasuk = (boolean) snapshot.child("sTerlambat").getValue();
+                    boolean jamLembur = (boolean) snapshot.child("sLembur").getValue();
+
+                    absenMasuk.setText(jamMasuk);
+                    if (jamKeluar.isEmpty()){
+                        absenKeluar.setText("-");
+                    } else {
+                        absenKeluar.setText(jamKeluar);
+                    }
+
+                    if (terlambatMasuk){
+                        wktAbsenId.setText("Terlambat absen");
+                    } else {
+                        wktAbsenId.setText("Absen tepat waktu");
+                    }
+
+                    if (jamLembur){
+                        lemburId.setText("Lembur");
+                    } else {
+                        lemburId.setText("-");
+                    }
 
                     if (kehadiran) {
-                        ketHadir.setText("Hadir");
-                        jamAbsen.setText(jam);
-                        ketAbsen.setText(Hadir);
-                        ketHadir.setTextColor(Color.GREEN);
-                        lokAbsen.setText(lokasi);
+                        if (absenKantor) {
+                            ketId.setText("Hadir");
+                            absenMasuk.setText(jamMasuk);
+                            ketAbsen.setText("-");
+                            ketId.setTextColor(Color.GREEN);
+                            lokAbsen.setText("Absen di kantor");
+                        } else {
+                            ketId.setText("Hadir");
+                            absenMasuk.setText(jamMasuk);
+                            ketAbsen.setText("-");
+                            ketId.setTextColor(Color.GREEN);
+                            lokAbsen.setText("Absen di luar kantor");
+                        }
                     } else {
-                        ketHadir.setText("Izin");
-                        jamAbsen.setText(jam);
-                        ketAbsen.setText(Hadir);
-                        ketHadir.setTextColor(ContextCompat.getColor(context, R.color.orange));
+                        ketId.setText("Izin");
+                        absenMasuk.setText("-");
+                        absenKeluar.setText("-");
+                        ketAbsen.setText(ketHadir);
+                        ketId.setTextColor(ContextCompat.getColor(context, R.color.orange));
                         lokAbsen.setText("-");
                     }
                 } else {
@@ -159,19 +193,25 @@ public class DetailAbsen extends AppCompatActivity {
         if (curentDate.equals(tgglNow)){
             nxt.setEnabled(false);
             nxt.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_next_disabled));
-            ketHadir.setText("Belum Absen");
-            ketHadir.setTextColor(ContextCompat.getColor(context, R.color.purple_500));
-            jamAbsen.setText("-");
+            ketId.setText("Belum Absen");
+            ketId.setTextColor(ContextCompat.getColor(context, R.color.purple_500));
+            absenMasuk.setText("-");
             ketAbsen.setText("-");
             lokAbsen.setText("-");
+            wktAbsenId.setText("-");
+            absenKeluar.setText("-");
+            lemburId.setText("-");
         } else {
             nxt.setEnabled(true);
             nxt.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_next));
-            ketHadir.setText("X");
-            ketHadir.setTextColor(Color.RED);
-            jamAbsen.setText("-");
-            ketAbsen.setText("Tidak ada data absen!");
+            ketId.setText("X");
+            ketId.setTextColor(Color.RED);
+            absenMasuk.setText("-");
+            ketAbsen.setText("-");
             lokAbsen.setText("-");
+            wktAbsenId.setText("-");
+            absenKeluar.setText("-");
+            lemburId.setText("-");
         }
     }
 

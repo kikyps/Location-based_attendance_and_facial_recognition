@@ -95,7 +95,7 @@ public class JabatanFragment extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setCancelable(false);
         progressDialog.show();
-        progressDialog.setContentView(R.layout.cutom_progress_bar);
+        progressDialog.setContentView(R.layout.custom_progress_bar);
         progressDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
     }
 

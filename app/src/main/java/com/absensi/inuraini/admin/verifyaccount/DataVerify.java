@@ -14,8 +14,7 @@ public class DataVerify {
     String sTtl;
     boolean sVerified;
 
-    public DataVerify(String key, String sAlamat, String sEmail, String sGender, String sJabatan, String sNama, String sPhone, String sStatus, String sTtl, boolean sVerified) {
-        this.key = key;
+    public DataVerify(String sAlamat, String sEmail, String sGender, String sJabatan, String sNama, String sPhone, String sStatus, String sTtl, boolean sVerified) {
         this.sAlamat = sAlamat;
         this.sEmail = sEmail;
         this.sGender = sGender;

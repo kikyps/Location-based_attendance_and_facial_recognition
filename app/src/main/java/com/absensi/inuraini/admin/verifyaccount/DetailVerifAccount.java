@@ -81,7 +81,7 @@ public class DetailVerifAccount extends AppCompatActivity {
                     (dialog, which) -> {
                         // Positive Button
                         Map<String, Object> postValues = new HashMap<>();
-                        postValues.put("sStatus", getSelectedRekap);
+                        postValues.put("sStatus", Preferences.getOnlyStrings(status.getText().toString()));
                         postValues.put("sVerified", true);
                         databaseReference.child(idPegawai).updateChildren(postValues)
                                         .addOnCompleteListener(task -> {

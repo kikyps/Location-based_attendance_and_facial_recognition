@@ -3,6 +3,7 @@ package com.absensi.inuraini;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +26,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Base64;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -322,12 +322,14 @@ public class Preferences {
         progressDialog.show();
     }
 
-    public static void customProgresBar(View view){
-        progressDialog = new ProgressDialog(view.getContext());
-        progressDialog.setContentView(R.layout.cutom_progress_bar);
-        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+    public static Dialog customProgresBar(Context context){
+        Dialog dialog = new Dialog(context);
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setContentView(R.layout.custom_progress_bar);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 
     public static String tgglFormatId (String str)
@@ -349,14 +351,13 @@ public class Preferences {
     public static String getOnlyDigits(String s) {
         Pattern pattern = Pattern.compile("[^0-9]");
         Matcher matcher = pattern.matcher(s);
-        String number = matcher.replaceAll("");
-        return number;
+        return matcher.replaceAll("");
     }
+
     public static String getOnlyStrings(String s) {
         Pattern pattern = Pattern.compile("[^a-z A-Z]");
         Matcher matcher = pattern.matcher(s);
-        String number = matcher.replaceAll("");
-        return number;
+        return matcher.replaceAll("");
     }
 
     public static void dialogNetwork(Context context) {

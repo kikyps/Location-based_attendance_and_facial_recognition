@@ -50,9 +50,6 @@ public class VerifyAccountFragment extends Fragment {
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Preferences.customProgresBar(root);
-        }
         showData();
     }
 
