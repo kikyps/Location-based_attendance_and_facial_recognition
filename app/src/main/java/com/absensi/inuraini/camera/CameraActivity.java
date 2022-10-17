@@ -529,8 +529,9 @@ public class CameraActivity extends AppCompatActivity {
             boolean lembur = getIntent().getBooleanExtra("lembur", false);
             boolean hadir = true;
             String lokAbsen = "Kantor";
+            boolean acc = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", lokAbsen, absenKantor, hadir, telat, lembur);
+            AbsenData absenData = new AbsenData(time, "", "", lokAbsen, absenKantor, hadir, telat, lembur, acc);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }
@@ -544,8 +545,9 @@ public class CameraActivity extends AppCompatActivity {
             boolean lembur = getIntent().getBooleanExtra("lembur", false);
             boolean hadir = true;
             Object[] lokAbsen = Preferences.getMyLocation(context, this);
+            boolean acc = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", (String) lokAbsen[2], absenKantor, hadir, telat, lembur);
+            AbsenData absenData = new AbsenData(time, "", "", (String) lokAbsen[2], absenKantor, hadir, telat, lembur, acc);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }

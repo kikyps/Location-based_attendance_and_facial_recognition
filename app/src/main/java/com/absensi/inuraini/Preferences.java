@@ -3,6 +3,7 @@ package com.absensi.inuraini;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -95,6 +97,7 @@ public class Preferences {
     public static String myAddress;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int REQUEST_CODE_GPS_PERMISSION = 1;
+    static boolean isMock;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -145,7 +148,7 @@ public class Preferences {
         editor.apply();
     }
 
-    public static String base64decode(String str) {
+    public static String retriveSec(String str) {
         try {
             return new String(Base64.decode(new StringBuffer(str).reverse().toString(), 0), StandardCharsets.UTF_8);
         } catch (IllegalArgumentException unused) {
@@ -240,7 +243,7 @@ public class Preferences {
     public static void googleInitialize(Context context){
         String web_id = "t92YuQnblRnbvNmclNXdlx2Zv92ZuMHcwFmLx0mZuFDMhhmMmdmYuVWdvBTcjJTO2QjYx52ZvdDc0ATLzgDNwMDM4QDNzYjM";
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(base64decode(web_id))
+                .requestIdToken(retriveSec(web_id))
                 .requestEmail()
                 .build();
         gsc = GoogleSignIn.getClient(context, gso);
@@ -601,7 +604,7 @@ public class Preferences {
     }
 
     public static boolean isGPSEnabled(Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);;
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
@@ -648,6 +651,56 @@ public class Preferences {
             e.printStackTrace();
         }
         return packageInfo.versionCode;
+    }
+
+    public static boolean isMockLocationEnabled(Context context) {
+        boolean isMockLocation = false;
+        try {
+            //if marshmallow
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                AppOpsManager opsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+                isMockLocation = (opsManager.checkOp(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), BuildConfig.APPLICATION_ID)== AppOpsManager.MODE_ALLOWED);
+            } else {
+                // in marshmallow this will always return true
+                isMockLocation = !android.provider.Settings.Secure.getString(context.getContentResolver(), "mock_location").equals("0");
+            }
+        } catch (Exception e) {
+            return isMockLocation;
+        }
+        return isMockLocation;
+    }
+
+    public static boolean areThereMockPermissionApps(Context context) {
+        int count = 0;
+        try {
+            PackageManager pm = context.getPackageManager();
+            List<ApplicationInfo> packages =
+                    pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            for (ApplicationInfo applicationInfo : packages) {
+                try {
+                    PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
+                            PackageManager.GET_PERMISSIONS);
+                    // Get Permissions
+                    String[] requestedPermissions = packageInfo.requestedPermissions;
+
+                    if (requestedPermissions != null) {
+                        for (int i = 0; i < requestedPermissions.length; i++) {
+                            if (requestedPermissions[i]
+                                    .equals("android.permission.ACCESS_MOCK_LOCATION")
+                                    && !applicationInfo.packageName.equals(context.getPackageName())) {
+                                count++;
+                            }
+                        }
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+//                    Log.e("MockDeductionAgilanbu", "Got exception --- " + e.getMessage());
+                }
+            }
+        } catch (Exception w) {
+            w.printStackTrace();
+        }
+        return count > 0;
     }
 }
 

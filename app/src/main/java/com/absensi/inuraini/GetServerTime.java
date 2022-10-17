@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class GetServerTime {
 
     Activity activity;
-    String ApiUrl = "https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta";
+    String ApiUrl = "hRnchtWYK9SYpNXQ9UmbvpVZtlGd/Umbvp3L05WZyJXdj9SZtlGVvkGch9ybp5SawFWZtlGduc3d39yL6MHc0RHa";
     RequestQueue requestQueue;
 
     public GetServerTime(Activity activity) {
@@ -27,7 +27,7 @@ public class GetServerTime {
 
         JSONObject jsonObject = new JSONObject();
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ApiUrl, jsonObject, response -> {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Preferences.retriveSec(ApiUrl), jsonObject, response -> {
             try {
                 volleyCallBack.onGetDateTime(response.getString("date"), response.getString("time"));
             } catch (JSONException e) {

@@ -37,6 +37,13 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".common.AntiMockActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.SetSystemDateTimeActivity"
             android:exported="false">
             <meta-data
@@ -44,8 +51,9 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".user.pengajuan.TambahLiburActivity"
-            android:exported="false">
+            android:name=".user.pengajuan.TambahIzinActivity"
+            android:exported="false"
+            android:label="Pengajuan Izin">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -120,7 +128,8 @@
             android:theme="@style/Theme.AbsensiWajah.NoActionBar" />
         <activity
             android:name=".admin.jabatan.TambahJabatan"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Tambah Jabatan"/>
         <activity
             android:name=".admin.rekap.DetailAbsen"
             android:exported="false" />

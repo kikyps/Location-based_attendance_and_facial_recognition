@@ -133,8 +133,6 @@ public class AbsenFragment extends Fragment {
         });
 
         outKantor.setOnClickListener(v -> {
-//            dialogKeterangan();
-//            throw new RuntimeException("Boom!");
             doAbsen = true;
             doAbsenKeluar = false;
             atOffice = false;
@@ -497,27 +495,27 @@ public class AbsenFragment extends Fragment {
                     boolean terlambatMasuk = (boolean) snapshot.child("sTerlambat").getValue();
                     boolean jamLembur = (boolean) snapshot.child("sLembur").getValue();
 
-                    absenMasuk.setText(jamMasuk);
-                    if (jamKeluar.isEmpty()){
-                        absenKeluar.setText("-");
-                    } else {
-                        absenKeluar.setText(jamKeluar);
-                    }
-
-                    if (terlambatMasuk){
-                        wktAbsenId.setText("Terlambat absen");
-                    } else {
-                        wktAbsenId.setText("Absen tepat waktu");
-                    }
-
-                    if (jamLembur){
-                        lemburId.setText("Lembur");
-                    } else {
-                        lemburId.setText("-");
-                    }
-
                     if (kehadiran) {
                         kehadiranTxt.setText("Hadir");
+                        absenMasuk.setText(jamMasuk);
+                        if (jamKeluar.isEmpty()){
+                            absenKeluar.setText("-");
+                        } else {
+                            absenKeluar.setText(jamKeluar);
+                        }
+
+                        if (terlambatMasuk){
+                            wktAbsenId.setText("Terlambat absen");
+                        } else {
+                            wktAbsenId.setText("Absen tepat waktu");
+                        }
+
+                        if (jamLembur){
+                            lemburId.setText("Lembur");
+                        } else {
+                            lemburId.setText("-");
+                        }
+
                         if (absenKantor) {
                             validInKantor();
                         } else {
@@ -584,12 +582,12 @@ public class AbsenFragment extends Fragment {
     private void validIzin(){
         done.setVisibility(View.INVISIBLE);
         kehadiranTxt.setText("Izin");
+        ketId.setText(ketHadir);
         absenMasuk.setText("-");
-        ketId.setText("-");
         wktAbsenId.setText("-");
         absenKeluar.setText("-");
         lemburId.setText("-");
-        inhere.setText(ketHadir);
+        inhere.setText("-");
         outKantor.setEnabled(true);
         outKantor.setClickable(false);
         inKantor.setEnabled(false);
@@ -638,11 +636,11 @@ public class AbsenFragment extends Fragment {
             nxt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_next));
             validNoData();
             absenMasuk.setText("-");
-            ketId.setText("-");
+            ketId.setText("Tidak ada data absen!");
             wktAbsenId.setText("-");
             absenKeluar.setText("-");
             lemburId.setText("-");
-            inhere.setText("Tidak ada data absen!");
+            inhere.setText("-");
         }
     }
 
