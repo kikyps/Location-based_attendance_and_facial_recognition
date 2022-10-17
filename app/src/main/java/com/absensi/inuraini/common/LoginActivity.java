@@ -1,10 +1,5 @@
 package com.absensi.inuraini.common;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +11,11 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.absensi.inuraini.MyLongClickListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.user.UserActivity;
@@ -116,8 +115,13 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         } else {
-            if (!Preferences.getUpdateDialog(context)) {
-                Preferences.checkUpdate(context, this);
+            boolean restart = getIntent().getBooleanExtra("relog", false);
+            if (restart){
+                Preferences.doRestart(context);
+            } else {
+                if (!Preferences.getUpdateDialog(context)) {
+                    Preferences.checkUpdate(context, this);
+                }
             }
         }
     }

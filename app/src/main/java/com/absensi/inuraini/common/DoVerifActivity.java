@@ -36,7 +36,7 @@ public class DoVerifActivity extends AppCompatActivity {
                     null,
                     (dialog, which) -> {
                         // Positive Button
-                        Preferences.signOut(context, LoginActivity.class);
+                        Preferences.signOut(context, true, LoginActivity.class);
                         finish();
                     },
                     (dialog, which) -> {

@@ -1,11 +1,5 @@
 package com.absensi.inuraini.common;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
-
-import android.app.Activity;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +10,11 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
@@ -60,7 +59,7 @@ public class CollectorActivity extends AppCompatActivity {
         restart.setOnTouchListener(new MyLongClickListener(6000) {
             @Override
             public void onLongClick() {
-                Preferences.signOut(context, LoginActivity.class);
+                Preferences.signOut(context, true, LoginActivity.class);
                 finish();
             }
         });

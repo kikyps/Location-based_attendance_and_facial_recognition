@@ -261,12 +261,43 @@ public class Preferences {
                 });
     }
 
-    public static void signOut(Context context, Class activity){
+    public static void signOut(Context context, Boolean start, Class activity){
         mAuth.signOut();
         gsc.signOut();
         clearData(context);
-        Intent intent = new Intent(context, activity);
-        context.startActivity(intent);
+        if (start) {
+            Intent intent = new Intent(context, activity);
+            intent.putExtra("relog", true);
+            context.startActivity(intent);
+        } else {
+            Intent intent = new Intent(context, activity);
+            context.startActivity(intent);
+        }
+    }
+
+    public static void doRestart(Context c) {
+        try {
+            // check if the context is given
+            if (c != null) {
+                // fetch the package manager so we can get the default launch activity
+                // (you can replace this intent with any other activity if you want
+                PackageManager pm = c.getPackageManager();
+                // check if we got the PackageManager
+                if (pm != null) {
+                    // create the intent with the default start activity for your application
+                    Intent mStartActivity = pm.getLaunchIntentForPackage(c.getPackageName());
+                    if (mStartActivity != null) {
+                        mStartActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                        c.getApplicationContext().startActivity(mStartActivity);
+                        // kill the application
+                        System.exit(0);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static boolean isPermissionGranted(Context context){

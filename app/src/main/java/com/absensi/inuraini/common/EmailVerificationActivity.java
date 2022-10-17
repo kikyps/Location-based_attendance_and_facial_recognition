@@ -54,7 +54,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
         }
 
         backLogin.setOnClickListener(v -> {
-            Preferences.signOut(context, LoginActivity.class);
+            Preferences.signOut(context, false, LoginActivity.class);
             finish();
         });
     }
@@ -62,7 +62,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Preferences.signOut(context, LoginActivity.class);
+        Preferences.signOut(context, false, LoginActivity.class);
         finish();
     }
 

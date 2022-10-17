@@ -56,6 +56,7 @@ public class UserActivity extends AppCompatActivity {
     TextView nama;
     LinearLayout infouser;
     Context context = this;
+    public static boolean firstExit = false;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
@@ -122,7 +123,7 @@ public class UserActivity extends AppCompatActivity {
         builder.setTitle("Sign Out")
                         .setMessage("Apakah anda yakin ingin keluar?")
                                 .setPositiveButton("Iya", (dialog, which) -> {
-                                    Preferences.signOut(context, LoginActivity.class);
+                                    Preferences.signOut(context, firstExit, LoginActivity.class);
                                     finish();
                                 })
                 .setNegativeButton("Tidak", (dialog, which) -> dialog.dismiss());

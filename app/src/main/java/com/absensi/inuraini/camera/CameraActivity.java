@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import com.absensi.inuraini.GetServerTime;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
+import com.absensi.inuraini.user.UserActivity;
 import com.absensi.inuraini.user.absen.AbsenData;
 import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -501,6 +502,7 @@ public class CameraActivity extends AppCompatActivity {
         float value = Math.min(left, right);
         if (blink(value)) {
             addFace();
+            UserActivity.firstExit = true;
             finish();
         }
     }

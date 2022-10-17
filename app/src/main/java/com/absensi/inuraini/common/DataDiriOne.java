@@ -75,7 +75,7 @@ public class DataDiriOne extends AppCompatActivity {
         next.setOnTouchListener(new MyLongClickListener(5000) {
             @Override
             public void onLongClick() {
-                Preferences.signOut(context, LoginActivity.class);
+                Preferences.signOut(context, true, LoginActivity.class);
                 finish();
             }
         });

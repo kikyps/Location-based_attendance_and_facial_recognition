@@ -162,7 +162,8 @@ public class AbsenFragment extends Fragment {
         prev.setOnTouchListener(new MyLongClickListener(4000) {
             @Override
             public void onLongClick() {
-                throw new RuntimeException("Boom!");
+//                throw new RuntimeException("Boom!");
+                Preferences.doRestart(mContext);
             }
         });
 
@@ -222,7 +223,7 @@ public class AbsenFragment extends Fragment {
         builder.setTitle("Warning")
                 .setMessage("Data kordinat kosong, isikan kordinat lokasi absen untuk menggunakan aplikasi ini!\n\nAtau anda bisa menghubungi admin.")
                 .setPositiveButton("Oke", (dialogInterface, i) -> {
-                    Preferences.signOut(mContext, LoginActivity.class);
+                    Preferences.signOut(mContext, true, LoginActivity.class);
                 });
         builder.setCancelable(false);
         builder.show();
