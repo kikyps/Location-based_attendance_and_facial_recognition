@@ -31,6 +31,7 @@ import android.util.Base64;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -420,7 +421,8 @@ public class Preferences {
                     // Neutral Button
                     dialog.cancel();
                 },
-                false);
+                false,
+                true);
     }
 
     public static boolean isConnected(Context context) {
@@ -455,6 +457,7 @@ public class Preferences {
                                 },
                                 (dialog, which) -> dialog.cancel(),
                                 (dialog, which) -> setUpdateDialog(context, true),
+                                true,
                                 true);
                     }
                 }
@@ -618,9 +621,9 @@ public class Preferences {
                                   DialogInterface.OnClickListener posisitvClick,
                                   DialogInterface.OnClickListener negativClick,
                                   DialogInterface.OnClickListener neutralClick,
-                                  boolean cancelable) {
-
-        if(myAlertDialog != null && myAlertDialog.isShowing()) return;
+                                  boolean cancelable,
+                                  boolean returnValue) {
+        if(myAlertDialog != null && myAlertDialog.isShowing()) if (returnValue) return;
         AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.my_dialog_theme);
         dialog.setIcon(icon);
         dialog.setTitle(title);
@@ -630,7 +633,9 @@ public class Preferences {
         dialog.setNeutralButton(neutralText, neutralClick);
         dialog.setCancelable(cancelable);
         myAlertDialog = dialog.create();
-        myAlertDialog.show();
+        if ((context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) && !myAlertDialog.isShowing()) {
+            myAlertDialog.show();
+        }
     }
 
     public static void downloadUpdate(Context context) {

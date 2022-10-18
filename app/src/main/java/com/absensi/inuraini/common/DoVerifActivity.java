@@ -47,6 +47,7 @@ public class DoVerifActivity extends AppCompatActivity {
                         // Neutral Button
                         dialog.cancel();
                     },
+                    false,
                     false);
         });
     }

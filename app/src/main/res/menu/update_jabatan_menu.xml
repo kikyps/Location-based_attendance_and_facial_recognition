@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/delete_jabatan"
         android:title="Hapus Data"
+        android:iconTint="@color/white"
         android:icon="@drawable/ic_baseline_delete_forever_24"
         app:showAsAction="always"/>
 </menu>

@@ -88,7 +88,8 @@ public class VerifyRecyclerAdapter extends RecyclerView.Adapter<VerifyRecyclerAd
                         // Neutral Button
                         dialog.cancel();
                     },
-                    true);
+                    true,
+                    false);
         });
         holder.card_view.setOnClickListener(view -> {
             Intent intent = new Intent(context, DetailVerifAccount.class);

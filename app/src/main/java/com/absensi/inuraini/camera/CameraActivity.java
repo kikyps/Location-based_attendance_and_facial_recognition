@@ -123,10 +123,10 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+        firebaseUser = Preferences.mAuth.getCurrentUser();
         camera_view = findViewById(R.id.previewCamera);
         namaface = findViewById(R.id.deskripsi);
         daftar = findViewById(R.id.daftardulu);
-        firebaseUser = Preferences.mAuth.getCurrentUser();
         registered = readFromSP();
         wajahid = getIntent().getBooleanExtra("faceid", false);
 //        loadFaceData(registered);
@@ -530,8 +530,9 @@ public class CameraActivity extends AppCompatActivity {
             boolean hadir = true;
             String lokAbsen = "Kantor";
             boolean acc = false;
+            boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", lokAbsen, absenKantor, hadir, telat, lembur, acc);
+            AbsenData absenData = new AbsenData(time, "", "", lokAbsen, absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }
@@ -546,8 +547,9 @@ public class CameraActivity extends AppCompatActivity {
             boolean hadir = true;
             Object[] lokAbsen = Preferences.getMyLocation(context, this);
             boolean acc = false;
+            boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", (String) lokAbsen[2], absenKantor, hadir, telat, lembur, acc);
+            AbsenData absenData = new AbsenData(time, "", "", (String) lokAbsen[2], absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }

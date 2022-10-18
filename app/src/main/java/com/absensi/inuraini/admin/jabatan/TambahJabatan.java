@@ -178,7 +178,8 @@ public class TambahJabatan extends AppCompatActivity {
                             (dialog, which) -> dialog.dismiss(),
                             (dialog, which) -> dialog.dismiss(),
                             (dialog, which) -> dialog.dismiss(),
-                            true);
+                            true,
+                            false);
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Hapus Jabatan")

@@ -97,7 +97,8 @@ public class DetailVerifAccount extends AppCompatActivity {
                         // Neutral Button
                         dialog.cancel();
                     },
-                    true);
+                    true,
+                    false);
         });
         showDataPegawai();
     }

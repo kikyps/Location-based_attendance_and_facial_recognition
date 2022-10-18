@@ -30,7 +30,7 @@ public class DetailAbsen extends AppCompatActivity {
     String idkaryawan;
     String eventDate;
     Context context = this;
-    TextView namaKar, ketId, absenMasuk, absenKeluar, ketAbsen, tanggalRek, lokAbsen, wktAbsenId, lemburId;
+    TextView namaKar, ketId, absenMasuk, absenKeluar, ketAbsen, tanggalRek, lokAbsen, wktAbsenId, lemburId, titikLok;
     ImageButton nxt, prev;
 
     DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
@@ -59,6 +59,7 @@ public class DetailAbsen extends AppCompatActivity {
         wktAbsenId = findViewById(R.id.wkt_absen);
         lemburId = findViewById(R.id.lembur_txt);
         absenKeluar = findViewById(R.id.jam_keluar);
+        titikLok = findViewById(R.id.titik_lokasi);
 
         setTanggal();
         layoutListener();
@@ -125,39 +126,41 @@ public class DetailAbsen extends AppCompatActivity {
                     boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
                     boolean terlambatMasuk = (boolean) snapshot.child("sTerlambat").getValue();
                     boolean jamLembur = (boolean) snapshot.child("sLembur").getValue();
-
-                    absenMasuk.setText(jamMasuk);
-                    if (jamKeluar.isEmpty()){
-                        absenKeluar.setText("-");
-                    } else {
-                        absenKeluar.setText(jamKeluar);
-                    }
-
-                    if (terlambatMasuk){
-                        wktAbsenId.setText("Terlambat absen");
-                    } else {
-                        wktAbsenId.setText("Absen tepat waktu");
-                    }
-
-                    if (jamLembur){
-                        lemburId.setText("Lembur");
-                    } else {
-                        lemburId.setText("-");
-                    }
+                    String titikAbsen = snapshot.child("sLokasi").getValue(String.class);
 
                     if (kehadiran) {
+                        absenMasuk.setText(jamMasuk);
+                        if (jamKeluar.isEmpty()){
+                            absenKeluar.setText("-");
+                        } else {
+                            absenKeluar.setText(jamKeluar);
+                        }
+
+                        if (terlambatMasuk){
+                            wktAbsenId.setText("Terlambat absen");
+                        } else {
+                            wktAbsenId.setText("Absen tepat waktu");
+                        }
+
+                        if (jamLembur){
+                            lemburId.setText("Lembur");
+                        } else {
+                            lemburId.setText("-");
+                        }
                         if (absenKantor) {
                             ketId.setText("Hadir");
                             absenMasuk.setText(jamMasuk);
                             ketAbsen.setText("-");
                             ketId.setTextColor(Color.GREEN);
                             lokAbsen.setText("Absen di kantor");
+                            titikLok.setText(titikAbsen);
                         } else {
                             ketId.setText("Hadir");
                             absenMasuk.setText(jamMasuk);
                             ketAbsen.setText("-");
                             ketId.setTextColor(Color.GREEN);
                             lokAbsen.setText("Absen di luar kantor");
+                            titikLok.setText(titikAbsen);
                         }
                     } else {
                         ketId.setText("Izin");
@@ -166,6 +169,7 @@ public class DetailAbsen extends AppCompatActivity {
                         ketAbsen.setText(ketHadir);
                         ketId.setTextColor(ContextCompat.getColor(context, R.color.orange));
                         lokAbsen.setText("-");
+                        titikLok.setText("-");
                     }
                 } else {
                     seleksiAbsen();
@@ -201,6 +205,7 @@ public class DetailAbsen extends AppCompatActivity {
             wktAbsenId.setText("-");
             absenKeluar.setText("-");
             lemburId.setText("-");
+            titikLok.setText("-");
         } else {
             nxt.setEnabled(true);
             nxt.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_next));
@@ -212,6 +217,7 @@ public class DetailAbsen extends AppCompatActivity {
             wktAbsenId.setText("-");
             absenKeluar.setText("-");
             lemburId.setText("-");
+            titikLok.setText("-");
         }
     }
 

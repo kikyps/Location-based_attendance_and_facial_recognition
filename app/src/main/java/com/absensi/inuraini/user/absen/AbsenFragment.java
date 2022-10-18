@@ -58,7 +58,7 @@ public class AbsenFragment extends Fragment {
     AnimatedVectorDrawable avd2;
     LinearLayout absenIn, absenOut;
 
-    boolean sudahAbsen, isToday;
+    boolean sudahAbsen, isToday, izinAcc, konfirmAdmin, kehadiran;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -174,8 +174,9 @@ public class AbsenFragment extends Fragment {
 
         tanggal.setOnClickListener(v -> {
             calendar.setTime(timeNow.getTime());
-            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), R.style.my_dialog_theme, date,
-                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), R.style.my_dialog_theme, date,
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.getDatePicker().setMaxDate(timeNow.getTimeInMillis());
             datePickerDialog.show();
@@ -288,8 +289,14 @@ public class AbsenFragment extends Fragment {
                     telat = false;
                     lembur = false;
                     if (sudahAbsen){
-                        absenIn.setVisibility(View.VISIBLE);
-                        absenOut.setVisibility(View.GONE);
+                        if (kehadiran){
+                            absenIn.setVisibility(View.VISIBLE);
+                            absenOut.setVisibility(View.GONE);
+                        } else {
+                            absenNow.setVisibility(View.GONE);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        }
                     } else {
                         absenIn.setVisibility(View.VISIBLE);
                         absenOut.setVisibility(View.GONE);
@@ -298,10 +305,16 @@ public class AbsenFragment extends Fragment {
                     telat = true;
                     lembur = false;
                     if (sudahAbsen){
-                        absenNow.setVisibility(View.VISIBLE);
-                        absenNow.setText("Absen Masuk");
-                        absenIn.setVisibility(View.VISIBLE);
-                        absenOut.setVisibility(View.GONE);
+                        if (kehadiran){
+                            absenNow.setVisibility(View.VISIBLE);
+                            absenNow.setText("Absen Masuk");
+                            absenIn.setVisibility(View.VISIBLE);
+                            absenOut.setVisibility(View.GONE);
+                        } else {
+                            absenNow.setVisibility(View.GONE);
+                            absenIn.setVisibility(View.GONE);
+                            absenOut.setVisibility(View.GONE);
+                        }
                     } else {
                         absenNow.setVisibility(View.VISIBLE);
                         absenNow.setText("Absen Masuk");
@@ -311,11 +324,17 @@ public class AbsenFragment extends Fragment {
                 } else if (x.after(absenKeluar.getTime()) && x.before(absenLembur.getTime())) {
                     lembur = false;
                     if (sudahAbsen) {
-                        if (jamKeluar.isEmpty()) {
-                            absenNow.setVisibility(View.VISIBLE);
-                            absenNow.setText("Absen Keluar");
-                            absenIn.setVisibility(View.GONE);
-                            absenOut.setVisibility(View.VISIBLE);
+                        if (kehadiran){
+                            if (jamKeluar.isEmpty()) {
+                                absenNow.setVisibility(View.VISIBLE);
+                                absenNow.setText("Absen Keluar");
+                                absenIn.setVisibility(View.GONE);
+                                absenOut.setVisibility(View.VISIBLE);
+                            } else {
+                                absenNow.setVisibility(View.GONE);
+                                absenIn.setVisibility(View.GONE);
+                                absenOut.setVisibility(View.GONE);
+                            }
                         } else {
                             absenNow.setVisibility(View.GONE);
                             absenIn.setVisibility(View.GONE);
@@ -337,11 +356,17 @@ public class AbsenFragment extends Fragment {
                 } else if (x.after(absenLembur.getTime()) && x.before(absenAkhir.getTime())){
                     lembur = true;
                     if (sudahAbsen) {
-                        if (jamKeluar.isEmpty()) {
-                            absenNow.setVisibility(View.VISIBLE);
-                            absenNow.setText("Absen Keluar");
-                            absenIn.setVisibility(View.GONE);
-                            absenOut.setVisibility(View.VISIBLE);
+                        if (kehadiran){
+                            if (jamKeluar.isEmpty()) {
+                                absenNow.setVisibility(View.VISIBLE);
+                                absenNow.setText("Absen Keluar");
+                                absenIn.setVisibility(View.GONE);
+                                absenOut.setVisibility(View.VISIBLE);
+                            } else {
+                                absenNow.setVisibility(View.GONE);
+                                absenIn.setVisibility(View.GONE);
+                                absenOut.setVisibility(View.GONE);
+                            }
                         } else {
                             absenNow.setVisibility(View.GONE);
                             absenIn.setVisibility(View.GONE);
@@ -427,6 +452,7 @@ public class AbsenFragment extends Fragment {
                             // Neutral Button
                             dialog.cancel();
                         },
+                        false,
                         false);
             } else {
                 Intent intent = new Intent(mContext, CameraActivity.class);
@@ -491,9 +517,11 @@ public class AbsenFragment extends Fragment {
                     jamKeluar = snapshot.child("sJamKeluar").getValue().toString();
                     ketHadir = snapshot.child("sKet").getValue().toString();
                     absenKantor = (boolean) snapshot.child("sKantor").getValue();
-                    boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
+                    kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
                     boolean terlambatMasuk = (boolean) snapshot.child("sTerlambat").getValue();
                     boolean jamLembur = (boolean) snapshot.child("sLembur").getValue();
+                    izinAcc = (boolean) snapshot.child("sAcc").getValue();
+                    konfirmAdmin = (boolean) snapshot.child("sKonfirmAdmin").getValue();
 
                     if (kehadiran) {
                         kehadiranTxt.setText("Hadir");
@@ -580,20 +608,54 @@ public class AbsenFragment extends Fragment {
     }
 
     private void validIzin(){
-        done.setVisibility(View.INVISIBLE);
-        kehadiranTxt.setText("Izin");
-        ketId.setText(ketHadir);
-        absenMasuk.setText("-");
-        wktAbsenId.setText("-");
-        absenKeluar.setText("-");
-        lemburId.setText("-");
-        inhere.setText("-");
-        outKantor.setEnabled(true);
-        outKantor.setClickable(false);
-        inKantor.setEnabled(false);
-        inKantor.setClickable(true);
-        inKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
-        outKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+        if (konfirmAdmin) {
+            if (izinAcc) {
+                done.setVisibility(View.INVISIBLE);
+                kehadiranTxt.setText("Izin");
+                ketId.setText(ketHadir);
+                absenMasuk.setText("-");
+                wktAbsenId.setText("-");
+                absenKeluar.setText("-");
+                lemburId.setText("-");
+                inhere.setText("-");
+                outKantor.setEnabled(true);
+                outKantor.setClickable(false);
+                inKantor.setEnabled(false);
+                inKantor.setClickable(true);
+                inKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+                outKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+            } else {
+                done.setVisibility(View.INVISIBLE);
+                kehadiranTxt.setText("Izin");
+                ketId.setText(ketHadir);
+                absenMasuk.setText("-");
+                wktAbsenId.setText("-");
+                absenKeluar.setText("-");
+                lemburId.setText("-");
+                inhere.setText("-");
+                outKantor.setEnabled(true);
+                outKantor.setClickable(false);
+                inKantor.setEnabled(false);
+                inKantor.setClickable(true);
+                inKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+                outKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+            }
+        } else {
+            done.setVisibility(View.INVISIBLE);
+            kehadiranTxt.setText("Izin (Belum Dikonfirmasi Admin)");
+            ketId.setText(ketHadir);
+            absenMasuk.setText("-");
+            wktAbsenId.setText("-");
+            absenKeluar.setText("-");
+            lemburId.setText("-");
+            inhere.setText("-");
+            outKantor.setEnabled(true);
+            outKantor.setClickable(false);
+            inKantor.setEnabled(false);
+            inKantor.setClickable(true);
+            inKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+            outKantor.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange));
+        }
     }
 
     private void validNoData() {

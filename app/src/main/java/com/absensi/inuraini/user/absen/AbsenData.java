@@ -2,7 +2,7 @@ package com.absensi.inuraini.user.absen;
 
 public class AbsenData {
     String key, sJamMasuk, sJamKeluar, sKet, sLokasi;
-    boolean sKantor, sKehadiran, sTerlambat, sLembur, sAcc;
+    boolean sKantor, sKehadiran, sTerlambat, sLembur, sAcc, sKonfirmAdmin;
 
     public String getKey() {
         return key;
@@ -84,7 +84,15 @@ public class AbsenData {
         this.sAcc = sAcc;
     }
 
-    public AbsenData(String sJamMasuk, String sJamKeluar, String sKet, String sLokasi, boolean sKantor, boolean sKehadiran, boolean sTerlambat, boolean sLembur, boolean sAcc) {
+    public boolean issKonfirmAdmin() {
+        return sKonfirmAdmin;
+    }
+
+    public void setsKonfirmAdmin(boolean sKonfirmAdmin) {
+        this.sKonfirmAdmin = sKonfirmAdmin;
+    }
+
+    public AbsenData(String sJamMasuk, String sJamKeluar, String sKet, String sLokasi, boolean sKantor, boolean sKehadiran, boolean sTerlambat, boolean sLembur, boolean sAcc, boolean sKonfirmAdmin) {
         this.sJamMasuk = sJamMasuk;
         this.sJamKeluar = sJamKeluar;
         this.sKet = sKet;
@@ -94,6 +102,7 @@ public class AbsenData {
         this.sTerlambat = sTerlambat;
         this.sLembur = sLembur;
         this.sAcc = sAcc;
+        this.sKonfirmAdmin = sKonfirmAdmin;
     }
 
     public AbsenData() {

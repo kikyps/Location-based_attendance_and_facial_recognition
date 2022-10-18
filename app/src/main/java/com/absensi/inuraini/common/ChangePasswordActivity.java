@@ -56,7 +56,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                             // Neutral Button
                             dialog.cancel();
                         },
-                        true);
+                        true,
+                        false);
             }
         });
 
@@ -74,7 +75,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         // Neutral Button
                         dialog.cancel();
                     },
-                    true);
+                    true,
+                    false);
         });
     }
 
