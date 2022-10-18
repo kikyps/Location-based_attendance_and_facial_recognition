@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +63,9 @@ public class UserActivity extends AppCompatActivity {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
     DateFormat jamNow = new SimpleDateFormat("HH:mm");
+    DateFormat jamSec = new SimpleDateFormat("HH:mm:ss");
+    private final Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,96 +163,108 @@ public class UserActivity extends AppCompatActivity {
                 startActivity(new Intent(context, AntiMockActivity.class));
                 finish();
             } else {
-                GetServerTime serverTime = new GetServerTime(this);
-                databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            boolean nohp = snapshot.hasChild("sPhone");
-                            boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
-                            String myId = snapshot.child("faceID").getValue(String.class);
-                            String namaku = snapshot.child("sNama").getValue(String.class);
-                            String getstatus = snapshot.child("sStatus").getValue(String.class);
-                            boolean wajahid = snapshot.hasChild("faceID");
+                String curentSec = jamSec.format(new Date().getTime());
+                String close = curentSec.substring(6,8);
 
-                            nama.setText(namaku);
-
-                            serverTime.getDateTime((date, time) -> {
-                                String curentDate = dateNow.format(new Date().getTime());
-                                String curentTime = jamNow.format(new Date().getTime());
-                                if (date.equals(curentDate) && time.equals(curentTime)) {
-                                    if (!nohp) {
-                                        Intent intent = new Intent(context, DataDiriOne.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                                Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                                Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                    } else {
-                                        if (!checkVerif) {
-                                            startActivity(new Intent(context, DoVerifActivity.class));
-                                            finish();
-                                        } else if (!wajahid) {
-                                            Intent intent = new Intent(context, CameraActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            intent.putExtra("faceid", true);
-                                            startActivity(intent);
-                                        } else {
-                                            if (!Preferences.getUpdateDialog(context)) {
-                                                Preferences.checkUpdate(context, UserActivity.this);
-                                            }
-                                            hideMyProgresDialog();
-                                        }
-                                    }
-                                } else {
-                                    Intent i = new Intent(UserActivity.this, SetSystemDateTimeActivity.class);
-                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                            Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                            Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(i);
-                                }
-                            });
-
-                            if (myId != null) {
-                                Preferences.setFaceId(context, myId);
-                            }
-
-                            if (getstatus != null) {
-                                if (Preferences.getDataStatus(context).isEmpty()) {
-                                    Preferences.setDataStatus(context, getstatus);
-                                }
-                            }
-
-                            if (Preferences.getDataStatus(context).equals("admin")) {
-                                Menu menu = navigationView.getMenu();
-                                MenuItem nav_admin = menu.findItem(R.id.admin_akses);
-                                MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                                nav_user.setVisible(false);
-                                nav_admin.setVisible(true);
-                            } else {
-                                Menu menu = navigationView.getMenu();
-                                MenuItem nav_dashboard = menu.findItem(R.id.admin_akses);
-                                MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                                nav_user.setVisible(true);
-                                nav_dashboard.setVisible(false);
-                            }
-
-                        } else {
-                            Intent intent = new Intent(context, DataDiriOne.class);
-                            intent.putExtra("faceid", true);
-                            startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                if (close.equals("58") || close.equals("59")) {
+                    Runnable runnable = this::getData;
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(runnable, 2000);
+                } else {
+                    getData();
+                }
             }
         }
     }
 
+    private void getData(){
+        GetServerTime serverTime = new GetServerTime(this);
+        databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    boolean nohp = snapshot.hasChild("sPhone");
+                    boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
+                    String myId = snapshot.child("faceID").getValue(String.class);
+                    String namaku = snapshot.child("sNama").getValue(String.class);
+                    String getstatus = snapshot.child("sStatus").getValue(String.class);
+                    boolean wajahid = snapshot.hasChild("faceID");
 
+                    nama.setText(namaku);
+
+                    serverTime.getDateTime((date, time) -> {
+                        String curentDate = dateNow.format(new Date().getTime());
+                        String curentTime = jamNow.format(new Date().getTime());
+
+                        if (date.equals(curentDate) && time.equals(curentTime)) {
+                            if (!nohp) {
+                                Intent intent = new Intent(context, DataDiriOne.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else {
+                                if (!checkVerif) {
+                                    startActivity(new Intent(context, DoVerifActivity.class));
+                                    finish();
+                                } else if (!wajahid) {
+                                    Intent intent = new Intent(context, CameraActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intent.putExtra("faceid", true);
+                                    startActivity(intent);
+                                } else {
+                                    if (!Preferences.getUpdateDialog(context)) {
+                                        Preferences.checkUpdate(context, UserActivity.this);
+                                    }
+                                    hideMyProgresDialog();
+                                }
+                            }
+                        } else {
+                            Intent i = new Intent(UserActivity.this, SetSystemDateTimeActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(i);
+                        }
+                    });
+
+                    if (myId != null) {
+                        Preferences.setFaceId(context, myId);
+                    }
+
+                    if (getstatus != null) {
+                        if (Preferences.getDataStatus(context).isEmpty()) {
+                            Preferences.setDataStatus(context, getstatus);
+                        }
+                    }
+
+                    if (Preferences.getDataStatus(context).equals("admin")) {
+                        Menu menu = navigationView.getMenu();
+                        MenuItem nav_admin = menu.findItem(R.id.admin_akses);
+                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
+                        nav_user.setVisible(false);
+                        nav_admin.setVisible(true);
+                    } else {
+                        Menu menu = navigationView.getMenu();
+                        MenuItem nav_dashboard = menu.findItem(R.id.admin_akses);
+                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
+                        nav_user.setVisible(true);
+                        nav_dashboard.setVisible(false);
+                    }
+
+                } else {
+                    Intent intent = new Intent(context, DataDiriOne.class);
+                    intent.putExtra("faceid", true);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
