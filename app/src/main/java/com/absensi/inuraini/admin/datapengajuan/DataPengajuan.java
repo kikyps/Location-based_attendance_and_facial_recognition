@@ -1,8 +1,10 @@
 package com.absensi.inuraini.admin.datapengajuan;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
-import com.absensi.inuraini.user.pengajuan.DataIzin;
 import com.absensi.inuraini.user.pengajuan.PengajuanLiburAdapter;
-import com.absensi.inuraini.user.pengajuan.TambahIzinActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,13 +28,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class DataPengajuan extends Fragment {
 
     DataPengajuanAdapter recyclerAdapter;
     Context mContext;
-//    ArrayList<DataIzin> listIzin = new ArrayList<>();
+    ArrayList<DataReqIzin> listReqIzin = new ArrayList<>();
     RecyclerView recyclerView;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -59,28 +57,46 @@ public class DataPengajuan extends Fragment {
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
+        recyclerView.setVisibility(View.GONE);
         showData();
+        Runnable runnable = () -> recyclerView.setVisibility(View.VISIBLE);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(runnable, 1300);
     }
 
     private void contentLiteners() {
 //        Collections.sort(listIzin, DataIzin.dataIzinComparator);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
+            recyclerView.setVisibility(View.GONE);
             showData();
+            Runnable runnable = () -> recyclerView.setVisibility(View.VISIBLE);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(runnable, 1300);
             swipeRefreshLayout.setRefreshing(false);
         });
     }
 
     private void showData(){
-        databaseReference.child("user").orderByChild("sKehadiran").equalTo(false).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("user").orderByChild("sVerified").equalTo(true).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                listIzin = new ArrayList<>();
+                listReqIzin = new ArrayList<>();
                 if (snapshot.exists()) {
-                    Toast.makeText(mContext, "Ada", Toast.LENGTH_SHORT).show();
+                    for (DataSnapshot item : snapshot.getChildren()) {
+                        DataReqIzin rekap = item.getValue(DataReqIzin.class);
+                        if (rekap != null) {
+                            if (rekap.getsStatus().equals("user")) {
+                                rekap.setKey(item.getKey());
+                                listReqIzin.add(rekap);
+                            }
+                        }
+                    }
                 } else {
-                    Toast.makeText(mContext, "Kosong!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Kosong", Toast.LENGTH_SHORT).show();
                 }
+                recyclerAdapter = new DataPengajuanAdapter(listReqIzin, getActivity());
+                recyclerView.setAdapter(recyclerAdapter);
             }
 
             @Override

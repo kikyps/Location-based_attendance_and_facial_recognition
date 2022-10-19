@@ -8,8 +8,7 @@ public class DataStore {
     String sNama;
     String sStatus;
 
-    public DataStore(String key, String sNama, String sStatus) {
-        this.key = key;
+    public DataStore(String sNama, String sStatus) {
         this.sNama = sNama;
         this.sStatus = sStatus;
     }

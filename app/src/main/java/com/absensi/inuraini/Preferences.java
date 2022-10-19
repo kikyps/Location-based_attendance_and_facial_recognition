@@ -359,11 +359,13 @@ public class Preferences {
 
     public static Dialog customProgresBar(Context context){
         Dialog dialog = new Dialog(context);
-        dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.setContentView(R.layout.custom_progress_bar);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        if ((context instanceof AppCompatActivity && !((AppCompatActivity) context).isFinishing()) && !dialog.isShowing()) {
+            dialog.show();
+        }
         return dialog;
     }
 

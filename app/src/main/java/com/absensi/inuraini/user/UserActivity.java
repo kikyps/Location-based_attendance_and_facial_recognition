@@ -54,7 +54,7 @@ public class UserActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
     private AppBarConfiguration mAppBarConfiguration;
     NavigationView navigationView;
-    Dialog progressDialog = null;
+    Dialog progressDialog;
     TextView nama;
     LinearLayout infouser;
     Context context = this;
@@ -151,26 +151,8 @@ public class UserActivity extends AppCompatActivity {
     private void hideMyProgresDialog(){
         if(progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
-            progressDialog = null;
+//            progressDialog = null;
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        hideMyProgresDialog();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        hideMyProgresDialog();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        hideMyProgresDialog();
     }
 
     private void readUserData() {

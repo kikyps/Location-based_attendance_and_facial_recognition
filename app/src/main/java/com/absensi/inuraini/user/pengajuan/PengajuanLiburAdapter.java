@@ -33,7 +33,6 @@ import java.util.Map;
 public class PengajuanLiburAdapter extends RecyclerView.Adapter<PengajuanLiburAdapter.MyViewHolder> implements Filterable {
     private final List<DataIzin> AllList;
     public List<DataIzin> FilteredList;
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     Context context;
 
     public PengajuanLiburAdapter(List<DataIzin> mList, Context context) {
