@@ -2,12 +2,13 @@ package com.absensi.inuraini.admin.datapengajuan;
 
 public class DataFilterIzin {
     String key, sKet;
-    boolean sAcc, sKonfirmAdmin;
+    boolean sAcc, sKonfirmAdmin, sKehadiran;
 
-    public DataFilterIzin(String sKet, boolean sAcc, boolean sKonfirmAdmin) {
+    public DataFilterIzin(String sKet, boolean sAcc, boolean sKonfirmAdmin, boolean sKehadiran) {
         this.sKet = sKet;
         this.sAcc = sAcc;
         this.sKonfirmAdmin = sKonfirmAdmin;
+        this.sKehadiran = sKehadiran;
     }
 
     public DataFilterIzin() {
@@ -43,5 +44,13 @@ public class DataFilterIzin {
 
     public void setsKonfirmAdmin(boolean sKonfirmAdmin) {
         this.sKonfirmAdmin = sKonfirmAdmin;
+    }
+
+    public boolean issKehadiran() {
+        return sKehadiran;
+    }
+
+    public void setsKehadiran(boolean sKehadiran) {
+        this.sKehadiran = sKehadiran;
     }
 }

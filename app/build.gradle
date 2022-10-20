@@ -26,8 +26,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 129201022
-        versionName '1.2.9'
+        versionCode 130201022
+        versionName '1.3.0'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -88,17 +88,17 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation platform('com.google.firebase:firebase-bom:30.5.0')
-    implementation 'com.google.firebase:firebase-auth:21.0.8'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
-    implementation 'com.google.firebase:firebase-database:20.0.6'
+    implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment:2.5.2'
     implementation 'androidx.navigation:navigation-ui:2.5.2'
-    implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
     implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.2'
-    implementation 'com.google.firebase:firebase-config:21.1.2'
-    implementation 'com.google.firebase:firebase-storage:20.0.2'
+    implementation 'com.google.firebase:firebase-config:21.2.0'
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

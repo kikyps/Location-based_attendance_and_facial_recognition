@@ -37,6 +37,14 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".admin.datapengajuan.ApprovalActivity"
+            android:exported="false"
+            android:label="Permintaan izin">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".common.AntiMockActivity"
             android:exported="false">
             <meta-data
@@ -129,7 +137,7 @@
         <activity
             android:name=".admin.jabatan.TambahJabatan"
             android:exported="false"
-            android:label="Tambah Jabatan"/>
+            android:label="Tambah Jabatan" />
         <activity
             android:name=".admin.rekap.DetailAbsen"
             android:exported="false" />

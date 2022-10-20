@@ -4,11 +4,15 @@ public class DataReqIzin {
     String key;
     String sNama;
     String sStatus;
+    String sket;
+    String sJabatan;
     boolean sKonfirmAdmin, sKehadiran;
 
-    public DataReqIzin(String sNama, String sStatus, boolean sKonfirmAdmin, boolean sKehadiran) {
+    public DataReqIzin(String sNama, String sStatus, String sket, String sJabatan, boolean sKonfirmAdmin, boolean sKehadiran) {
         this.sNama = sNama;
         this.sStatus = sStatus;
+        this.sket = sket;
+        this.sJabatan = sJabatan;
         this.sKonfirmAdmin = sKonfirmAdmin;
         this.sKehadiran = sKehadiran;
     }
@@ -40,6 +44,14 @@ public class DataReqIzin {
         this.sStatus = sStatus;
     }
 
+    public String getSket() {
+        return sket;
+    }
+
+    public void setSket(String sket) {
+        this.sket = sket;
+    }
+
     public boolean issKonfirmAdmin() {
         return sKonfirmAdmin;
     }
@@ -54,5 +66,13 @@ public class DataReqIzin {
 
     public void setsKehadiran(boolean sKehadiran) {
         this.sKehadiran = sKehadiran;
+    }
+
+    public String getsJabatan() {
+        return sJabatan;
+    }
+
+    public void setsJabatan(String sJabatan) {
+        this.sJabatan = sJabatan;
     }
 }

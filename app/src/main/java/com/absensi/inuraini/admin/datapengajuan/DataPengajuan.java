@@ -2,12 +2,16 @@ package com.absensi.inuraini.admin.datapengajuan;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +38,7 @@ public class DataPengajuan extends Fragment {
     DataPengajuanAdapter recyclerAdapter;
     Context mContext;
     ArrayList<DataReqIzin> listReqIzin = new ArrayList<>();
+    LinearLayout progressLayout;
     RecyclerView recyclerView;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -51,30 +56,50 @@ public class DataPengajuan extends Fragment {
 
     private void layoutBinding(View root) {
         firebaseUser = Preferences.mAuth.getCurrentUser();
+        progressLayout = root.findViewById(R.id.progresLayout);
         recyclerView = root.findViewById(R.id.rv_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayout);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         swipeRefreshLayout = root.findViewById(R.id.swiper);
-        recyclerView.setVisibility(View.GONE);
-        showData();
-        Runnable runnable = () -> recyclerView.setVisibility(View.VISIBLE);
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(runnable, 1300);
+//        progressLayout.setVisibility(View.VISIBLE);
+//        showData();
     }
 
     private void contentLiteners() {
 //        Collections.sort(listIzin, DataIzin.dataIzinComparator);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            recyclerView.setVisibility(View.GONE);
+            progressLayout.setVisibility(View.VISIBLE);
             showData();
-            Runnable runnable = () -> recyclerView.setVisibility(View.VISIBLE);
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(runnable, 1300);
             swipeRefreshLayout.setRefreshing(false);
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressLayout.setVisibility(View.VISIBLE);
+        showData();
+    }
+
+    private void displayProgressBar(boolean visible) {
+        RelativeLayout layout = new RelativeLayout(getActivity());
+        layout.setBackgroundColor(Color.TRANSPARENT);
+        ProgressBar progressBar = new ProgressBar(getActivity(),null,android.R.attr.progressBarStyleLarge);
+        progressBar.setBackgroundColor(Color.TRANSPARENT);
+        progressBar.setIndeterminate(true);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100,100);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+        if (visible) {
+            layout.addView(progressBar, params);
+            getActivity().setContentView(layout);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void showData(){
@@ -97,6 +122,11 @@ public class DataPengajuan extends Fragment {
                 }
                 recyclerAdapter = new DataPengajuanAdapter(listReqIzin, getActivity());
                 recyclerView.setAdapter(recyclerAdapter);
+                Runnable runnable = () -> {
+                    progressLayout.setVisibility(View.GONE);
+                };
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(runnable, 2500);
             }
 
             @Override

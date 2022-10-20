@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.absensi.inuraini.Preferences;
@@ -60,20 +61,26 @@ public class PengajuanLiburAdapter extends RecyclerView.Adapter<PengajuanLiburAd
         if (dataIzin.issKonfirmAdmin()) {
             if (dataIzin.sAcc) {
                 holder.tv_acc.setText("Diizinkan");
+                holder.tv_acc.setTextColor(ContextCompat.getColor(context, R.color.green));
             } else {
                 holder.tv_acc.setText("Ditolak");
+                holder.tv_acc.setTextColor(ContextCompat.getColor(context, R.color.red));
             }
         } else {
             holder.tv_acc.setText("Menunggu Persetujuan");
         }
         holder.card_view.setOnClickListener(view -> {
-            Intent intent = new Intent(context, TambahIzinActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("updateIzin", true);
-            intent.putExtra("setTggl", holder.tv_tggl_izin.getText().toString());
-            intent.putExtra("setKet", holder.tv_keterangan.getText().toString());
-            intent.putExtra("idIzin", dataIzin.getKey());
-            context.startActivities(new Intent[]{intent});
+            if (dataIzin.issKonfirmAdmin()){
+                Toast.makeText(context, "Permintaan libur anda telah di tanggapi oleh admin anda tidak dapat mengedit atau membatalkan permintaan!", Toast.LENGTH_LONG).show();
+            } else {
+                Intent intent = new Intent(context, TambahIzinActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("updateIzin", true);
+                intent.putExtra("setTggl", holder.tv_tggl_izin.getText().toString());
+                intent.putExtra("setKet", holder.tv_keterangan.getText().toString());
+                intent.putExtra("idIzin", dataIzin.getKey());
+                context.startActivities(new Intent[]{intent});
+            }
         });
     }
 

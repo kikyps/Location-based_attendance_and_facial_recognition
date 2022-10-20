@@ -36,7 +36,7 @@ public class TambahIzinActivity extends AppCompatActivity {
     Button ijin;
     String idIzin, tggl, ketUpdate;
     Context context = this;
-    boolean update;
+    boolean update, setHas = false;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -146,53 +146,56 @@ public class TambahIzinActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     boolean kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
-                    if (kehadiran) {
-                        Preferences.showDialog(context,
-                                null,
-                                "Pengajuan Izin",
-                                "Anda sudah absen hari ini, anda tidak dapat izin ketika anda sudah absen atau hadir ke kantor, pilih tanggal lain!",
-                                "oke",
-                                null,
-                                null,
-                                (dialog, which) -> {
-                                    // Positive Button
-                                    dialog.dismiss();
-                                },
-                                (dialog, which) -> {
-                                    // Negative Button
-                                    dialog.cancel();
-                                },
-                                (dialog, which) -> {
-                                    // Neutral Button
-                                    dialog.cancel();
-                                },
-                                true,
-                                false);
-                    } else {
-                        Preferences.showDialog(context,
-                                null,
-                                "Pengajuan Izin",
-                                "Anda sudah izin hari ini, pilih tanggal lain untuk mengajukan izin!",
-                                "oke",
-                                null,
-                                null,
-                                (dialog, which) -> {
-                                    // Positive Button
-                                    dialog.dismiss();
-                                },
-                                (dialog, which) -> {
-                                    // Negative Button
-                                    dialog.cancel();
-                                },
-                                (dialog, which) -> {
-                                    // Neutral Button
-                                    dialog.cancel();
-                                },
-                                true,
-                                false);
+                    if (!setHas) {
+                        if (kehadiran) {
+                            Preferences.showDialog(context,
+                                    null,
+                                    "Pengajuan Izin",
+                                    "Anda sudah absen hari ini, anda tidak dapat izin ketika anda sudah absen atau hadir ke kantor, pilih tanggal lain!",
+                                    "oke",
+                                    null,
+                                    null,
+                                    (dialog, which) -> {
+                                        // Positive Button
+                                        dialog.dismiss();
+                                    },
+                                    (dialog, which) -> {
+                                        // Negative Button
+                                        dialog.cancel();
+                                    },
+                                    (dialog, which) -> {
+                                        // Neutral Button
+                                        dialog.cancel();
+                                    },
+                                    true,
+                                    false);
+                        } else {
+                            Preferences.showDialog(context,
+                                    null,
+                                    "Pengajuan Izin",
+                                    "Anda sudah izin hari ini, pilih tanggal lain untuk mengajukan izin!",
+                                    "oke",
+                                    null,
+                                    null,
+                                    (dialog, which) -> {
+                                        // Positive Button
+                                        dialog.dismiss();
+                                    },
+                                    (dialog, which) -> {
+                                        // Negative Button
+                                        dialog.cancel();
+                                    },
+                                    (dialog, which) -> {
+                                        // Neutral Button
+                                        dialog.cancel();
+                                    },
+                                    true,
+                                    false);
 
+                        }
                     }
                 } else {
+                    setHas = true;
                     Preferences.showDialog(context,
                             null,
                             "Pengajuan Izin",

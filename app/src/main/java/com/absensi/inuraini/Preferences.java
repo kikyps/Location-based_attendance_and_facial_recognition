@@ -98,7 +98,6 @@ public class Preferences {
     public static String myAddress;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int REQUEST_CODE_GPS_PERMISSION = 1;
-    static boolean isMock;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
