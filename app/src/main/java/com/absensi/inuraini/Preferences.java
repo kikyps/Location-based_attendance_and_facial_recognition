@@ -1,6 +1,7 @@
 package com.absensi.inuraini;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
@@ -17,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,6 +39,7 @@ import androidx.core.content.ContextCompat;
 
 import com.absensi.inuraini.admin.location.SettingsLocation;
 import com.absensi.inuraini.camera.SimilarityClassifier;
+import com.absensi.inuraini.common.AntiMockActivity;
 import com.absensi.inuraini.common.EmailVerificationActivity;
 import com.absensi.inuraini.user.absen.AbsenFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -68,6 +71,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -97,7 +101,6 @@ public class Preferences {
     public static double longitude;
     public static String myAddress;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
-    public static final int REQUEST_CODE_GPS_PERMISSION = 1;
 
     private static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -447,19 +450,56 @@ public class Preferences {
                     mLastClickTime = SystemClock.elapsedRealtime();
 
                     if (start) {
-                        showDialog(context, null, "Pembaruan Aplikasi", deskripsi, "Update", null, "Ingat nanti",
-                                (dialog, which) -> {
-                                    start = false;
-                                    if (!isPermissionGranted(context)) {
-                                        takePermissions(context, activity);
-                                    } else {
-                                        downloadUpdate(context);
-                                    }
-                                },
-                                (dialog, which) -> dialog.cancel(),
-                                (dialog, which) -> setUpdateDialog(context, true),
-                                true,
-                                true);
+                        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                                .setMinimumFetchIntervalInSeconds(5)
+                                .build();
+                        remoteConfig.setConfigSettingsAsync(configSettings);
+                        remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                final boolean dialog_update_cancelable = remoteConfig.getBoolean("dialog_update_cancelable");
+                                if (dialog_update_cancelable) {
+                                    showDialog(context,
+                                            null,
+                                            "Pembaruan Aplikasi",
+                                            deskripsi,
+                                            "Update",
+                                            null,
+                                            "Ingat nanti",
+                                            (dialog, which) -> {
+                                                start = false;
+                                                if (!isPermissionGranted(context)) {
+                                                    takePermissions(context, activity);
+                                                } else {
+                                                    downloadUpdate(context);
+                                                }
+                                            },
+                                            (dialog, which) -> dialog.cancel(),
+                                            (dialog, which) -> setUpdateDialog(context, true),
+                                            true,
+                                            true);
+                                } else {
+                                    showDialog(context,
+                                            null,
+                                            "Pembaruan Aplikasi",
+                                            deskripsi,
+                                            "Update",
+                                            null,
+                                            null,
+                                            (dialog, which) -> {
+                                                start = false;
+                                                if (!isPermissionGranted(context)) {
+                                                    takePermissions(context, activity);
+                                                } else {
+                                                    downloadUpdate(context);
+                                                }
+                                            },
+                                            (dialog, which) -> dialog.cancel(),
+                                            (dialog, which) -> setUpdateDialog(context, true),
+                                            false,
+                                            true);
+                                }
+                            }
+                        });
                     }
                 }
             }
@@ -495,16 +535,47 @@ public class Preferences {
 
                                         myAddress = getAddressFromLocation(context, latitude, longitude);
 
-                                        if (AbsenFragment.doAbsen) {
-                                            AbsenFragment.checkAbsenKantor();
-                                        } else if (AbsenFragment.doAbsenKeluar){
-                                            AbsenFragment.checkAbsenKeluar();
-                                        } else if (SettingsLocation.setloc){
-                                            SettingsLocation.updateLatLong();
+                                        Location location = locationResult.getLastLocation();
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                            if (location.isMock()){
+                                                Intent intent = new Intent(context, AntiMockActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                context.startActivity(intent);
+                                            } else {
+                                                if (AbsenFragment.doAbsen) {
+                                                    AbsenFragment.checkAbsenKantor();
+                                                } else if (AbsenFragment.doAbsenKeluar){
+                                                    AbsenFragment.checkAbsenKeluar();
+                                                } else if (SettingsLocation.setloc){
+                                                    SettingsLocation.updateLatLong();
+                                                }
+                                                AbsenFragment.doAbsen = false;
+                                                AbsenFragment.doAbsenKeluar = false;
+                                                SettingsLocation.setloc = false;
+                                            }
+                                        } else {
+                                            if (location.isFromMockProvider()){
+                                                Intent intent = new Intent(context, AntiMockActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                context.startActivity(intent);
+                                            } else {
+                                                if (AbsenFragment.doAbsen) {
+                                                    AbsenFragment.checkAbsenKantor();
+                                                } else if (AbsenFragment.doAbsenKeluar){
+                                                    AbsenFragment.checkAbsenKeluar();
+                                                } else if (SettingsLocation.setloc){
+                                                    SettingsLocation.updateLatLong();
+                                                }
+                                                AbsenFragment.doAbsen = false;
+                                                AbsenFragment.doAbsenKeluar = false;
+                                                SettingsLocation.setloc = false;
+                                            }
                                         }
-                                        AbsenFragment.doAbsen = false;
-                                        AbsenFragment.doAbsenKeluar = false;
-                                        SettingsLocation.setloc = false;
                                     }
                                 }
                             }, Looper.getMainLooper());
@@ -533,10 +604,25 @@ public class Preferences {
 
                                     myAddress = getAddressFromLocation(context, latitude, longitude);
 
-                                    if (AbsenFragment.atOffice) {
-                                        AbsenFragment.checkAbsenKantor();
-                                    } else if (SettingsLocation.setloc){
-                                        SettingsLocation.updateLatLong();
+                                    Location location = locationResult.getLastLocation();
+
+                                    if (location.isFromMockProvider()){
+                                        Intent intent = new Intent(context, AntiMockActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        context.startActivity(intent);
+                                    } else {
+                                        if (AbsenFragment.doAbsen) {
+                                            AbsenFragment.checkAbsenKantor();
+                                        } else if (AbsenFragment.doAbsenKeluar){
+                                            AbsenFragment.checkAbsenKeluar();
+                                        } else if (SettingsLocation.setloc){
+                                            SettingsLocation.updateLatLong();
+                                        }
+                                        AbsenFragment.doAbsen = false;
+                                        AbsenFragment.doAbsenKeluar = false;
+                                        SettingsLocation.setloc = false;
                                     }
                                 }
                             }
@@ -575,6 +661,7 @@ public class Preferences {
         }
         return straddress;
     }
+
 
     public static void turnOnGPS(Context context, Activity activity) {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -676,37 +763,41 @@ public class Preferences {
         return isMockLocation;
     }
 
-    public static boolean areThereMockPermissionApps(Context context) {
-        int count = 0;
-        try {
-            PackageManager pm = context.getPackageManager();
-            List<ApplicationInfo> packages =
-                    pm.getInstalledApplications(PackageManager.GET_META_DATA);
+    public static boolean areThereMockPermissionApps(Context context, boolean enable) {
+        if (enable) {
+            int count = 0;
+            try {
+                PackageManager pm = context.getPackageManager();
+                List<ApplicationInfo> packages =
+                        pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
-            for (ApplicationInfo applicationInfo : packages) {
-                try {
-                    PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
-                            PackageManager.GET_PERMISSIONS);
-                    // Get Permissions
-                    String[] requestedPermissions = packageInfo.requestedPermissions;
+                for (ApplicationInfo applicationInfo : packages) {
+                    try {
+                        PackageInfo packageInfo = pm.getPackageInfo(applicationInfo.packageName,
+                                PackageManager.GET_PERMISSIONS);
+                        // Get Permissions
+                        String[] requestedPermissions = packageInfo.requestedPermissions;
 
-                    if (requestedPermissions != null) {
-                        for (int i = 0; i < requestedPermissions.length; i++) {
-                            if (requestedPermissions[i]
-                                    .equals("android.permission.ACCESS_MOCK_LOCATION")
-                                    && !applicationInfo.packageName.equals(context.getPackageName())) {
-                                count++;
+                        if (requestedPermissions != null) {
+                            for (int i = 0; i < requestedPermissions.length; i++) {
+                                if (requestedPermissions[i]
+                                        .equals("android.permission.ACCESS_MOCK_LOCATION")
+                                        && !applicationInfo.packageName.equals(context.getPackageName())) {
+                                    count++;
+                                }
                             }
                         }
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
+                    } catch (PackageManager.NameNotFoundException e) {
 //                    Log.e("MockDeductionAgilanbu", "Got exception --- " + e.getMessage());
+                    }
                 }
+            } catch (Exception w) {
+                w.printStackTrace();
             }
-        } catch (Exception w) {
-            w.printStackTrace();
+            return count > 0;
+        } else {
+            return false;
         }
-        return count > 0;
     }
 }
 

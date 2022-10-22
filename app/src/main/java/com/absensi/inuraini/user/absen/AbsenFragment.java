@@ -38,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -67,6 +68,7 @@ public class AbsenFragment extends Fragment {
 
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+    FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
     Object[] myLatLong = new Object[3];
 
@@ -282,6 +284,7 @@ public class AbsenFragment extends Fragment {
                 currentcal.setTime(currenttime);
 
                 Date x = currentcal.getTime();
+
                 if (x.after(absenMasuk.getTime()) && x.before(absenTelat.getTime())) {
                     //checkes whether the current time is between 14:49:00 and 20:11:13.
                     absenNow.setVisibility(View.VISIBLE);

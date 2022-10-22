@@ -45,6 +45,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.scottyab.rootbeer.RootBeer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -64,8 +67,7 @@ public class UserActivity extends AppCompatActivity {
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
     DateFormat jamNow = new SimpleDateFormat("HH:mm");
     DateFormat jamSec = new SimpleDateFormat("HH:mm:ss");
-    private final Handler handler = new Handler();
-    private Runnable runnable;
+    FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,20 +162,33 @@ public class UserActivity extends AppCompatActivity {
             Preferences.dialogNetwork(context);
         } else {
             showMyProgresDialog();
-            if (Preferences.areThereMockPermissionApps(context)) {
-                startActivity(new Intent(context, AntiMockActivity.class));
-                finish();
-            } else {
-                String curentSec = jamSec.format(new Date().getTime());
-                String close = curentSec.substring(6,8);
-
-                if (close.equals("58") || close.equals("59")) {
-                    Runnable runnable = this::getData;
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.postDelayed(runnable, 2000);
+            RootBeer rootBeer = new RootBeer(context);
+            if (rootBeer.isRooted()){
+                if (Preferences.areThereMockPermissionApps(context, true)) {
+                    startActivity(new Intent(context, AntiMockActivity.class));
+                    finish();
                 } else {
-                    getData();
+                    String curentSec = jamSec.format(new Date().getTime());
+                    String close = curentSec.substring(6, 8);
+
+                    if (close.equals("58") || close.equals("59")) {
+                        Runnable runnable = this::getData;
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(runnable, 2000);
+                    } else {
+                        getData();
+                    }
                 }
+            }
+            String curentSec = jamSec.format(new Date().getTime());
+            String close = curentSec.substring(6, 8);
+
+            if (close.equals("58") || close.equals("59")) {
+                Runnable runnable = this::getData;
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(runnable, 2000);
+            } else {
+                getData();
             }
         }
     }
