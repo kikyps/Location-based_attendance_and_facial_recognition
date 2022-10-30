@@ -237,7 +237,7 @@ public class TambahIzinActivity extends AppCompatActivity {
         boolean acc = false;
         boolean konfirmAdmin = false;
 
-        AbsenData absenData = new AbsenData("", "", ketizin, "", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
+        AbsenData absenData = new AbsenData("", "", ketizin, "", "", "", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
         databaseReference.child("user").child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData)
                 .addOnCompleteListener(task -> {
                     Toast.makeText(context, "Pengajuan izin berhasil di tambahkan", Toast.LENGTH_SHORT).show();

@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -26,8 +27,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 135221022
-        versionName '1.3.5'
+        versionCode 138271022
+        versionName '1.3.8'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -82,20 +83,21 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
-    implementation platform('com.google.firebase:firebase-bom:31.0.0')
+    implementation platform('com.google.firebase:firebase-bom:31.0.1')
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-fragment:2.5.2'
-    implementation 'androidx.navigation:navigation-ui:2.5.2'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.0'
+    implementation 'com.google.android.libraries.places:places:2.6.0'
     implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.2'
     implementation 'com.google.firebase:firebase-config:21.2.0'
     implementation 'com.google.firebase:firebase-storage:20.1.0'
@@ -116,6 +118,12 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'com.airbnb.android:lottie:5.2.0'
     implementation 'com.scottyab:rootbeer-lib:0.1.0'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
+    implementation 'com.h6ah4i.android.materialshadowninepatch:materialshadowninepatch:1.0.0'
+//    implementation 'com.github.billthefarmer:CustomCalendarView:v1.05'
+//    implementation 'com.github.MOLO17:CustomizableCalendar:v0.1.4'
+//    implementation 'com.applandeo:material-calendar-view:1.9.0-rc03'
 
     // CameraX core library using the camera2 implementation
     def camerax_version = "1.2.0-beta02"

@@ -4,9 +4,11 @@
     <color name="purple_500">@color/colorPrimary</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="teal_700">#1D000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="semi_transparent">#88FFFFFF</color>
+    <color name="my_location">#4CAF50</color>
     <color name="bluesea">#0FFFF7</color>
     <color name="red">#F44336</color>
     <color name="colorPrimary">#04223A</color>

@@ -32,7 +32,6 @@ import com.absensi.inuraini.GetServerTime;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
-import com.absensi.inuraini.common.AntiMockActivity;
 import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
@@ -46,12 +45,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.scottyab.rootbeer.RootBeer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
@@ -153,8 +152,8 @@ public class UserActivity extends AppCompatActivity {
     private void hideMyProgresDialog(){
         if(progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
-//            progressDialog = null;
         }
+        progressDialog = null;
     }
 
     private void readUserData() {
@@ -162,24 +161,6 @@ public class UserActivity extends AppCompatActivity {
             Preferences.dialogNetwork(context);
         } else {
             showMyProgresDialog();
-            RootBeer rootBeer = new RootBeer(context);
-            if (rootBeer.isRooted()){
-                if (Preferences.areThereMockPermissionApps(context, true)) {
-                    startActivity(new Intent(context, AntiMockActivity.class));
-                    finish();
-                } else {
-                    String curentSec = jamSec.format(new Date().getTime());
-                    String close = curentSec.substring(6, 8);
-
-                    if (close.equals("58") || close.equals("59")) {
-                        Runnable runnable = this::getData;
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.postDelayed(runnable, 2000);
-                    } else {
-                        getData();
-                    }
-                }
-            }
             String curentSec = jamSec.format(new Date().getTime());
             String close = curentSec.substring(6, 8);
 
@@ -188,7 +169,9 @@ public class UserActivity extends AppCompatActivity {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(runnable, 2000);
             } else {
-                getData();
+                Runnable runnable = this::getData;
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(runnable, 1000);
             }
         }
     }
@@ -205,6 +188,7 @@ public class UserActivity extends AppCompatActivity {
                     String namaku = snapshot.child("sNama").getValue(String.class);
                     String getstatus = snapshot.child("sStatus").getValue(String.class);
                     boolean wajahid = snapshot.hasChild("faceID");
+                    boolean trial = snapshot.hasChild("sTrial");
 
                     nama.setText(namaku);
 
@@ -254,7 +238,13 @@ public class UserActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (Preferences.getDataStatus(context).equals("admin")) {
+                    if (Preferences.getDataStatus(context).equals(Preferences.retriveSec("yVGdzFWb"))) {
+                        Menu menu = navigationView.getMenu();
+                        MenuItem nav_admin = menu.findItem(R.id.admin_akses);
+                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
+                        nav_user.setVisible(false);
+                        nav_admin.setVisible(true);
+                    } else if (Preferences.getDataStatus(context).equals("admin")){
                         Menu menu = navigationView.getMenu();
                         MenuItem nav_admin = menu.findItem(R.id.admin_akses);
                         MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
@@ -266,6 +256,12 @@ public class UserActivity extends AppCompatActivity {
                         MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
                         nav_user.setVisible(true);
                         nav_dashboard.setVisible(false);
+                    }
+
+                    if (!trial){
+                        Map<String, Object> postValues = new HashMap<>();
+                        postValues.put("sTrial", 0);
+                        databaseReference.child(firebaseUser.getUid()).updateChildren(postValues);
                     }
 
                 } else {
@@ -302,7 +298,7 @@ public class UserActivity extends AppCompatActivity {
         }
 
         if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (Preferences.isGPSEnabled(context)){
+            if (resultCode == RESULT_OK){
                 Preferences.getMyLocation(context, UserActivity.this);
             } else {
                 AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
@@ -326,14 +322,11 @@ public class UserActivity extends AppCompatActivity {
         }
 
         if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (grantResults.length > 0) {
-                boolean location = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                if (location) {
-                    Preferences.getMyLocation(context, this);
-                } else {
-                    AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(context, "Izinkan akses lokasi untuk absen", Toast.LENGTH_SHORT).show();
-                }
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Preferences.getMyLocation(context, this);
+            } else {
+                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(context, "Izinkan akses lokasi untuk absen", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.absensi.inuraini;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
@@ -37,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.absensi.inuraini.admin.location.maps.MapsActivity;
 import com.absensi.inuraini.admin.location.SettingsLocation;
 import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.AntiMockActivity;
@@ -81,7 +81,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Preferences {
-    public static int currentVersionCode;
     public static FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
     public static ProgressDialog progressDialog;
     public static StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -90,8 +89,10 @@ public class Preferences {
     public static GoogleSignInClient gsc;
     public static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     public static final int RC_SIGN_IN = 1001;
-    private static final String FACE_ID = "face_id",
-            DATA_STATUS = "status", DATA_DIALOG = "dialog_show";
+    private static final String
+            FACE_ID = "face_id",
+            DATA_STATUS = "status",
+            DATA_DIALOG = "dialog_show";
     public static final int REQUEST_PERMISSION_CODE = 111;
     private static long mLastClickTime = 0;
     public static AlertDialog myAlertDialog;
@@ -338,7 +339,6 @@ public class Preferences {
     }
 
     public static void checkUpdate(Context context, Activity activity){
-        currentVersionCode = getCurrentVersionCode(context);
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setMinimumFetchIntervalInSeconds(5)
                 .build();
@@ -551,10 +551,15 @@ public class Preferences {
                                                     AbsenFragment.checkAbsenKeluar();
                                                 } else if (SettingsLocation.setloc){
                                                     SettingsLocation.updateLatLong();
+                                                } else if (SettingsLocation.getMaps){
+                                                    Intent intent = new Intent(context, MapsActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    context.startActivity(intent);
                                                 }
                                                 AbsenFragment.doAbsen = false;
                                                 AbsenFragment.doAbsenKeluar = false;
                                                 SettingsLocation.setloc = false;
+                                                SettingsLocation.getMaps = false;
                                             }
                                         } else {
                                             if (location.isFromMockProvider()){
@@ -570,10 +575,14 @@ public class Preferences {
                                                     AbsenFragment.checkAbsenKeluar();
                                                 } else if (SettingsLocation.setloc){
                                                     SettingsLocation.updateLatLong();
+                                                } else if (SettingsLocation.getMaps){
+                                                    Intent intent = new Intent(context, MapsActivity.class);
+                                                    context.startActivity(intent);
                                                 }
                                                 AbsenFragment.doAbsen = false;
                                                 AbsenFragment.doAbsenKeluar = false;
                                                 SettingsLocation.setloc = false;
+                                                SettingsLocation.getMaps = false;
                                             }
                                         }
                                     }
@@ -761,6 +770,12 @@ public class Preferences {
             return isMockLocation;
         }
         return isMockLocation;
+    }
+
+    public static long getApkSize(Context context, String packageName)
+            throws PackageManager.NameNotFoundException {
+        return new File(context.getPackageManager().getApplicationInfo(
+                packageName, 0).publicSourceDir).length();
     }
 
     public static boolean areThereMockPermissionApps(Context context, boolean enable) {

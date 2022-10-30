@@ -3,7 +3,6 @@ package com.absensi.inuraini.admin.location;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,9 +17,9 @@ import androidx.fragment.app.Fragment;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,8 +38,10 @@ public class SettingsLocation extends Fragment {
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
-    public static boolean setloc;
+    public static boolean setloc, getMaps;
+    FirebaseUser firebaseUser;
     static DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    int trialCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +54,7 @@ public class SettingsLocation extends Fragment {
     }
 
     private void layoutBinding(View root) {
+        firebaseUser = Preferences.mAuth.getCurrentUser();
         mContext = root.getContext();
         address = root.findViewById(R.id.address_input);
         distance = root.findViewById(R.id.distance);
@@ -69,10 +71,59 @@ public class SettingsLocation extends Fragment {
             setLatLong();
         });
 
+        changeLocations.setOnLongClickListener(v -> {
+            if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))){
+                getMaps = true;
+                Preferences.getMyLocation(mContext, getActivity());
+            } else {
+                if (trialCount < 3) {
+                    Map<String, Object> postValues = new HashMap<>();
+                    postValues.put("sTrial", trialCount + 1);
+                    databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
+                    getMaps = true;
+                    Preferences.getMyLocation(mContext, getActivity());
+                    if (trialCount == 0){
+                        Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 2x Lagi", Toast.LENGTH_LONG).show();
+                    } else if (trialCount == 1) {
+                        Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 1x Lagi", Toast.LENGTH_LONG).show();
+                    } else if (trialCount == 2) {
+                        Toast.makeText(mContext, "Ini adalah penggunaan terakhir anda untuk dapat menggunakan fitur maps", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Preferences.showDialog(mContext,
+                            null,
+                            "Trial limit",
+                            "Masa penggunaan trial anda telah mencapai batas anda tidak dapat menggunakan fitur google maps!, untuk dapat menggunakan fitur ini kembali anda dapat menambah billing pada (Google Maps Api)",
+                            "Mengerti",
+                            null,
+                            null,
+                            (dialog, which) -> dialog.dismiss(),
+                            (dialog, which) -> dialog.dismiss(),
+                            (dialog, which) -> dialog.dismiss(),
+                            false,
+                            true);
+                }
+            }
+            return true;
+        });
+
         saveDistance.setOnClickListener(v -> updateJarak());
     }
 
     private void showAddressAndDistance(){
+        databaseReference.child("user").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                trialCount = snapshot.child("sTrial").getValue(int.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
         databaseReference.child("data").child("latlong").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

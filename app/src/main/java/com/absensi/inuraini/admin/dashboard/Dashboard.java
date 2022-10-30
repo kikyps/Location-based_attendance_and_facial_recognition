@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.absensi.inuraini.R;
+import com.absensi.inuraini.admin.datapegawai.StoreDataPegawai;
 import com.absensi.inuraini.admin.datapengajuan.DataPengajuanAdapter;
 import com.absensi.inuraini.admin.datapengajuan.DataReqIzin;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +39,7 @@ public class Dashboard extends Fragment {
     Context mContext;
     RecyclerView recyclerView;
     ArrayList<DataReqIzin> listReqIzin = new ArrayList<>();
+    ArrayList<StoreDataPegawai> listPegawai = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -86,9 +88,19 @@ public class Dashboard extends Fragment {
         databaseReference.child("user").orderByChild("sVerified").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listPegawai = new ArrayList<>();
                 if (snapshot.exists()) {
+                    for (DataSnapshot item : snapshot.getChildren()) {
+                        StoreDataPegawai pegawai = item.getValue(StoreDataPegawai.class);
+                        if (pegawai != null) {
+                            if (pegawai.getsStatus().equals("user") || pegawai.getsStatus().equals("admin")) {
+                                pegawai.setKey(item.getKey());
+                                listPegawai.add(pegawai);
+                            }
+                        }
+                    }
                     int count = (int) snapshot.getChildrenCount();
-                    dataPegawaiCount.setText(String.valueOf(count));
+                    dataPegawaiCount.setText(String.valueOf(listPegawai.size()));
                 } else {
                     dataPegawaiCount.setText("0");
                 }

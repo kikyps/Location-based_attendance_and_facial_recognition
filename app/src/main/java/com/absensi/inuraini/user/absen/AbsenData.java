@@ -1,8 +1,26 @@
 package com.absensi.inuraini.user.absen;
 
 public class AbsenData {
-    String key, sJamMasuk, sJamKeluar, sKet, sLokasi;
+    String key, sJamMasuk, sJamKeluar, sKet, sLatitude, sLongitude, sLokasi;
     boolean sKantor, sKehadiran, sTerlambat, sLembur, sAcc, sKonfirmAdmin;
+
+    public AbsenData(String sJamMasuk, String sJamKeluar, String sKet, String sLatitude, String sLongitude, String sLokasi, boolean sKantor, boolean sKehadiran, boolean sTerlambat, boolean sLembur, boolean sAcc, boolean sKonfirmAdmin) {
+        this.sJamMasuk = sJamMasuk;
+        this.sJamKeluar = sJamKeluar;
+        this.sKet = sKet;
+        this.sLatitude = sLatitude;
+        this.sLongitude = sLongitude;
+        this.sLokasi = sLokasi;
+        this.sKantor = sKantor;
+        this.sKehadiran = sKehadiran;
+        this.sTerlambat = sTerlambat;
+        this.sLembur = sLembur;
+        this.sAcc = sAcc;
+        this.sKonfirmAdmin = sKonfirmAdmin;
+    }
+
+    public AbsenData() {
+    }
 
     public String getKey() {
         return key;
@@ -92,19 +110,19 @@ public class AbsenData {
         this.sKonfirmAdmin = sKonfirmAdmin;
     }
 
-    public AbsenData(String sJamMasuk, String sJamKeluar, String sKet, String sLokasi, boolean sKantor, boolean sKehadiran, boolean sTerlambat, boolean sLembur, boolean sAcc, boolean sKonfirmAdmin) {
-        this.sJamMasuk = sJamMasuk;
-        this.sJamKeluar = sJamKeluar;
-        this.sKet = sKet;
-        this.sLokasi = sLokasi;
-        this.sKantor = sKantor;
-        this.sKehadiran = sKehadiran;
-        this.sTerlambat = sTerlambat;
-        this.sLembur = sLembur;
-        this.sAcc = sAcc;
-        this.sKonfirmAdmin = sKonfirmAdmin;
+    public String getsLatitude() {
+        return sLatitude;
     }
 
-    public AbsenData() {
+    public void setsLatitude(String sLatitude) {
+        this.sLatitude = sLatitude;
+    }
+
+    public String getsLongitude() {
+        return sLongitude;
+    }
+
+    public void setsLongitude(String sLongitude) {
+        this.sLongitude = sLongitude;
     }
 }

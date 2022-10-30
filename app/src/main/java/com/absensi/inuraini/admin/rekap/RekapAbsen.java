@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class RekapAbsen extends Fragment {
@@ -82,6 +81,7 @@ public class RekapAbsen extends Fragment {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayout = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(mLayout);
+//        recyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         filterData = root.findViewById(R.id.filter_data);
         tanggal = root.findViewById(R.id.tanggal);
@@ -226,10 +226,7 @@ public class RekapAbsen extends Fragment {
                                 listUser.add(rekap);
                             }
                         }
-                        Preferences.progressDialog.dismiss();
                     }
-                } else {
-                    Preferences.progressDialog.dismiss();
                 }
                 absenRecyclerAdapter = new AbsenRecyclerAdapter(listUser, getActivity());
                 recyclerView.setAdapter(absenRecyclerAdapter);

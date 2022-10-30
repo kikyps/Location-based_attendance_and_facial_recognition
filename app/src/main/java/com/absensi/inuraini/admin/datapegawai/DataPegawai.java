@@ -1,9 +1,10 @@
 package com.absensi.inuraini.admin.datapegawai;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,11 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -74,13 +70,12 @@ public class DataPegawai extends Fragment {
                     for (DataSnapshot item : snapshot.getChildren()) {
                         StoreDataPegawai pegawai = item.getValue(StoreDataPegawai.class);
                         if (pegawai != null) {
-                            pegawai.setKey(item.getKey());
+                            if (pegawai.getsStatus().equals("user") || pegawai.getsStatus().equals("admin")) {
+                                pegawai.setKey(item.getKey());
+                                listPegawai.add(pegawai);
+                            }
                         }
-                        listPegawai.add(pegawai);
-                        Preferences.progressDialog.dismiss();
                     }
-                } else {
-                    Preferences.progressDialog.dismiss();
                 }
                 recyclerAdapter = new PegawaiRecyclerAdapter(listPegawai, getActivity());
                 recyclerView.setAdapter(recyclerAdapter);

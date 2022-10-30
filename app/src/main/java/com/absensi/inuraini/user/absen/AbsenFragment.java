@@ -529,12 +529,6 @@ public class AbsenFragment extends Fragment {
                     if (kehadiran) {
                         kehadiranTxt.setText("Hadir");
                         absenMasuk.setText(jamMasuk);
-                        if (jamKeluar.isEmpty()){
-                            absenKeluar.setText("-");
-                        } else {
-                            absenKeluar.setText(jamKeluar);
-                        }
-
                         if (terlambatMasuk){
                             wktAbsenId.setText("Terlambat absen");
                         } else {
@@ -569,15 +563,23 @@ public class AbsenFragment extends Fragment {
     }
 
     private void validInKantor() {
-        done.setVisibility(View.VISIBLE);
-        Drawable drawable = done.getDrawable();
+        if (jamKeluar.isEmpty()){
+            absenKeluar.setText("-");
+            done.setVisibility(View.VISIBLE);
+            done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_access_time_24));
+        } else {
+            absenKeluar.setText(jamKeluar);
+            done.setVisibility(View.VISIBLE);
+            done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.avd_done));
+            Drawable drawable = done.getDrawable();
 
-        if (drawable instanceof AnimatedVectorDrawableCompat) {
-            avd = (AnimatedVectorDrawableCompat) drawable;
-            avd.start();
-        } else if (drawable instanceof AnimatedVectorDrawable) {
-            avd2 = (AnimatedVectorDrawable) drawable;
-            avd2.start();
+            if (drawable instanceof AnimatedVectorDrawableCompat) {
+                avd = (AnimatedVectorDrawableCompat) drawable;
+                avd.start();
+            } else if (drawable instanceof AnimatedVectorDrawable) {
+                avd2 = (AnimatedVectorDrawable) drawable;
+                avd2.start();
+            }
         }
 
         inhere.setText("Absen di kantor");
@@ -590,15 +592,23 @@ public class AbsenFragment extends Fragment {
     }
 
     private void validLuarKantor() {
-        done.setVisibility(View.VISIBLE);
-        Drawable drawable = done.getDrawable();
+        if (jamKeluar.isEmpty()){
+            absenKeluar.setText("-");
+            done.setVisibility(View.VISIBLE);
+            done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_access_time_24));
+        } else {
+            absenKeluar.setText(jamKeluar);
+            done.setVisibility(View.VISIBLE);
+            done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.avd_done));
+            Drawable drawable = done.getDrawable();
 
-        if (drawable instanceof AnimatedVectorDrawableCompat) {
-            avd = (AnimatedVectorDrawableCompat) drawable;
-            avd.start();
-        } else if (drawable instanceof AnimatedVectorDrawable) {
-            avd2 = (AnimatedVectorDrawable) drawable;
-            avd2.start();
+            if (drawable instanceof AnimatedVectorDrawableCompat) {
+                avd = (AnimatedVectorDrawableCompat) drawable;
+                avd.start();
+            } else if (drawable instanceof AnimatedVectorDrawable) {
+                avd2 = (AnimatedVectorDrawable) drawable;
+                avd2.start();
+            }
         }
 
         inhere.setText("Absen di luar kantor");

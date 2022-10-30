@@ -1,5 +1,6 @@
 package com.absensi.inuraini.common;
 
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
+import com.absensi.inuraini.TamperingProtection;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
@@ -30,7 +32,6 @@ public class CollectorActivity extends AppCompatActivity {
     TextView error;
     Button restart, update;
     boolean doubleBackToExitPressedOnce;
-    int currentVersionCode;
     FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
     Context context = this;
 
@@ -59,7 +60,7 @@ public class CollectorActivity extends AppCompatActivity {
         restart.setOnTouchListener(new MyLongClickListener(6000) {
             @Override
             public void onLongClick() {
-                Preferences.signOut(context, true, LoginActivity.class);
+                Preferences.signOut(context, true, SplashScreenActivity.class);
                 finish();
             }
         });
@@ -74,7 +75,6 @@ public class CollectorActivity extends AppCompatActivity {
     }
 
     private void checkUpdate(Context context){
-        currentVersionCode = Preferences.getCurrentVersionCode(context);
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setMinimumFetchIntervalInSeconds(5)
                 .build();
@@ -107,8 +107,16 @@ public class CollectorActivity extends AppCompatActivity {
     }
 
     private void copyErrorLog() {
-        ClipboardManager cm = (ClipboardManager)this.getSystemService(Context.CLIPBOARD_SERVICE);
-        cm.setText(error.getText().toString());
+        ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(null, error.getText().toString());
+        if (cm == null) return;
+        cm.setPrimaryClip(clip);
+//        try {
+//            CharSequence textToPaste = cm.getPrimaryClip().getItemAt(0).getText();
+//            Toast.makeText(context, textToPaste, Toast.LENGTH_SHORT).show();
+//        } catch (Exception e) {
+//            return;
+//        }
         Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
     }
 
