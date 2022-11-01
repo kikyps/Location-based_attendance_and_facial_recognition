@@ -72,6 +72,7 @@ public class SettingsLocation extends Fragment {
         });
 
         changeLocations.setOnLongClickListener(v -> {
+
             if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))){
                 getMaps = true;
                 Preferences.getMyLocation(mContext, getActivity());
@@ -171,18 +172,33 @@ public class SettingsLocation extends Fragment {
     }
 
     private void setLatLong(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Konfirmasi")
-                .setMessage("Set titik lokasi anda saat ini sebagai lokasi absensi?")
-                .setPositiveButton("ya", (dialogInterface, i) -> {
-                    setloc = true;
-                    Preferences.getMyLocation(mContext, getActivity());
-                })
-                .setNegativeButton("cancel", (dialogInterface, i) -> {
-                    dialogInterface.cancel();
-                });
-        builder.setCancelable(true);
-        builder.show();
+        String show = null;
+
+        if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))){
+            show = "Map";
+        } else if (trialCount < 3) {
+            show = "Map";
+        }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("Konfirmasi")
+                    .setMessage("Set titik lokasi anda saat ini sebagai lokasi absensi?")
+                    .setPositiveButton("ya", (dialogInterface, i) -> {
+                        setloc = true;
+                        Preferences.getMyLocation(mContext, getActivity());
+                    })
+                    .setNegativeButton("cancel", (dialogInterface, i) -> {
+                        dialogInterface.cancel();
+                    })
+                    .setNeutralButton(show, (dialog, which) -> {
+                        Map<String, Object> postValues = new HashMap<>();
+                        postValues.put("sTrial", trialCount + 1);
+                        databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
+                        getMaps = true;
+                        Preferences.getMyLocation(mContext, getActivity());
+                    });
+            builder.setCancelable(true);
+            builder.show();
     }
 
     public static void updateLatLong(){

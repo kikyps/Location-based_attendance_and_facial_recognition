@@ -30,6 +30,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
+import com.absensi.inuraini.admin.location.SpotTestActivity;
 import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.common.LoginActivity;
 import com.google.firebase.auth.FirebaseUser;
@@ -159,11 +160,11 @@ public class AbsenFragment extends Fragment {
             setTanggal();
         });
 
-        prev.setOnTouchListener(new MyLongClickListener(4000) {
+        prev.setOnTouchListener(new MyLongClickListener(2000) {
             @Override
             public void onLongClick() {
 //                throw new RuntimeException("Boom!");
-                Preferences.doRestart(mContext);
+                startActivity(new Intent(mContext, SpotTestActivity.class));
             }
         });
 

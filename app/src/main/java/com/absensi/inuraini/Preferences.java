@@ -92,7 +92,8 @@ public class Preferences {
     private static final String
             FACE_ID = "face_id",
             DATA_STATUS = "status",
-            DATA_DIALOG = "dialog_show";
+            DATA_DIALOG = "dialog_show",
+            MAPS_GUIDE = "maps_guide";
     public static final int REQUEST_PERMISSION_CODE = 111;
     private static long mLastClickTime = 0;
     public static AlertDialog myAlertDialog;
@@ -138,11 +139,22 @@ public class Preferences {
         return getSharedPreferences(context).getBoolean(DATA_DIALOG,false);
     }
 
+    public static void setMapsGuide(Context context, boolean data){
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putBoolean(MAPS_GUIDE, data);
+        editor.apply();
+    }
+
+    public static boolean getMapsGuide(Context context){
+        return getSharedPreferences(context).getBoolean(MAPS_GUIDE,false);
+    }
+
     public static void clearData(Context context){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.remove(FACE_ID);
         editor.remove(DATA_STATUS);
         editor.remove(DATA_DIALOG);
+        editor.remove(MAPS_GUIDE);
         editor.apply();
     }
 

@@ -156,6 +156,18 @@ public class UserActivity extends AppCompatActivity {
         progressDialog = null;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hideMyProgresDialog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        hideMyProgresDialog();
+    }
+
     private void readUserData() {
         if (!Preferences.isConnected(context)) {
             Preferences.dialogNetwork(context);

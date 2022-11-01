@@ -20,7 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
-import com.absensi.inuraini.TamperingProtection;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 

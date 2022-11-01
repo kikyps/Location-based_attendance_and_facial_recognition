@@ -361,6 +361,23 @@ public class DetailAbsen extends AppCompatActivity {
                 intent.putExtra("getNama", namaKar.getText().toString());
                 intent.putExtra("getJabatan", jabatan);
                 startActivity(intent);
+                return true;
+            case R.id.print_absen:
+                Preferences.showDialog(context,
+                        null,
+                        "Pemberitahuan",
+                        "Fitur ini dalam tahap pengembangan!, untuk saat ini fitur cetak absensi belum tersedia",
+                        "Mengerti",
+                        null,
+                        null,
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                        },
+                        (dialog, which) -> dialog.dismiss(),
+                        (dialog, which) -> dialog.dismiss(),
+                        false,
+                        true);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

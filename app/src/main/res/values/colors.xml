@@ -18,4 +18,5 @@
     <color name="orange">#FF5722</color>
     <color name="merah">#F44336</color>
     <color name="transparent">#00000000</color>
+    <color name="background">#E6000000</color>
 </resources>

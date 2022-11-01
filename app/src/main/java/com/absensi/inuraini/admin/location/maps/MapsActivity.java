@@ -3,11 +3,14 @@ package com.absensi.inuraini.admin.location.maps;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,6 +26,11 @@ import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.admin.location.DataKordinat;
 import com.absensi.inuraini.databinding.ActivityMapsBinding;
+import com.absensi.inuraini.spotlight.OnSpotlightStateChangedListener;
+import com.absensi.inuraini.spotlight.Spotlight;
+import com.absensi.inuraini.spotlight.shape.Circle;
+import com.absensi.inuraini.spotlight.target.CustomTarget;
+import com.absensi.inuraini.spotlight.target.Target;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -69,8 +77,6 @@ public class MapsActivity extends AppCompatActivity {
     List<AutocompletePrediction> predictionList;
     boolean setOnce = true;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    private boolean waitDouble = true;
-    private static final int DOUBLE_CLICK_TIME = 350;
     float ZOOM_CAMERA_VIEW = 17.0f;
 
     @Override
@@ -120,8 +126,7 @@ public class MapsActivity extends AppCompatActivity {
                 mMap.getUiSettings().setZoomControlsEnabled(false);
                 getLatlong = new LatLng(Double.parseDouble(getLatitude), Double.parseDouble(getLongitude));
                 mMap.addMarker(new MarkerOptions().position(getLatlong).title(getAddres));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatlong));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatlong, ZOOM_CAMERA_VIEW));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatlong, ZOOM_CAMERA_VIEW));
 
                 try {
                     assert mapFragment.getView() != null;
@@ -158,15 +163,26 @@ public class MapsActivity extends AppCompatActivity {
                 mark.setVisibility(View.VISIBLE);
                 searchBar.setVisibility(View.VISIBLE);
                 searchBar.setEnabled(true);
-                cardAddress.setVisibility(View.VISIBLE);
+                cardAddress.setVisibility(View.GONE);
                 getDBLatlong();
 
                 googleMap.setOnCameraIdleListener(() -> {
                     getLatlong = mMap.getCameraPosition().target;
                     alamat.setText(Preferences.getAddressFromLocation(context, getLatlong.latitude, getLatlong.longitude));
                 });
-            }
 
+                googleMap.setOnMapLongClickListener(latLng -> {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_CAMERA_VIEW));
+                });
+
+                if (!Preferences.getMapsGuide(context)) {
+                    Runnable runnable = this::setCustomSpotLight;
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(runnable, 1000);
+                } else {
+                    cardAddress.setVisibility(View.VISIBLE);
+                }
+            }
         });
     }
 
@@ -183,8 +199,7 @@ public class MapsActivity extends AppCompatActivity {
                     mMap.getUiSettings().setMapToolbarEnabled(false);
                     mMap.getUiSettings().setZoomControlsEnabled(false);
                     mMap.addMarker(new MarkerOptions().position(getLatlong).title(Preferences.getAddressFromLocation(context, Double.parseDouble(dbLatitude), Double.parseDouble(dbLongitude))));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatlong));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatlong, ZOOM_CAMERA_VIEW));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatlong, ZOOM_CAMERA_VIEW));
 
                     try {
                         assert mapFragment.getView() != null;
@@ -271,6 +286,87 @@ public class MapsActivity extends AppCompatActivity {
         });
     }
 
+    private void setCustomSpotLight(){
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        ArrayList<Target> targets = new ArrayList<>();
+
+        // make an target
+        View first = inflater.inflate(R.layout.custom_spotlight, null);
+        final CustomTarget firstTarget =
+                new CustomTarget.Builder(MapsActivity.this).setPoint(mycur)
+                        .setShape(new Circle(100f))
+                        .setOverlay(first)
+                        .build();
+
+        targets.add(firstTarget);
+
+        View second = inflater.inflate(R.layout.custom_spotlight2, null);
+        final CustomTarget secondTarget =
+                new CustomTarget.Builder(MapsActivity.this).setPoint(mycur)
+                        .setShape(new Circle(100f))
+                        .setOverlay(second)
+                        .build();
+
+        targets.add(secondTarget);
+
+        View third = inflater.inflate(R.layout.custom_spotlight3, null);
+        final CustomTarget thirdTarget =
+                new CustomTarget.Builder(MapsActivity.this).setPoint(mycur)
+                        .setShape(new Circle(100f))
+                        .setOverlay(third)
+                        .build();
+
+        targets.add(thirdTarget);
+
+        final Spotlight spotlight =
+
+                Spotlight.with(MapsActivity.this)
+                        .setOverlayColor(R.color.background)
+                        .setDuration(1000L)
+                        .setAnimation(new DecelerateInterpolator(2f))
+                        .setTargets(targets)
+                        .setClosedOnTouchedOutside(false)
+                        .setOnSpotlightStateListener(new OnSpotlightStateChangedListener() {
+                            @Override
+                            public void onStarted() {
+
+                            }
+
+                            @Override
+                            public void onEnded() {
+                                Preferences.setMapsGuide(context, true);
+                                cardAddress.setVisibility(View.VISIBLE);
+                            }
+                        });
+        spotlight.start();
+
+        View.OnClickListener closeOne = v -> {
+            spotlight.closeCurrentTarget();
+        };
+
+        View.OnClickListener closeDouble = new OnDoubleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Toast.makeText(context, "Klik 2 kali secara cepat!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDoubleClick(View v) {
+                spotlight.closeCurrentTarget();
+            }
+        };
+
+        View.OnLongClickListener closeLong = v -> {
+            spotlight.closeCurrentTarget();
+            return true;
+        };
+
+        first.findViewById(R.id.close_curSpotlight).setOnClickListener(closeOne);
+        second.findViewById(R.id.close_curSpotlight).setOnClickListener(closeDouble);
+        third.findViewById(R.id.close_curSpotlight).setOnLongClickListener(closeLong);
+    }
+
     public void searchAddress() {
         Places.initialize(context, getString(R.string.google_maps_api));
         placesClient = Places.createClient(context);
@@ -326,8 +422,23 @@ public class MapsActivity extends AppCompatActivity {
                             }
                         }
                     } else {
-                        Log.i("mytag", "Prediction fetching task unsuccessful Error code :" + task.getException().getMessage());
+                        Log.i("mytag", "Prediction fetching task unsuccessful Error code : " + task.getException().getMessage());
 //                        Toast.makeText(context, "Error : " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Preferences.showDialog(context,
+                                null,
+                                "Pemberitahuan",
+                                "Fitur ini dalam tahap pengembangan!, untuk saat ini fitur pencarian lokasi belum tersedia",
+                                "Mengerti",
+                                null,
+                                null,
+                                (dialog, which) -> {
+                                    dialog.dismiss();
+                                    searchBar.closeSearch();
+                                },
+                                (dialog, which) -> dialog.dismiss(),
+                                (dialog, which) -> dialog.dismiss(),
+                                false,
+                                true);
                     }
                 });
             }

@@ -6,4 +6,9 @@
         android:orderInCategory="100"
         android:title="Data Pengajuan"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/print_absen"
+        android:orderInCategory="100"
+        android:title="Cetak Absensi"
+        app:showAsAction="never" />
 </menu>
