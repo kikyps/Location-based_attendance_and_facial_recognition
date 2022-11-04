@@ -36,8 +36,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.absensi.inuraini.admin.location.maps.MapsActivity;
 import com.absensi.inuraini.admin.location.SettingsLocation;
+import com.absensi.inuraini.admin.location.maps.MapsActivity;
 import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.AntiMockActivity;
 import com.absensi.inuraini.common.EmailVerificationActivity;
@@ -665,11 +665,9 @@ public class Preferences {
             if (addressList != null && addressList.size() > 0) {
                 Address address = addressList.get(0);
                 StringBuilder sb = new StringBuilder();
-                if(address.getAddressLine(0) !=null && address.getAddressLine(0).length()>0 && !address.getAddressLine(0).contentEquals("null"))
-                {
+                if(address.getAddressLine(0) !=null && address.getAddressLine(0).length()>0 && !address.getAddressLine(0).contentEquals("null")) {
                     sb.append(address.getAddressLine(0)).append("\n");
                 } else {
-
                     sb.append(address.getLocality()).append("\n");
                     sb.append(address.getPostalCode()).append("\n");
                     sb.append(address.getCountryName());

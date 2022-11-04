@@ -32,9 +32,9 @@ import java.util.Map;
 public class SettingsLocation extends Fragment {
     @SuppressLint("StaticFieldLeak")
     static TextInputLayout address;
-    TextInputLayout distance;
-    TextInputEditText alamat, distanceText;
-    Button changeLocations, saveDistance;
+    TextInputLayout distance, namaKantor;
+    TextInputEditText kantorTxt, alamat, distanceText;
+    Button changeLocations, saveDistance, setNameOffice;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -60,6 +60,9 @@ public class SettingsLocation extends Fragment {
         distance = root.findViewById(R.id.distance);
         changeLocations = root.findViewById(R.id.ubah_kordinat);
         saveDistance = root.findViewById(R.id.simpan_jarak);
+        setNameOffice = root.findViewById(R.id.ubah_nama_kantor);
+        namaKantor = root.findViewById(R.id.nama_kantor_input);
+        kantorTxt = root.findViewById(R.id.kantor_text);
         alamat = root.findViewById(R.id.address_text);
         distanceText = root.findViewById(R.id.distance_text);
         distanceText.addTextChangedListener(textDistance);
@@ -67,6 +70,12 @@ public class SettingsLocation extends Fragment {
     }
 
     private void actionlisteners(){
+        setNameOffice.setOnClickListener(v -> {
+            if (officeNameValidate()) {
+                updateNamaKantor();
+            }
+        });
+
         changeLocations.setOnClickListener(v -> {
             setLatLong();
         });
@@ -79,7 +88,7 @@ public class SettingsLocation extends Fragment {
             } else {
                 if (trialCount < 3) {
                     Map<String, Object> postValues = new HashMap<>();
-                    postValues.put("sTrial", trialCount + 1);
+                    postValues.put("sTrial", trialCount++);
                     databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
                     getMaps = true;
                     Preferences.getMyLocation(mContext, getActivity());
@@ -129,12 +138,15 @@ public class SettingsLocation extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    String nameOffice = snapshot.child("sNamaKantor").getValue(String.class);
                     String addressValue = snapshot.child("sAddress").getValue().toString();
                     String jarak = snapshot.child("sDistance").getValue().toString();
 
+                    namaKantor.getEditText().setText(nameOffice);
                     address.getEditText().setText(addressValue);
                     distance.getEditText().setText(jarak);
 
+                    namaKantor.getEditText().clearFocus();
                     address.getEditText().clearFocus();
                     distance.getEditText().clearFocus();
                 } else {
@@ -149,6 +161,28 @@ public class SettingsLocation extends Fragment {
         });
     }
 
+    private void updateNamaKantor(){
+        String getNameKantor = namaKantor.getEditText().getText().toString();
+        Map<String, Object> updatesNamaKantor = new HashMap<>();
+        updatesNamaKantor.put("sNamaKantor", getNameKantor);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Konfirmasi")
+                .setMessage("Apakah anda yakin ingin mengubah nama kantor?")
+                .setPositiveButton("ya", (dialogInterface, i) -> {
+                    databaseReference.child("data").child("latlong").updateChildren(updatesNamaKantor).addOnSuccessListener(unused -> {
+                        Toast.makeText(mContext, "Nama kantor berhasil di ubah", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();
+                    });
+                })
+                .setNegativeButton("cancel", (dialogInterface, i) -> {
+                    dialogInterface.cancel();
+                });
+        builder.setCancelable(true);
+        builder.show();
+    }
+
     private void updateJarak(){
         String getDistance = distance.getEditText().getText().toString();
         Map<String, Object> updatesDistance = new HashMap<>();
@@ -156,7 +190,7 @@ public class SettingsLocation extends Fragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Konfirmasi")
-                .setMessage("Apakah anda yakin ingin mengedit data ini?")
+                .setMessage("Apakah anda yakin ingin mengubah jarak dari lokasi absensi?")
                 .setPositiveButton("ya", (dialogInterface, i) -> {
                     databaseReference.child("data").child("latlong").updateChildren(updatesDistance).addOnSuccessListener(unused -> {
                         Toast.makeText(mContext, "Jarak Berhasil Di Simpan", Toast.LENGTH_SHORT).show();
@@ -192,7 +226,7 @@ public class SettingsLocation extends Fragment {
                     })
                     .setNeutralButton(show, (dialog, which) -> {
                         Map<String, Object> postValues = new HashMap<>();
-                        postValues.put("sTrial", trialCount + 1);
+                        postValues.put("sTrial", trialCount++);
                         databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
                         getMaps = true;
                         Preferences.getMyLocation(mContext, getActivity());
@@ -211,6 +245,22 @@ public class SettingsLocation extends Fragment {
         }).addOnFailureListener(e -> {
             Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private boolean officeNameValidate(){
+        String getOffice = namaKantor.getEditText().getText().toString();
+
+        if (getOffice.isEmpty()){
+            namaKantor.setError("Nama kantor tidak boleh kosong!");
+            return false;
+        } else if (getOffice.length() <= 3){
+            namaKantor.setError("Nama kantor terlalu pendek");
+            return false;
+        } else {
+            namaKantor.setError(null);
+            namaKantor.setErrorEnabled(false);
+            return true;
+        }
     }
 
     private final TextWatcher textDistance = new TextWatcher() {

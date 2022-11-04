@@ -2,10 +2,6 @@ package com.absensi.inuraini.common;
 
 import static com.absensi.inuraini.Preferences.mAuth;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -17,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
@@ -124,6 +124,7 @@ public class VerifyOTP extends AppCompatActivity {
                     postValues.put("sJabatan", jabatan);
                     postValues.put("sStatus", "user");
                     postValues.put("sVerified", false);
+                    postValues.put("sTrial", 0);
                     databaseReference.child(firebaseUser.getUid()).setValue(postValues).addOnSuccessListener(unused -> {
                         databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
