@@ -528,11 +528,11 @@ public class CameraActivity extends AppCompatActivity {
             boolean telat = getIntent().getBooleanExtra("telat", false);
             boolean lembur = getIntent().getBooleanExtra("lembur", false);
             boolean hadir = true;
-            Object[] lokAbsen = Preferences.getMyLocation(context, this);
+            Object[][] lokAbsen = Preferences.getMyLocation(context, this);
             boolean acc = false;
             boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0]), String.valueOf(lokAbsen[1]), "Kantor", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
+            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), "Kantor", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }
@@ -545,11 +545,11 @@ public class CameraActivity extends AppCompatActivity {
             boolean telat = getIntent().getBooleanExtra("telat", false);
             boolean lembur = getIntent().getBooleanExtra("lembur", false);
             boolean hadir = true;
-            Object[] lokAbsen = Preferences.getMyLocation(context, this);
+            Object[][] lokAbsen = Preferences.getMyLocation(context, this);
             boolean acc = false;
             boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0]), String.valueOf(lokAbsen[1]), (String) lokAbsen[2], absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
+            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), (String) lokAbsen[1][1], absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }

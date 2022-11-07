@@ -30,7 +30,6 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
-import com.absensi.inuraini.admin.location.SpotTestActivity;
 import com.absensi.inuraini.camera.CameraActivity;
 import com.absensi.inuraini.common.LoginActivity;
 import com.google.firebase.auth.FirebaseUser;
@@ -71,7 +70,7 @@ public class AbsenFragment extends Fragment {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
     FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
 
-    Object[] myLatLong = new Object[3];
+//    Object[] myLatLong = new Object[3];
 
     static double aoiLat;
     static double aoiLong;
@@ -164,7 +163,8 @@ public class AbsenFragment extends Fragment {
             @Override
             public void onLongClick() {
 //                throw new RuntimeException("Boom!");
-                startActivity(new Intent(mContext, SpotTestActivity.class));
+//                startActivity(new Intent(mContext, SpotTestActivity.class));
+                checkLokasi();
             }
         });
 
@@ -411,9 +411,9 @@ public class AbsenFragment extends Fragment {
     }
 
     private void checkLokasi() {
-        myLatLong = Preferences.getMyLocation(mContext, getActivity());
-        Toast.makeText(mContext, "Latitude = " + myLatLong[0] + " Longitude = " + myLatLong[1], Toast.LENGTH_SHORT).show();
-        Toast.makeText(mContext, (CharSequence) myLatLong[2], Toast.LENGTH_SHORT).show();
+        Object[][] myLatLong = Preferences.getMyLocation(mContext, getActivity());
+        Toast.makeText(mContext, "Latitude = " + myLatLong[0][0] + " Longitude = " + myLatLong[0][1], Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, (CharSequence) myLatLong[1][12], Toast.LENGTH_LONG).show();
     }
 
     public static void checkAbsenKantor(){

@@ -236,12 +236,12 @@ public class SettingsLocation extends Fragment {
     }
 
     public static void updateLatLong(){
-        DataKordinat dataKordinat = new DataKordinat(String.valueOf(Preferences.latitude), String.valueOf(Preferences.longitude), Preferences.myAddress);
+        DataKordinat dataKordinat = new DataKordinat(String.valueOf(Preferences.latitude), String.valueOf(Preferences.longitude), Preferences.myAddress[12]);
         Map<String, Object> postValues = dataKordinat.toMap();
 
         databaseReference.child("data").child("latlong").updateChildren(postValues).addOnSuccessListener(unused -> {
             Toast.makeText(mContext, "Lokasi anda saat ini di set sebagai lokasi absensi karyawan", Toast.LENGTH_SHORT).show();
-            address.getEditText().setText(Preferences.myAddress);
+            address.getEditText().setText(Preferences.myAddress[12]);
         }).addOnFailureListener(e -> {
             Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();
         });

@@ -3,6 +3,7 @@ package com.absensi.inuraini.admin.rekap;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,7 +11,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -374,6 +378,34 @@ public class DetailAbsen extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Preferences.REQUEST_PERMISSION_CODE){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                if (Environment.isExternalStorageManager()){
+//                    Toast.makeText(this, "Permission granted in android 11 and above", Toast.LENGTH_SHORT).show();
+                    printAbsensi();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Preferences.REQUEST_PERMISSION_CODE) {
+            if (grantResults.length > 0) {
+                boolean readExternalStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean writeExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                if (readExternalStorage && writeExternalStorage) {
+//                    Toast.makeText(this, "Permission granted in android 10 or below", Toast.LENGTH_SHORT).show();
+                    printAbsensi();
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_rekap, menu);
         return true;
@@ -427,7 +459,7 @@ public class DetailAbsen extends AppCompatActivity {
         int pageHeight = 2010;
         DateFormat dateFormat;
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_absensi);
-        scaleBitmap = Bitmap.createScaledBitmap(bitmap, 238, 218, false);
+        scaleBitmap = Bitmap.createScaledBitmap(bitmap, 218, 218, false);
 
         PdfDocument pdfDocument = new PdfDocument();
         Paint paint = new Paint();
@@ -442,15 +474,15 @@ public class DetailAbsen extends AppCompatActivity {
         Canvas canvas = page.getCanvas();
         canvas.drawBitmap(scaleBitmap, 20, 20, paint);
 
-        titlePaint.setTextAlign(Paint.Align.LEFT);
+        titlePaint.setTextAlign(Paint.Align.CENTER);
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         titlePaint.setColor(Color.BLACK);
         titlePaint.setTextSize(47);
-        canvas.drawText(getOfficeName, 320, 100, titlePaint);
+        canvas.drawText(getOfficeName, pageWidth / 2 + 110, 100, titlePaint);
 
-        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(22f);
-        canvas.drawText(getAddress, 295, 160, paint);
+        canvas.drawText(getAddress, pageWidth / 2 + 110, 160, paint);
 
         linePDAM.setStyle(Paint.Style.STROKE);
         linePDAM.setStrokeWidth(6);

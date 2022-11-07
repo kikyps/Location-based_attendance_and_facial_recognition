@@ -101,7 +101,7 @@ public class Preferences {
     public static LocationRequest locationRequest;
     public static double latitude;
     public static double longitude;
-    public static String myAddress;
+    public static String[] myAddress = new String[13];
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
     private static SharedPreferences getSharedPreferences(Context context){
@@ -522,7 +522,7 @@ public class Preferences {
         });
     }
 
-    public static Object[] getMyLocation(Context context, Activity activity) {
+    public static Object[][] getMyLocation(Context context, Activity activity) {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(5000);
@@ -652,35 +652,73 @@ public class Preferences {
                 turnOnGPS(context, activity);
             }
         }
-        return new Object[]{latitude, longitude, myAddress};
+        return new Object[][] {{latitude, longitude}, {myAddress[0], myAddress[1], myAddress[2], myAddress[3], myAddress[4], myAddress[5], myAddress[6], myAddress[7], myAddress[8], myAddress[9], myAddress[10], myAddress[11], myAddress[12]}};
     }
 
-    public static String getAddressFromLocation(Context context, final double latitude, final double longitude) {
-        String straddress = "";
+    public static String[] getAddressFromLocation(Context context, final double latitude, final double longitude) {
+        String getAddressLine = "",         // index 0
+                getAdminArea = "",          // index 1
+                getCuntryCode = "",         // index 2
+                getCountryName = "",        // index 3
+                getFeatureName = "",        // index 4
+                getLocality = "",           // index 5
+                getPostalCode = "",         // index 6
+                getPremises = "",           // index 7
+                getSubAdminArea = "",       // index 8
+                getSubLocality = "",        // index 9
+                getSubThorughfare = "",     // index 10
+                getThoroughfare = "",       // index 11
+                getSpecificAddress = "";    // index 12
+
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
 
         try {
-            List<Address> addressList = geocoder.getFromLocation(
-                    latitude, longitude, 1);
+            List<Address> addressList = geocoder.getFromLocation(latitude, longitude, 1);
             if (addressList != null && addressList.size() > 0) {
                 Address address = addressList.get(0);
                 StringBuilder sb = new StringBuilder();
-                if(address.getAddressLine(0) !=null && address.getAddressLine(0).length()>0 && !address.getAddressLine(0).contentEquals("null")) {
-                    sb.append(address.getAddressLine(0)).append("\n");
+                if(address.getAddressLine(0) != null && address.getAddressLine(0).length() > 0 && !address.getAddressLine(0).contentEquals("null")) {
+                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                        getAddressLine = address.getAddressLine(i);
+                    }
+                    getAdminArea = address.getAdminArea();
+                    getCuntryCode = address.getCountryCode();
+                    getCountryName = address.getCountryName();
+                    getFeatureName = address.getFeatureName();
+                    getLocality = address.getLocality();
+                    getPostalCode =  address.getPostalCode();
+                    getPremises = address.getPremises();
+                    getSubAdminArea = address.getSubAdminArea();
+                    getSubLocality = address.getSubLocality();
+                    getSubThorughfare = address.getSubThoroughfare();
+                    getThoroughfare = address.getThoroughfare();
+                    getSpecificAddress = replaceCharIfContains(getThoroughfare, "Jalan", "JL.") + ", " + getSubAdminArea + ", Prov. " + getAdminArea + ", " + getCountryName;
                 } else {
-                    sb.append(address.getLocality()).append("\n");
-                    sb.append(address.getPostalCode()).append("\n");
+                    sb.append(address.getLocality()).append(", ");
+                    sb.append(address.getPostalCode()).append(", ");
                     sb.append(address.getCountryName());
+                    getAddressLine = sb.toString();
                 }
-                straddress = sb.toString();
                 //Log.e("leaddress","@"+straddress);
             }
         } catch (IOException e) {
             //Log.e(TAG, "Unable connect to Geocoder", e);
         }
-        return straddress;
+        return new String[]{getAddressLine, getAdminArea, getCuntryCode, getCountryName, getFeatureName, getLocality,
+                getPostalCode, getPremises, getSubAdminArea, getSubLocality, getSubThorughfare, getThoroughfare, getSpecificAddress};
     }
 
+    public static String replaceCharIfContains(String args, String target, String replacement) {
+        return args.replace(target, replacement);
+    }
+
+    public static String replaceCharWhileContains(String args, String target, String replacement) {
+        String someValue = "";
+        while (args.contains(target)) {
+            someValue = args.replace(target, replacement);
+        }
+        return someValue;
+    }
 
     public static void turnOnGPS(Context context, Activity activity) {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -804,8 +842,8 @@ public class Preferences {
                         String[] requestedPermissions = packageInfo.requestedPermissions;
 
                         if (requestedPermissions != null) {
-                            for (int i = 0; i < requestedPermissions.length; i++) {
-                                if (requestedPermissions[i]
+                            for (String requestedPermission : requestedPermissions) {
+                                if (requestedPermission
                                         .equals("android.permission.ACCESS_MOCK_LOCATION")
                                         && !applicationInfo.packageName.equals(context.getPackageName())) {
                                     count++;

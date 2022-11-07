@@ -65,7 +65,7 @@ public class MapsActivity extends AppCompatActivity {
     private GoogleMap mMap;
     ActivityMapsBinding binding;
     Context context = this;
-    Object[] myLatLong = new Object[3];
+    Object[][] myLatLong = new Object[2][13];
     LatLng getLatlong;
     TextView alamat;
     CardView cardAddress;
@@ -168,7 +168,7 @@ public class MapsActivity extends AppCompatActivity {
 
                 googleMap.setOnCameraIdleListener(() -> {
                     getLatlong = mMap.getCameraPosition().target;
-                    alamat.setText(Preferences.getAddressFromLocation(context, getLatlong.latitude, getLatlong.longitude));
+                    alamat.setText(Preferences.getAddressFromLocation(context, getLatlong.latitude, getLatlong.longitude)[0]);
                 });
 
                 googleMap.setOnMapLongClickListener(latLng -> {
@@ -198,7 +198,7 @@ public class MapsActivity extends AppCompatActivity {
                     // Add a marker in Sydney and move the camera
                     mMap.getUiSettings().setMapToolbarEnabled(false);
                     mMap.getUiSettings().setZoomControlsEnabled(false);
-                    mMap.addMarker(new MarkerOptions().position(getLatlong).title(Preferences.getAddressFromLocation(context, Double.parseDouble(dbLatitude), Double.parseDouble(dbLongitude))));
+                    mMap.addMarker(new MarkerOptions().position(getLatlong).title(Preferences.getAddressFromLocation(context, Double.parseDouble(dbLatitude), Double.parseDouble(dbLongitude))[0]));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatlong, ZOOM_CAMERA_VIEW));
 
                     try {
@@ -238,7 +238,7 @@ public class MapsActivity extends AppCompatActivity {
 
                         @Override
                         public void onDoubleClick(View v) {
-                            LatLng myLatlong = new LatLng((Double) myLatLong[0], (Double) myLatLong[1]);
+                            LatLng myLatlong = new LatLng((Double) myLatLong[0][0], (Double) myLatLong[0][1]);
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatlong, ZOOM_CAMERA_VIEW));
                         }
                     });
@@ -253,12 +253,12 @@ public class MapsActivity extends AppCompatActivity {
                                 null,
                                 (dialog, which) -> {
 //                                Positive Button
-                                    DataKordinat dataKordinat = new DataKordinat(String.valueOf(getLatlong.latitude), String.valueOf(getLatlong.longitude), Preferences.getAddressFromLocation(context, getLatlong.latitude, getLatlong.longitude));
+                                    DataKordinat dataKordinat = new DataKordinat(String.valueOf(getLatlong.latitude), String.valueOf(getLatlong.longitude), Preferences.getAddressFromLocation(context, getLatlong.latitude, getLatlong.longitude)[12]);
                                     Map<String, Object> postValues = dataKordinat.toMap();
 
                                     databaseReference.child("data").child("latlong").updateChildren(postValues).addOnSuccessListener(unused -> {
                                         mMap.clear();
-                                        mMap.addMarker(new MarkerOptions().position(getLatlong).title(Preferences.getAddressFromLocation(context, Double.parseDouble(dbLatitude), Double.parseDouble(dbLongitude))));
+                                        mMap.addMarker(new MarkerOptions().position(getLatlong).title(Preferences.getAddressFromLocation(context, Double.parseDouble(dbLatitude), Double.parseDouble(dbLongitude))[1]));
                                         Toast.makeText(context, "Lokasi anda saat ini di set sebagai lokasi absensi karyawan", Toast.LENGTH_SHORT).show();
                                     }).addOnFailureListener(e -> {
                                         Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();

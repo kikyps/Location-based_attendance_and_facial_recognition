@@ -227,11 +227,10 @@ public class Storage {
     }
 
     public Uri getUriFromFile(String path) {
-        File file = new File(path);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            return Uri.fromFile(file);
+            return Uri.fromFile(getFile(path));
         } else {
-            return FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", file);
+            return FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", getFile(path));
         }
     }
 

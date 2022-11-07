@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
-    implementation platform('com.google.firebase:firebase-bom:31.0.1')
+    implementation platform('com.google.firebase:firebase-bom:31.0.2')
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.firebase:firebase-database:20.1.0'
@@ -97,7 +97,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.libraries.places:places:2.6.0'
+    implementation 'com.google.android.libraries.places:places:2.7.0'
     implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.2'
     implementation 'com.google.firebase:firebase-config:21.2.0'
     implementation 'com.google.firebase:firebase-storage:20.1.0'
@@ -121,6 +121,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
     implementation 'com.h6ah4i.android.materialshadowninepatch:materialshadowninepatch:1.0.0'
+//    implementation 'com.github.getActivity:XXPermissions:16.2'
 //    implementation 'com.github.billthefarmer:CustomCalendarView:v1.05'
 //    implementation 'com.github.MOLO17:CustomizableCalendar:v0.1.4'
 //    implementation 'com.applandeo:material-calendar-view:1.9.0-rc03'
