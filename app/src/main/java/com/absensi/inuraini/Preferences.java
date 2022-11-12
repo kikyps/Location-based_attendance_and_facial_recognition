@@ -692,7 +692,11 @@ public class Preferences {
                     getSubLocality = address.getSubLocality();
                     getSubThorughfare = address.getSubThoroughfare();
                     getThoroughfare = address.getThoroughfare();
-                    getSpecificAddress = replaceCharIfContains(getThoroughfare, "Jalan", "JL.") + ", " + getSubAdminArea + ", Prov. " + getAdminArea + ", " + getCountryName;
+                    if (getThoroughfare != null) {
+                        getSpecificAddress = replaceCharIfContains(getThoroughfare, "Jalan", "JL.") + ", " + getSubAdminArea + ", Prov. " + getAdminArea + ", " + getCountryName;
+                    } else {
+                        getSpecificAddress = "Nama jalan tidak di ketahui!" + ", " + getSubAdminArea + ", Prov. " + getAdminArea + ", " + getCountryName;
+                    }
                 } else {
                     sb.append(address.getLocality()).append(", ");
                     sb.append(address.getPostalCode()).append(", ");
@@ -709,11 +713,15 @@ public class Preferences {
     }
 
     public static String replaceCharIfContains(String args, String target, String replacement) {
-        return args.replace(target, replacement);
+        String someValue = args;
+        if (args != null && args.contains(target)) {
+            someValue = args.replace(target, replacement);
+        }
+        return someValue;
     }
 
     public static String replaceCharWhileContains(String args, String target, String replacement) {
-        String someValue = "";
+        String someValue = args;
         while (args.contains(target)) {
             someValue = args.replace(target, replacement);
         }

@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.absensi.inuraini.Preferences;
@@ -35,6 +37,8 @@ public class SettingsLocation extends Fragment {
     TextInputLayout distance, namaKantor;
     TextInputEditText kantorTxt, alamat, distanceText;
     Button changeLocations, saveDistance, setNameOffice;
+    String addressValue;
+    ImageButton rest;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -65,6 +69,8 @@ public class SettingsLocation extends Fragment {
         kantorTxt = root.findViewById(R.id.kantor_text);
         alamat = root.findViewById(R.id.address_text);
         distanceText = root.findViewById(R.id.distance_text);
+        rest = root.findViewById(R.id.reset);
+        alamat.addTextChangedListener(textAddress);
         distanceText.addTextChangedListener(textDistance);
         showAddressAndDistance();
     }
@@ -74,10 +80,6 @@ public class SettingsLocation extends Fragment {
             if (officeNameValidate()) {
                 updateNamaKantor();
             }
-        });
-
-        changeLocations.setOnClickListener(v -> {
-            setLatLong();
         });
 
         changeLocations.setOnLongClickListener(v -> {
@@ -118,6 +120,11 @@ public class SettingsLocation extends Fragment {
         });
 
         saveDistance.setOnClickListener(v -> updateJarak());
+
+        rest.setOnClickListener(v -> {
+            address.getEditText().setText(addressValue);
+            address.getEditText().clearFocus();
+        });
     }
 
     private void showAddressAndDistance(){
@@ -133,13 +140,12 @@ public class SettingsLocation extends Fragment {
             }
         });
 
-
         databaseReference.child("data").child("latlong").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     String nameOffice = snapshot.child("sNamaKantor").getValue(String.class);
-                    String addressValue = snapshot.child("sAddress").getValue().toString();
+                    addressValue = snapshot.child("sAddress").getValue().toString();
                     String jarak = snapshot.child("sDistance").getValue().toString();
 
                     namaKantor.getEditText().setText(nameOffice);
@@ -172,6 +178,28 @@ public class SettingsLocation extends Fragment {
                 .setPositiveButton("ya", (dialogInterface, i) -> {
                     databaseReference.child("data").child("latlong").updateChildren(updatesNamaKantor).addOnSuccessListener(unused -> {
                         Toast.makeText(mContext, "Nama kantor berhasil di ubah", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();
+                    });
+                })
+                .setNegativeButton("cancel", (dialogInterface, i) -> {
+                    dialogInterface.cancel();
+                });
+        builder.setCancelable(true);
+        builder.show();
+    }
+
+    private void updateAlamatKantor(){
+        String getAlamatKantor = address.getEditText().getText().toString();
+        Map<String, Object> updatesAlamatKantor = new HashMap<>();
+        updatesAlamatKantor.put("sAddress", getAlamatKantor);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Konfirmasi")
+                .setMessage("Apakah anda yakin ingin mengubah alamat kantor?")
+                .setPositiveButton("ya", (dialogInterface, i) -> {
+                    databaseReference.child("data").child("latlong").updateChildren(updatesAlamatKantor).addOnSuccessListener(unused -> {
+                        Toast.makeText(mContext, "Alamat kantor berhasil di ubah", Toast.LENGTH_SHORT).show();
                     }).addOnFailureListener(e -> {
                         Toast.makeText(mContext, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show();
                     });
@@ -262,6 +290,39 @@ public class SettingsLocation extends Fragment {
             return true;
         }
     }
+
+    private final TextWatcher textAddress = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            String addressText = address.getEditText().getText().toString();
+
+            if (addressText.isEmpty() || addressText.equals(addressValue)){
+                rest.setVisibility(View.GONE);
+                changeLocations.setText("Ubah lokasi absensi");
+                changeLocations.setBackgroundColor(ContextCompat.getColor(mContext, R.color.purple_500));
+                changeLocations.setOnClickListener(v -> {
+                    setLatLong();
+                });
+            } else {
+                rest.setVisibility(View.VISIBLE);
+                changeLocations.setText("Ubah alamat lokasi");
+                changeLocations.setBackgroundColor(ContextCompat.getColor(mContext, R.color.btn_alamat_backgroun));
+                changeLocations.setOnClickListener(v -> {
+                    updateAlamatKantor();
+                });
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
 
     private final TextWatcher textDistance = new TextWatcher() {
         @Override

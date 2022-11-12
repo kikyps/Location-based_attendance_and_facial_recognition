@@ -186,7 +186,10 @@
         <activity
             android:name=".common.LoginActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".dexter.DexterActivity"
+            android:theme="@style/Dexter.Internal.Theme.Transparent"
+            />
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="face" />

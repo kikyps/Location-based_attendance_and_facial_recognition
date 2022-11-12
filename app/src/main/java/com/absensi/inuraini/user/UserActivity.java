@@ -99,6 +99,8 @@ public class UserActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         contentListeners(headerView);
+
+
     }
 
     private void contentListeners(View view){
@@ -211,7 +213,8 @@ public class UserActivity extends AppCompatActivity {
                                 Intent intent = new Intent(context, DataDiriOne.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK |
-                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        Intent.FLAG_ACTIVITY_NEW_TASK |
+                                        Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
                             } else {
                                 if (!checkVerif) {
@@ -307,14 +310,14 @@ public class UserActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (resultCode == RESULT_OK){
-                Preferences.getMyLocation(context, UserActivity.this);
-            } else {
-                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(context, "Aktifkan GPS untuk absen", Toast.LENGTH_SHORT).show();
-            }
-        }
+//        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
+//            if (resultCode == RESULT_OK){
+//                Preferences.getMyLocation(context, UserActivity.this);
+//            } else {
+//                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
+//                Toast.makeText(context, "Aktifkan GPS untuk absen", Toast.LENGTH_SHORT).show();
+//            }
+//        }
     }
 
     @Override

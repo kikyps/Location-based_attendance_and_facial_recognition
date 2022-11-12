@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,8 @@ import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
 import com.absensi.inuraini.camera.CameraActivity;
+import com.absensi.inuraini.clocationlib.GetLocation;
+import com.absensi.inuraini.clocationlib.OnMyLocation;
 import com.absensi.inuraini.common.LoginActivity;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -125,6 +128,7 @@ public class AbsenFragment extends Fragment {
         progressBar = root.findViewById(R.id.progresbar);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void buttonOncreate() {
         inKantor.setOnClickListener(v -> {
             doAbsen = true;
@@ -157,6 +161,7 @@ public class AbsenFragment extends Fragment {
         prev.setOnClickListener(v -> {
             calendar.add(Calendar.DATE, -1);
             setTanggal();
+//            Toast.makeText(mContext, GetLocation.MyAddress() != null ? "Alamat : " +  GetLocation.MyAddress().getAddressLine(0) : "", Toast.LENGTH_SHORT).show();
         });
 
         prev.setOnTouchListener(new MyLongClickListener(2000) {
@@ -164,7 +169,20 @@ public class AbsenFragment extends Fragment {
             public void onLongClick() {
 //                throw new RuntimeException("Boom!");
 //                startActivity(new Intent(mContext, SpotTestActivity.class));
-                checkLokasi();
+//                checkLokasi();
+                GetLocation location = new GetLocation(mContext, getActivity());
+                location.setAcceptMockProvider(false);
+                location.getMyLocation(new OnMyLocation() {
+                    @Override
+                    public void onCurrentLocation(Location location, Address address) {
+                        Toast.makeText(mContext, "Kota : " + address.getThoroughfare(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailed(int errorCode, String msg) {
+
+                    }
+                });
             }
         });
 

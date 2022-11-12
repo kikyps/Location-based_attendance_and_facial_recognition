@@ -53,7 +53,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DetailAbsen extends AppCompatActivity {
-    String eventDate, idkaryawan, jabatan, latitudeTxt, longitudeTxt, titikAbsen, getOfficeName, getAddress, nama, getNumber, getTTl;
+    String eventDate, idkaryawan, jabatan, latitudeTxt, longitudeTxt, titikAbsen, getOfficeName, getAddress,
+            nama, getNumber, getTTl, jamMasuk, jamKeluar, ketHadir;
     Context context = this;
     TextView namaKar, ketId, absenMasuk, absenKeluar, ketAbsen, tanggalRek, lokAbsen, wktAbsenId, lemburId, titikLok;
     ImageButton nxt, prev;
@@ -244,9 +245,9 @@ public class DetailAbsen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     hasData = true;
-                    String jamMasuk = snapshot.child("sJamMasuk").getValue(String.class);
-                    String jamKeluar = snapshot.child("sJamKeluar").getValue(String.class);
-                    String ketHadir = snapshot.child("sKet").getValue(String.class);
+                    jamMasuk = snapshot.child("sJamMasuk").getValue(String.class);
+                    jamKeluar = snapshot.child("sJamKeluar").getValue(String.class);
+                    ketHadir = snapshot.child("sKet").getValue(String.class);
                     absenKantor = (boolean) snapshot.child("sKantor").getValue();
                     kehadiran = (boolean) snapshot.child("sKehadiran").getValue();
                     terlambatMasuk = (boolean) snapshot.child("sTerlambat").getValue();
@@ -466,6 +467,7 @@ public class DetailAbsen extends AppCompatActivity {
         Paint paint1 = new Paint();
         Paint linePDAM = new Paint();
         Paint titlePaint = new Paint();
+        Paint jam = new Paint();
 
         PdfDocument.PageInfo pageInfo
                 = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create(); //A4 Portrait
@@ -478,11 +480,11 @@ public class DetailAbsen extends AppCompatActivity {
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         titlePaint.setColor(Color.BLACK);
         titlePaint.setTextSize(47);
-        canvas.drawText(getOfficeName, pageWidth / 2 + 110, 100, titlePaint);
+        canvas.drawText(getOfficeName, pageWidth / 2 + 120, 100, titlePaint);
 
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(22f);
-        canvas.drawText(getAddress, pageWidth / 2 + 110, 160, paint);
+        canvas.drawText(getAddress, pageWidth / 2 + 120, 160, paint);
 
         linePDAM.setStyle(Paint.Style.STROKE);
         linePDAM.setStrokeWidth(6);
@@ -516,54 +518,66 @@ public class DetailAbsen extends AppCompatActivity {
         paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         paint1.setColor(Color.BLACK);
         paint1.setTextSize(45);
-        canvas.drawText("KETERANGAN ABSENSI", 20, 750, paint1);
-        canvas.drawText("POTONGAN", 20, 1360, paint1);
+        canvas.drawText("KETERANGAN ABSENSI", 20, 700, paint1);
+//        canvas.drawText("POTONGAN", 20, 1360, paint1);
 
         paint1.setStyle(Paint.Style.STROKE);
         paint1.setStrokeWidth(3);
-        canvas.drawLine(20, 760, 330, 760, paint1);
-        canvas.drawLine(20, 1370, 260, 1370, paint1);
+        canvas.drawLine(20, 710, 504, 710, paint1);
+//        canvas.drawLine(20, 1370, 260, 1370, paint1);
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
-        canvas.drawRect(20, 780, pageWidth - 20, 1280, paint);
+        canvas.drawRect(20, 730, pageWidth - 20, 1060, paint);
 
         paint.setTextAlign(Paint.Align.LEFT);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawText("No.", 40, 830, paint);
-        canvas.drawText("Keterangan", 160, 830, paint);
-        canvas.drawText("Data Absen", 780, 830, paint);
+        canvas.drawText("No.", 40, 780, paint);
+        canvas.drawText("Keterangan", 160, 780, paint);
+        canvas.drawText("Data Absen", pageWidth / 2 + 30, 780, paint);
 
-        canvas.drawLine(20, 860, pageWidth - 20, 860, paint);
-        canvas.drawLine(130, 790, 130, 850, paint);
-        canvas.drawLine(750, 790, 750, 850, paint);
-        canvas.drawLine(750, 1210, 750, 1270, paint);
-        canvas.drawLine(20, 1200, pageWidth - 20, 1200, paint);
+        canvas.drawLine(20, 810, pageWidth - 20, 810, paint);
+        canvas.drawLine(130, 740, 130, 800, paint);
+        canvas.drawLine(pageWidth / 2, 740, pageWidth / 2, 800, paint);
+        canvas.drawLine(pageWidth / 2, 810, pageWidth / 2, 1060, paint);
+        canvas.drawLine(130, 810, 130, 1060, paint);
+//        canvas.drawLine(20, 1200, pageWidth - 20, 1200, paint);
 
-        canvas.drawText("1.", 40, 920, paint);
-        canvas.drawText("Kehadiran", 160, 920, paint);
-        if (kehadiran) {
-            canvas.drawText("Hadir", 780, 920, paint);
-        } else {
-            canvas.drawText("Izin", 780, 920, paint);
-        }
+        canvas.drawText("1.", 40, 860, paint);
+        canvas.drawText("Kehadiran", 160, 860, paint);
+        canvas.drawText(kehadiran ? "Hadir" : "Izin", pageWidth / 2 + 30, 860, paint);
 
-        canvas.drawText("2.", 40, 980, paint);
-        canvas.drawText("Lokasi Absen", 160, 980, paint);
-        canvas.drawText(titikAbsen, 780, 980, paint);
+        canvas.drawText("2.", 40, 920, paint);
+        canvas.drawText("Lokasi Absen", 160, 920, paint);
+        canvas.drawText(absenKantor ? "Absen di kantor" : "Absen di luar kantor", pageWidth / 2 + 30, 920, paint);
 
-//        canvas.drawText("3.", 40, 1040, paint);
-//        canvas.drawText("Tunjangan Keluarga", 160, 1040, paint);
-//        canvas.drawText(TunjanganKeluarga, 780, 1040, paint);
+        canvas.drawText("3.", 40, 980, paint);
+        canvas.drawText("Waktu Absen", 160, 980, paint);
+        canvas.drawText(terlambatMasuk ? "Terlambat Absen" : "Absen tepat waktu", pageWidth / 2 + 30, 980, paint);
 //
-//        canvas.drawText("4.", 40, 1100, paint);
-//        canvas.drawText("Tunjangan Beras", 160, 1100, paint);
-//        canvas.drawText(TunjanganBeras, 780, 1100, paint);
-//
-//        canvas.drawText("5.", 40, 1160, paint);
-//        canvas.drawText("Tunjangan Kinerja", 160, 1160, paint);
-//        canvas.drawText(TunjanganKinerja, 780, 1160, paint);
+        canvas.drawText("4.", 40, 1040, paint);
+        canvas.drawText("Jam lembur", 160, 1040, paint);
+        canvas.drawText(jamLembur ? "Lembur" : "-", pageWidth / 2 + 30, 1040, paint);
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawRect(20, 1100, pageWidth / 2 - 120, 1300, paint);
+        canvas.drawRect(pageWidth / 2 + 120, 1100, pageWidth - 20, 1300, paint);
+        canvas.drawLine(20, 1180, pageWidth /2 - 120, 1180, paint);
+        canvas.drawLine(pageWidth / 2 + 120, 1180, pageWidth - 20, 1180, paint);
+
+        jam.setTextAlign(Paint.Align.LEFT);
+        jam.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+        jam.setColor(Color.BLACK);
+        jam.setTextSize(40f);
+        canvas.drawText("Jam Masuk", 140, 1150, jam);
+        canvas.drawText("Jam Keluar", pageWidth / 2 + 250, 1150, jam);
+
+        jam.setTextAlign(Paint.Align.CENTER);
+        jam.setTextSize(60);
+        canvas.drawText(jamMasuk, 250, 1260, jam);
+        canvas.drawText(jamKeluar, pageWidth / 2 + 350, 1260, jam);
 //
 //        int gajiPe = Integer.parseInt(gaji);
 //        int tunJab = Integer.parseInt(TunjanganJabatan);
