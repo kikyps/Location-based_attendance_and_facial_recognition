@@ -99,8 +99,6 @@ public class UserActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         contentListeners(headerView);
-
-
     }
 
     private void contentListeners(View view){

@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -52,13 +54,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DetailAbsen extends AppCompatActivity {
+public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.SendDataInterface {
     String eventDate, idkaryawan, jabatan, latitudeTxt, longitudeTxt, titikAbsen, getOfficeName, getAddress,
             nama, getNumber, getTTl, jamMasuk, jamKeluar, ketHadir;
     Context context = this;
     TextView namaKar, ketId, absenMasuk, absenKeluar, ketAbsen, tanggalRek, lokAbsen, wktAbsenId, lemburId, titikLok;
     ImageButton nxt, prev;
-
+    Menu mMenu;
     DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
     DateFormat dateRekap = new SimpleDateFormat("ddMMyyyy");
     Calendar calendar = Calendar.getInstance();
@@ -69,12 +71,13 @@ public class DetailAbsen extends AppCompatActivity {
     int trialCount;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-    String getStoragePath;
+    Bitmap bmpMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_absen);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -258,6 +261,10 @@ public class DetailAbsen extends AppCompatActivity {
 
                     if (kehadiran) {
 
+                        if(mMenu != null) {
+                            mMenu.findItem(R.id.print_absen).setVisible(true);
+                        }
+
                         if (!isFinishing()) {
                             Bundle bundle = new Bundle();
                             bundle.putString("viewMyLatitude", latitudeTxt);
@@ -308,6 +315,9 @@ public class DetailAbsen extends AppCompatActivity {
                             titikLok.setText(titikAbsen);
                         }
                     } else {
+                        if(mMenu != null) {
+                            mMenu.findItem(R.id.print_absen).setVisible(true);
+                        }
                         showMore.setVisibility(View.GONE);
                         cardLokasi.setClickable(false);
                         cardLokasi.setFocusable(false);
@@ -322,6 +332,9 @@ public class DetailAbsen extends AppCompatActivity {
                         titikLok.setTextSize(15);
                     }
                 } else {
+                    if(mMenu != null) {
+                        mMenu.findItem(R.id.print_absen).setVisible(false);
+                    }
                     hasData = false;
                     showMore.setVisibility(View.GONE);
                     cardLokasi.setClickable(false);
@@ -409,6 +422,7 @@ public class DetailAbsen extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_rekap, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -454,6 +468,87 @@ public class DetailAbsen extends AppCompatActivity {
         }
     }
 
+    public Bitmap captureScreenShot(View view) {
+        /*
+         * Creating a Bitmap of view with ARGB_4444.
+         * */
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_4444);
+        Canvas canvas = new Canvas(bitmap);
+        Drawable backgroundDrawable = view.getBackground();
+
+        if (backgroundDrawable != null) {
+            backgroundDrawable.draw(canvas);
+        } else {
+            canvas.drawColor(Color.parseColor("#80000000"));
+        }
+        view.draw(canvas);
+        return bitmap;
+    }
+
+    private void getPaintModel(Paint paint, Paint tableContext, Paint tableField, Paint line, Paint linePDAM, Paint titlePaint, Paint jam, Paint officeName, Paint addressOffice, Paint tableField1, Paint identity, Paint time, Paint drawReact) {
+        // paint
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+//        paint.setStyle(Paint.Style.FILL);
+        paint.setTextSize(40f);
+
+        // tableContext
+        tableContext.setTextAlign(Paint.Align.LEFT);
+        tableContext.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        tableContext.setColor(Color.BLACK);
+        tableContext.setTextSize(45);
+
+        // linePDAM
+        linePDAM.setStyle(Paint.Style.STROKE);
+        linePDAM.setStrokeWidth(6);
+
+        // tittlePaint
+        titlePaint.setTextAlign(Paint.Align.CENTER);
+        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        titlePaint.setColor(Color.BLACK);
+        titlePaint.setTextSize(70);
+
+        // jam
+        jam.setTextAlign(Paint.Align.CENTER);
+        jam.setTextSize(60);
+
+        // officeName
+        officeName.setTextAlign(Paint.Align.CENTER);
+        officeName.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        officeName.setColor(Color.BLACK);
+        officeName.setTextSize(47);
+
+        // addressOffice
+        addressOffice.setTextAlign(Paint.Align.CENTER);
+        addressOffice.setTextSize(22f);
+
+        // tableField
+        tableField.setTextAlign(Paint.Align.LEFT);
+        tableField.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+//        tableField.setStyle(Paint.Style.FILL);
+        tableField.setTextSize(40f);
+
+        // identity
+        identity.setTextAlign(Paint.Align.LEFT);
+        identity.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        identity.setColor(Color.BLACK);
+        identity.setTextSize(40f);
+
+        // time
+        time.setTextAlign(Paint.Align.RIGHT);
+        time.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        time.setColor(Color.BLACK);
+        time.setTextSize(40f);
+
+        // line
+        line.setStyle(Paint.Style.STROKE);
+        line.setStrokeWidth(3);
+
+        // drawReact
+        drawReact.setStyle(Paint.Style.STROKE);
+        drawReact.setStrokeWidth(3);
+    }
+
     private void printAbsensi() {
         Bitmap bitmap, scaleBitmap;
         int pageWidth = 1200;
@@ -464,85 +559,59 @@ public class DetailAbsen extends AppCompatActivity {
 
         PdfDocument pdfDocument = new PdfDocument();
         Paint paint = new Paint();
-        Paint paint1 = new Paint();
-        Paint linePDAM = new Paint();
+        Paint tableContext = new Paint();
+        Paint lineOffice = new Paint();
         Paint titlePaint = new Paint();
         Paint jam = new Paint();
+        Paint officeName = new Paint();
+        Paint addressOffice = new Paint();
+        Paint tableField = new Paint();
+        Paint identity = new Paint();
+        Paint time = new Paint();
+        Paint line = new Paint();
+        Paint drawReact = new Paint();
 
-        PdfDocument.PageInfo pageInfo
-                = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create(); //A4 Portrait
+        getPaintModel(paint, tableContext, tableField, line, lineOffice, titlePaint, jam, officeName, addressOffice, tableField, identity, time, drawReact);
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create(); //A4 Portrait
         PdfDocument.Page page = pdfDocument.startPage(pageInfo);
 
         Canvas canvas = page.getCanvas();
         canvas.drawBitmap(scaleBitmap, 20, 20, paint);
 
-        titlePaint.setTextAlign(Paint.Align.CENTER);
-        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        titlePaint.setColor(Color.BLACK);
-        titlePaint.setTextSize(47);
-        canvas.drawText(getOfficeName, pageWidth / 2 + 120, 100, titlePaint);
+        canvas.drawText(getOfficeName, pageWidth / 2 + 120, 100, officeName);
 
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(22f);
-        canvas.drawText(getAddress, pageWidth / 2 + 120, 160, paint);
+        canvas.drawText(getAddress, pageWidth / 2 + 120, 160, addressOffice);
 
-        linePDAM.setStyle(Paint.Style.STROKE);
-        linePDAM.setStrokeWidth(6);
-        canvas.drawLine(295, 180, pageWidth - 40, 180, linePDAM);
+        canvas.drawLine(295, 180, pageWidth - 40, 180, lineOffice);
 
-        titlePaint.setTextAlign(Paint.Align.CENTER);
-        titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        titlePaint.setColor(Color.BLACK);
-        titlePaint.setTextSize(70);
         canvas.drawText("ABSENSI", pageWidth / 2, 320, titlePaint);
 
-        paint.setTextAlign(Paint.Align.LEFT);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(40f);
-//        canvas.drawText("NIK : " + Nik, 20, 420, paint);
-        canvas.drawText("Nama : " + nama, 20, 420, paint);
-        canvas.drawText("No.Telp : " + getNumber, 20, 480, paint);
-        canvas.drawText("Tgl Lahir : " + getTTl, 20, 540, paint);
-        canvas.drawText("Jabatan : " + jabatan, 20, 600, paint);
+        canvas.drawText("Nama : " + nama, 20, 420, identity);
+        canvas.drawText("No.Telp : " + getNumber, 20, 480, identity);
+        canvas.drawText("Tgl Lahir : " + getTTl, 20, 540, identity);
+        canvas.drawText("Jabatan : " + jabatan, 20, 600, identity);
 
-        paint.setTextAlign(Paint.Align.RIGHT);
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(40f);
-        canvas.drawText("Tanggal : " + eventDate.substring(0, 2) + "/" + eventDate.substring(2, 4) + "/" + eventDate.substring(4, 8), pageWidth - 20, 420, paint);
+        canvas.drawText("Tanggal : " + eventDate.substring(0, 2) + "/" + eventDate.substring(2, 4) + "/" + eventDate.substring(4, 8), pageWidth - 20, 420, time);
 
         dateFormat = new SimpleDateFormat("HH:mm");
-        canvas.drawText("Pukul : " + dateFormat.format(new Date().getTime()), pageWidth - 20, 480, paint);
+        canvas.drawText("Pukul : " + dateFormat.format(new Date().getTime()), pageWidth - 20, 480, time);
 
-        paint1.setTextAlign(Paint.Align.LEFT);
-        paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        paint1.setColor(Color.BLACK);
-        paint1.setTextSize(45);
-        canvas.drawText("KETERANGAN ABSENSI", 20, 700, paint1);
-//        canvas.drawText("POTONGAN", 20, 1360, paint1);
+        canvas.drawText("KETERANGAN ABSENSI", 20, 700, tableContext);
 
-        paint1.setStyle(Paint.Style.STROKE);
-        paint1.setStrokeWidth(3);
-        canvas.drawLine(20, 710, 504, 710, paint1);
-//        canvas.drawLine(20, 1370, 260, 1370, paint1);
+        canvas.drawLine(20, 710, 504, 710, line);
 
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(2);
-        canvas.drawRect(20, 730, pageWidth - 20, 1060, paint);
+        canvas.drawRect(20, 730, pageWidth - 20, 1060, drawReact);
 
-        paint.setTextAlign(Paint.Align.LEFT);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawText("No.", 40, 780, paint);
-        canvas.drawText("Keterangan", 160, 780, paint);
-        canvas.drawText("Data Absen", pageWidth / 2 + 30, 780, paint);
+        canvas.drawText("No.", 40, 780, tableField);
+        canvas.drawText("Keterangan", 160, 780, tableField);
+        canvas.drawText("Data Absen", pageWidth / 2 + 30, 780, tableField);
 
-        canvas.drawLine(20, 810, pageWidth - 20, 810, paint);
-        canvas.drawLine(130, 740, 130, 800, paint);
-        canvas.drawLine(pageWidth / 2, 740, pageWidth / 2, 800, paint);
-        canvas.drawLine(pageWidth / 2, 810, pageWidth / 2, 1060, paint);
-        canvas.drawLine(130, 810, 130, 1060, paint);
-//        canvas.drawLine(20, 1200, pageWidth - 20, 1200, paint);
+        canvas.drawLine(20, 810, pageWidth - 20, 810, line);
+        canvas.drawLine(130, 740, 130, 800, line);
+        canvas.drawLine(pageWidth / 2, 740, pageWidth / 2, 800, line);
+        canvas.drawLine(pageWidth / 2, 810, pageWidth / 2, 1060, line);
+        canvas.drawLine(130, 810, 130, 1060, line);
 
         canvas.drawText("1.", 40, 860, paint);
         canvas.drawText("Kehadiran", 160, 860, paint);
@@ -550,100 +619,55 @@ public class DetailAbsen extends AppCompatActivity {
 
         canvas.drawText("2.", 40, 920, paint);
         canvas.drawText("Lokasi Absen", 160, 920, paint);
-        canvas.drawText(absenKantor ? "Absen di kantor" : "Absen di luar kantor", pageWidth / 2 + 30, 920, paint);
 
         canvas.drawText("3.", 40, 980, paint);
         canvas.drawText("Waktu Absen", 160, 980, paint);
-        canvas.drawText(terlambatMasuk ? "Terlambat Absen" : "Absen tepat waktu", pageWidth / 2 + 30, 980, paint);
-//
+
         canvas.drawText("4.", 40, 1040, paint);
         canvas.drawText("Jam lembur", 160, 1040, paint);
-        canvas.drawText(jamLembur ? "Lembur" : "-", pageWidth / 2 + 30, 1040, paint);
 
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(2);
-        canvas.drawRect(20, 1100, pageWidth / 2 - 120, 1300, paint);
-        canvas.drawRect(pageWidth / 2 + 120, 1100, pageWidth - 20, 1300, paint);
-        canvas.drawLine(20, 1180, pageWidth /2 - 120, 1180, paint);
-        canvas.drawLine(pageWidth / 2 + 120, 1180, pageWidth - 20, 1180, paint);
+        if (kehadiran) {
+            canvas.drawText(absenKantor ? "Absen di kantor" : "Absen di luar kantor", pageWidth / 2 + 30, 920, paint);
 
-        jam.setTextAlign(Paint.Align.LEFT);
-        jam.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
-        jam.setColor(Color.BLACK);
-        jam.setTextSize(40f);
-        canvas.drawText("Jam Masuk", 140, 1150, jam);
-        canvas.drawText("Jam Keluar", pageWidth / 2 + 250, 1150, jam);
+            canvas.drawText(terlambatMasuk ? "Terlambat Absen" : "Absen tepat waktu", pageWidth / 2 + 30, 980, paint);
 
-        jam.setTextAlign(Paint.Align.CENTER);
-        jam.setTextSize(60);
-        canvas.drawText(jamMasuk, 250, 1260, jam);
-        canvas.drawText(jamKeluar, pageWidth / 2 + 350, 1260, jam);
-//
-//        int gajiPe = Integer.parseInt(gaji);
-//        int tunJab = Integer.parseInt(TunjanganJabatan);
-//        int tunKel = Integer.parseInt(TunjanganKeluarga);
-//        int tunBer = Integer.parseInt(TunjanganBeras);
-//        int tunKin = Integer.parseInt(TunjanganKinerja);
-//        int totalPenghasilan = gajiPe + tunJab + tunKel + tunBer + tunKin;
-//
-//        canvas.drawText("Total Penghasilan", 160, 1250, paint);
-//        canvas.drawText(String.valueOf(totalPenghasilan), 780, 1250, paint);
-//
-//        paint.setStyle(Paint.Style.STROKE);
-//        paint.setStrokeWidth(2);
-//        canvas.drawRect(20, 1390, pageWidth - 20, 1820, paint);
-//
-//        paint.setTextAlign(Paint.Align.LEFT);
-//        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawText("No.", 40, 1440, paint);
-//        canvas.drawText("Keterangan", 160, 1440, paint);
-//        canvas.drawText("Nominal", 780, 1440, paint);
-//
-//        canvas.drawLine(20, 1470, pageWidth - 20, 1470, paint);
-//        canvas.drawLine(130, 1400, 130, 1460, paint);
-//        canvas.drawLine(750, 1400, 750, 1460, paint);
-//        canvas.drawLine(750, 1750, 750, 1810, paint);
-//        canvas.drawLine(20, 1740, pageWidth - 20, 1740, paint);
-//
-//        canvas.drawText("1.", 40, 1530, paint);
-//        canvas.drawText("Jumlah Kotor", 160, 1530, paint);
-//        canvas.drawText(JumlahKotor, 780, 1530, paint);
-//
-//        canvas.drawText("2.", 40, 1590, paint);
-//        canvas.drawText("Dapenma", 160, 1590, paint);
-//        canvas.drawText(Dapenma, 780, 1590, paint);
-//
-//        canvas.drawText("3.", 40, 1650, paint);
-//        canvas.drawText("Jamsostek", 160, 1650, paint);
-//        canvas.drawText(JamSostek, 780, 1650, paint);
-//
-//        canvas.drawText("4.", 40, 1710, paint);
-//        canvas.drawText("PPH 21", 160, 1710, paint);
-//        canvas.drawText(JamSostek, 780, 1710, paint);
-//
-//        int jumKotor = Integer.parseInt(JumlahKotor);
-//        int dapenma = Integer.parseInt(Dapenma);
-//        int jamSostek = Integer.parseInt(JamSostek);
-//        int pph = Integer.parseInt(PPH21);
-//        int totalPotongan = jumKotor + dapenma + jamSostek + pph;
-//
-//        canvas.drawText("Total Potongan", 160, 1790, paint);
-//        canvas.drawText(String.valueOf(totalPotongan), 780, 1790, paint);
-//
-//        double totalGaji = totalPenghasilan - totalPotongan;
-//
-//        String totalGajiPegawai = formatRupiah(totalGaji);
-//
-//        paint.setColor(Color.rgb(115, 204, 255));
-//        canvas.drawRect(110, 1860, pageWidth - 120, 1970, paint);
-//
-//        paint.setTextAlign(Paint.Align.LEFT);
-//        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-//        paint.setColor(Color.BLACK);
-//        paint.setTextSize(60);
-//        canvas.drawText("Total Gaji", 140, 1940, paint);
-//        canvas.drawText("=", 480, 1940, paint);
-//        canvas.drawText(String.valueOf(totalGajiPegawai), 580, 1940, paint);
+            canvas.drawText(jamLembur ? "Lembur" : "-", pageWidth / 2 + 30, 1040, paint);
+
+            canvas.drawRect(20, 1100, pageWidth / 2 - 120, 1300, drawReact);
+            canvas.drawRect(pageWidth / 2 + 120, 1100, pageWidth - 20, 1300, drawReact);
+            canvas.drawLine(20, 1180, pageWidth / 2 - 120, 1180, line);
+            canvas.drawLine(pageWidth / 2 + 120, 1180, pageWidth - 20, 1180, line);
+
+            canvas.drawText("Jam Masuk", 140, 1150, identity);
+            canvas.drawText("Jam Keluar", pageWidth / 2 + 250, 1150, identity);
+
+            canvas.drawText(jamMasuk, 250, 1260, jam);
+            canvas.drawText(jamKeluar, pageWidth / 2 + 350, 1260, jam);
+
+            canvas.drawBitmap(bmpMap, 20, 1350, paint);
+
+            canvas.drawText("Titik Lokasi Absensi", 20, 1720, identity);
+
+            if (titikAbsen.length() > 50){
+                canvas.drawText(titikAbsen.substring(0, 51), 20, 1770, paint);
+                canvas.drawText(titikAbsen.substring(51), 20, 1810, paint);
+            } else {
+                canvas.drawText(titikAbsen, 20, 1760, paint);
+            }
+        } else {
+            canvas.drawText("-", pageWidth / 2 + 30, 920, paint);
+
+            canvas.drawText("-", pageWidth / 2 + 30, 980, paint);
+
+            canvas.drawText("-", pageWidth / 2 + 30, 1040, paint);
+
+            canvas.drawRect(20, 1100, pageWidth - 20, 1300, drawReact);
+            canvas.drawLine(20, 1180, pageWidth - 20, 1180, line);
+
+            canvas.drawText("Keterangan Izin", 40, 1150, identity);
+
+            canvas.drawText(ketHadir, 40, 1280, paint);
+        }
 
         pdfDocument.finishPage(page);
 
@@ -683,9 +707,16 @@ public class DetailAbsen extends AppCompatActivity {
             alertDialog.setCancelable(true);
             alertDialog.show();
 
+            cardLokasi.setDrawingCacheEnabled(false);
+
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(context, "Error!! " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void sendData(Bitmap dataBmp) {
+        bmpMap = dataBmp;
     }
 }
