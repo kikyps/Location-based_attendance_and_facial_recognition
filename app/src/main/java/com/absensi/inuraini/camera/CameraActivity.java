@@ -39,6 +39,7 @@ import com.absensi.inuraini.R;
 import com.absensi.inuraini.user.UserActivity;
 import com.absensi.inuraini.user.absen.AbsenData;
 import com.absensi.inuraini.user.absen.AbsenFragment;
+import com.absensi.inuraini.user.ui.HomeActivityUser;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
@@ -502,7 +503,11 @@ public class CameraActivity extends AppCompatActivity {
         float value = Math.min(left, right);
         if (blink(value)) {
             addFace();
-            UserActivity.firstExit = true;
+            if (Preferences.getDataStatus(context).equals("user")) {
+                HomeActivityUser.firstExit = true;
+            } else {
+                UserActivity.firstExit = true;
+            }
             finish();
         }
     }

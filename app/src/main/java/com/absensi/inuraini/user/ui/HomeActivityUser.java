@@ -1,32 +1,23 @@
-package com.absensi.inuraini.user;
+package com.absensi.inuraini.user.ui;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.absensi.inuraini.GetServerTime;
 import com.absensi.inuraini.Preferences;
@@ -36,8 +27,10 @@ import com.absensi.inuraini.common.DataDiriOne;
 import com.absensi.inuraini.common.DoVerifActivity;
 import com.absensi.inuraini.common.LoginActivity;
 import com.absensi.inuraini.common.SetSystemDateTimeActivity;
+import com.absensi.inuraini.meowbottomnavigation.MeowBottomNavigation;
 import com.absensi.inuraini.user.absen.AbsenFragment;
-import com.google.android.material.navigation.NavigationView;
+import com.absensi.inuraini.user.account.AccountInfo;
+import com.absensi.inuraini.user.pengajuan.PengajuanLibur;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,70 +44,74 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserActivity extends AppCompatActivity {
+public class HomeActivityUser extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
-    private AppBarConfiguration mAppBarConfiguration;
-    NavigationView navigationView;
-    Dialog progressDialog;
-    TextView nama;
-    LinearLayout infouser;
-    Context context = this;
+    private final int ID_LIBUR = 1;
+    private final int ID_ABSEN = 2;
+    private final int ID_AKUN = 3;
     public static boolean firstExit = false;
-    FirebaseUser firebaseUser;
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+
+    Context context = this;
+    Dialog progressDialog;
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
     DateFormat jamNow = new SimpleDateFormat("HH:mm");
     DateFormat jamSec = new SimpleDateFormat("HH:mm:ss");
 
+    FirebaseUser firebaseUser;
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
-        firebaseUser = Preferences.mAuth.getCurrentUser();
+        setContentView(R.layout.activity_home_user);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        Preferences.clearDataUpdateDialog(this);
+        firebaseUser = Preferences.mAuth.getCurrentUser();
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_akun,
-                R.id.nav_absen,
-                R.id.nav_pengajuan_libur,
-                R.id.nav_dashboard,
-                R.id.nav_rekap_absen,
-                R.id.nav_data_pengajuan,
-                R.id.nav_lokasi,
-                R.id.nav_jabatan,
-                R.id.nav_data_pegawai,
-                R.id.nav_verif_akun)
-                .setOpenableLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_user);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-
-        contentListeners(headerView);
-    }
-
-    private void contentListeners(View view){
-        nama = view.findViewById(R.id.name_txt);
-        infouser = view.findViewById(R.id.info_user);
         boolean getValidity = getIntent().getBooleanExtra("validCtx", false);
         if (!getValidity){
             finishAndRemoveTask();
         }
+
+        MeowBottomNavigation bottomNavigation = findViewById(R.id.myNavigation);
+
+        bottomNavigation.add(new MeowBottomNavigation.Model(ID_LIBUR, R.drawable.ic_pengajuan_libur));
+        bottomNavigation.add(new MeowBottomNavigation.Model(ID_ABSEN, R.drawable.ic_absen));
+        bottomNavigation.add(new MeowBottomNavigation.Model(ID_AKUN, R.drawable.ic_baseline_account_circle_24));
+
+        bottomNavigation.setOnClickMenuListener(item -> {
+
+        });
+
+        bottomNavigation.setOnShowListener(item -> {
+            switch (item.getId()){
+                case ID_LIBUR:
+                    replaceFragment(new PengajuanLibur());
+                    toolbar.setTitle("Pengajuan Libur");
+                    break;
+                case ID_ABSEN:
+                    replaceFragment(new AbsenFragment());
+                    toolbar.setTitle("Absensi");
+                    break;
+                case ID_AKUN:
+                    replaceFragment(new AccountInfo());
+                    toolbar.setTitle("Akun Saya");
+                    break;
+            }
+        });
+
+        bottomNavigation.setOnReselectListener(item -> {
+
+        });
+
+        bottomNavigation.show(ID_ABSEN, true);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -129,11 +126,11 @@ public class UserActivity extends AppCompatActivity {
     private void onSignOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Sign Out")
-                        .setMessage("Apakah anda yakin ingin keluar?")
-                                .setPositiveButton("Iya", (dialog, which) -> {
-                                    Preferences.signOut(context, firstExit, LoginActivity.class);
-                                    finish();
-                                })
+                .setMessage("Apakah anda yakin ingin keluar?")
+                .setPositiveButton("Iya", (dialog, which) -> {
+                    Preferences.signOut(context, firstExit, LoginActivity.class);
+                    finish();
+                })
                 .setNegativeButton("Tidak", (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(true);
@@ -144,30 +141,6 @@ public class UserActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         readUserData();
-    }
-
-    private void showMyProgresDialog(){
-        hideMyProgresDialog();
-        progressDialog = Preferences.customProgresBar(context);
-    }
-
-    private void hideMyProgresDialog(){
-        if(progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-        progressDialog = null;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        hideMyProgresDialog();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        hideMyProgresDialog();
     }
 
     private void readUserData() {
@@ -200,11 +173,9 @@ public class UserActivity extends AppCompatActivity {
                     boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
                     String myId = snapshot.child("faceID").getValue(String.class);
                     String namaku = snapshot.child("sNama").getValue(String.class);
+                    String getstatus = snapshot.child("sStatus").getValue(String.class);
                     boolean wajahid = snapshot.hasChild("faceID");
                     boolean trial = snapshot.hasChild("sTrial");
-                    String getstatus = snapshot.child("sStatus").getValue(String.class);
-
-                    nama.setText(namaku);
 
                     serverTime.getDateTime((date, time) -> {
                         String curentDate = dateNow.format(new Date().getTime());
@@ -229,13 +200,13 @@ public class UserActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 } else {
                                     if (!Preferences.getUpdateDialog(context)) {
-                                        Preferences.checkUpdate(context, UserActivity.this);
+                                        Preferences.checkUpdate(context, HomeActivityUser.this);
                                     }
                                     hideMyProgresDialog();
                                 }
                             }
                         } else {
-                            Intent intent = new Intent(UserActivity.this, SetSystemDateTimeActivity.class);
+                            Intent intent = new Intent(HomeActivityUser.this, SetSystemDateTimeActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                     Intent.FLAG_ACTIVITY_NEW_TASK |
@@ -252,26 +223,6 @@ public class UserActivity extends AppCompatActivity {
                         if (Preferences.getDataStatus(context).isEmpty()) {
                             Preferences.setDataStatus(context, getstatus);
                         }
-                    }
-
-                    if (Preferences.getDataStatus(context).equals(Preferences.retriveSec("yVGdzFWb"))) {
-                        Menu menu = navigationView.getMenu();
-                        MenuItem nav_admin = menu.findItem(R.id.admin_akses);
-                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                        nav_user.setVisible(false);
-                        nav_admin.setVisible(true);
-                    } else if (Preferences.getDataStatus(context).equals("admin")){
-                        Menu menu = navigationView.getMenu();
-                        MenuItem nav_admin = menu.findItem(R.id.admin_akses);
-                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                        nav_user.setVisible(false);
-                        nav_admin.setVisible(true);
-                    } else {
-                        Menu menu = navigationView.getMenu();
-                        MenuItem nav_dashboard = menu.findItem(R.id.admin_akses);
-                        MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
-                        nav_user.setVisible(true);
-                        nav_dashboard.setVisible(false);
                     }
 
                     if (!trial){
@@ -294,57 +245,35 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_user);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.user_frame, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void showMyProgresDialog(){
+        hideMyProgresDialog();
+        progressDialog = Preferences.customProgresBar(context);
+    }
+
+    private void hideMyProgresDialog(){
+        if(progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        progressDialog = null;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Preferences.REQUEST_PERMISSION_CODE){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-                if (Environment.isExternalStorageManager()){
-//                    Toast.makeText(this, "Permission granted in android 11 and above", Toast.LENGTH_SHORT).show();
-                    Preferences.downloadUpdate(context);
-                }
-            }
-        }
-
-        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (resultCode == RESULT_OK){
-                Preferences.getMyLocation(context, UserActivity.this);
-            } else {
-                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(context, "Aktifkan GPS untuk absen", Toast.LENGTH_SHORT).show();
-            }
-        }
+    protected void onPause() {
+        super.onPause();
+        hideMyProgresDialog();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Preferences.REQUEST_PERMISSION_CODE) {
-            if (grantResults.length > 0) {
-                boolean readExternalStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean writeExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                if (readExternalStorage && writeExternalStorage) {
-//                    Toast.makeText(this, "Permission granted in android 10 or below", Toast.LENGTH_SHORT).show();
-                    Preferences.downloadUpdate(context);
-                }
-            }
-        }
-
-        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Preferences.getMyLocation(context, this);
-            } else {
-                AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(context, "Izinkan akses lokasi untuk absen", Toast.LENGTH_SHORT).show();
-            }
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        hideMyProgresDialog();
     }
 
     @Override

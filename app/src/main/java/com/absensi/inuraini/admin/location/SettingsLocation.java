@@ -83,39 +83,7 @@ public class SettingsLocation extends Fragment {
         });
 
         changeLocations.setOnLongClickListener(v -> {
-
-            if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))){
-                getMaps = true;
-                Preferences.getMyLocation(mContext, getActivity());
-            } else {
-                if (trialCount < 3) {
-                    Map<String, Object> postValues = new HashMap<>();
-                    postValues.put("sTrial", trialCount++);
-                    databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
-                    getMaps = true;
-                    Preferences.getMyLocation(mContext, getActivity());
-                    if (trialCount == 0){
-                        Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 2x Lagi", Toast.LENGTH_LONG).show();
-                    } else if (trialCount == 1) {
-                        Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 1x Lagi", Toast.LENGTH_LONG).show();
-                    } else if (trialCount == 2) {
-                        Toast.makeText(mContext, "Ini adalah penggunaan terakhir anda untuk dapat menggunakan fitur maps", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Preferences.showDialog(mContext,
-                            null,
-                            "Trial limit",
-                            "Masa penggunaan trial anda telah mencapai batas anda tidak dapat menggunakan fitur google maps!, untuk dapat menggunakan fitur ini kembali anda dapat menambah billing pada (Google Maps Api)",
-                            "Mengerti",
-                            null,
-                            null,
-                            (dialog, which) -> dialog.dismiss(),
-                            (dialog, which) -> dialog.dismiss(),
-                            (dialog, which) -> dialog.dismiss(),
-                            false,
-                            true);
-                }
-            }
+            showMaps();
             return true;
         });
 
@@ -125,6 +93,41 @@ public class SettingsLocation extends Fragment {
             address.getEditText().setText(addressValue);
             address.getEditText().clearFocus();
         });
+    }
+
+    private void showMaps(){
+        if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))){
+            getMaps = true;
+            Preferences.getMyLocation(mContext, getActivity());
+        } else {
+            if (trialCount < 3) {
+                Map<String, Object> postValues = new HashMap<>();
+                postValues.put("sTrial", trialCount + 1);
+                databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
+                getMaps = true;
+                Preferences.getMyLocation(mContext, getActivity());
+                if (trialCount == 1){
+                    Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 2x Lagi", Toast.LENGTH_LONG).show();
+                } else if (trialCount == 2) {
+                    Toast.makeText(mContext, "Anda hanya dapat menggunakan fitur ini 1x Lagi", Toast.LENGTH_LONG).show();
+                } else if (trialCount == 3) {
+                    Toast.makeText(mContext, "Ini adalah penggunaan terakhir anda untuk dapat menggunakan fitur maps", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Preferences.showDialog(mContext,
+                        null,
+                        "Trial limit",
+                        "Masa penggunaan trial anda telah mencapai batas anda tidak dapat menggunakan fitur google maps!, untuk dapat menggunakan fitur ini kembali anda dapat menambah billing pada (Google Maps Api)",
+                        "Mengerti",
+                        null,
+                        null,
+                        (dialog, which) -> dialog.dismiss(),
+                        (dialog, which) -> dialog.dismiss(),
+                        (dialog, which) -> dialog.dismiss(),
+                        false,
+                        true);
+            }
+        }
     }
 
     private void showAddressAndDistance(){
@@ -253,11 +256,7 @@ public class SettingsLocation extends Fragment {
                         dialogInterface.cancel();
                     })
                     .setNeutralButton(show, (dialog, which) -> {
-                        Map<String, Object> postValues = new HashMap<>();
-                        postValues.put("sTrial", trialCount++);
-                        databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
-                        getMaps = true;
-                        Preferences.getMyLocation(mContext, getActivity());
+                        showMaps();
                     });
             builder.setCancelable(true);
             builder.show();

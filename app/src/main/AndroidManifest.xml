@@ -37,12 +37,20 @@
         android:theme="@style/Theme.AbsensiWajah"
         tools:targetApi="s">
         <activity
+            android:name=".user.ui.HomeActivityUser"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".admin.location.SpotTestActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_api" /> <!-- <uses-library android:name="org.apache.http.legacy" android:required="false" /> -->
@@ -189,8 +197,8 @@
             android:exported="false" />
         <activity
             android:name=".dexter.DexterActivity"
-            android:theme="@style/Dexter.Internal.Theme.Transparent"
-            />
+            android:theme="@style/Dexter.Internal.Theme.Transparent" />
+
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="face" />

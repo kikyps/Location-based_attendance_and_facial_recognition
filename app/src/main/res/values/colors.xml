@@ -20,4 +20,5 @@
     <color name="transparent">#00000000</color>
     <color name="background">#E6000000</color>
     <color name="btn_alamat_backgroun">#FF1B776E</color>
+    <color name="shadow_botnav_color">#1f212121</color>
 </resources>

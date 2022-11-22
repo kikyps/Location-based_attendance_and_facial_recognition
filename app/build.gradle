@@ -33,8 +33,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 140171122
-        versionName '1.4.0'
+        versionCode 142221122
+        versionName '1.4.2'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -50,7 +50,7 @@ android {
         enable true
         // 可选：指定需加密的代码包路径，可配置多个，未指定将默认全部加密。
         fogPackages = ['com.absensi.inuraini']
-        // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥）,
+        // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥,
         // 也可以指定一个固定的密钥：HardCodeKeyGenerator("This is a key")
         kg new RandomKeyGenerator()
         // 可选（4.0版本新增）：用于控制字符串加密后在字节码中的存在形式, 默认为base64，
@@ -65,13 +65,7 @@ android {
         // Obfuscation depth
         depth 3
         // The classes which need to be obfuscated
-        obfClass = [
-                "com.absensi.inuraini"
-//                "com.absensi.inuraini.DownloadTask",
-//                "com.absensi.inuraini.GetServerTime",
-//                "com.absensi.inuraini.mytools",
-//                "com.absensi.inuraini.common"
-        ]
+        obfClass = ["com.absensi.inuraini"]
         // It will not obfuscate the classes that in blackClass
 //        blackClass = ["com.absensi.inuraini.common.CollectorActivity", "com.absensi.inuraini.user.absen.AbsenData"]
     }
@@ -126,9 +120,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
-    implementation platform('com.google.firebase:firebase-bom:31.0.2')
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
     implementation 'com.google.firebase:firebase-auth:21.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.0'
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
@@ -152,7 +146,7 @@ dependencies {
     implementation 'com.google.mlkit:face-detection:16.1.5'
     implementation 'com.google.code.gson:gson:2.10'
 //    implementation 'androidx.core:core-splashscreen:1.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.2'
     implementation 'com.google.firebase:firebase-analytics:21.2.0'
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'com.airbnb.android:lottie:5.2.0'

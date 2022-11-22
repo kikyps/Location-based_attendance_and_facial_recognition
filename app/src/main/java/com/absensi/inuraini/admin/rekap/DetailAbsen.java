@@ -51,8 +51,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.SendDataInterface {
     String eventDate, idkaryawan, jabatan, latitudeTxt, longitudeTxt, titikAbsen, getOfficeName, getAddress,
@@ -138,46 +136,12 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
         });
 
         cardLokasi.setOnClickListener(v -> {
-            if (firebaseUser.getUid().equals(Preferences.retriveSec("==gM240Sl92Uvd1UJtmdYd3RlRmeJpFU5QlRXhlc"))) {
-                Intent intent = new Intent(context, MapsActivity.class);
-                intent.putExtra("seeLocation", true);
-                intent.putExtra("getAbsenLatitude", latitudeTxt);
-                intent.putExtra("getAbsenLongitude", longitudeTxt);
-                intent.putExtra("getAbsenLokasi", titikAbsen);
-                startActivity(intent);
-            } else {
-                if (trialCount < 3) {
-                    Map<String, Object> postValues = new HashMap<>();
-                    postValues.put("sTrial", trialCount++);
-                    databaseReference.child("user").child(firebaseUser.getUid()).updateChildren(postValues);
-                    Intent intent = new Intent(context, MapsActivity.class);
-                    intent.putExtra("seeLocation", true);
-                    intent.putExtra("getAbsenLatitude", latitudeTxt);
-                    intent.putExtra("getAbsenLongitude", longitudeTxt);
-                    intent.putExtra("getAbsenLokasi", titikAbsen);
-                    startActivity(intent);
-                    if (trialCount == 0) {
-                        Toast.makeText(context, "Anda hanya dapat menggunakan fitur ini 2x Lagi", Toast.LENGTH_LONG).show();
-                    } else if (trialCount == 1) {
-                        Toast.makeText(context, "Anda hanya dapat menggunakan fitur ini 1x Lagi", Toast.LENGTH_LONG).show();
-                    } else if (trialCount == 2) {
-                        Toast.makeText(context, "Ini adalah penggunaan terakhir anda untuk dapat menggunakan fitur maps", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Preferences.showDialog(context,
-                            null,
-                            "Trial Limit",
-                            "Masa penggunaan trial anda telah mencapai batas anda tidak dapat menggunakan fitur google maps!, untuk dapat menggunakan fitur ini kembali anda dapat menambah billing pada (Google Maps Api)",
-                            "Mengerti",
-                            null,
-                            null,
-                            (dialog, which) -> dialog.dismiss(),
-                            (dialog, which) -> dialog.dismiss(),
-                            (dialog, which) -> dialog.dismiss(),
-                            false,
-                            true);
-                }
-            }
+            Intent intent = new Intent(context, MapsActivity.class);
+            intent.putExtra("seeLocation", true);
+            intent.putExtra("getAbsenLatitude", latitudeTxt);
+            intent.putExtra("getAbsenLongitude", longitudeTxt);
+            intent.putExtra("getAbsenLokasi", titikAbsen);
+            startActivity(intent);
         });
     }
 
@@ -695,7 +659,7 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Success")
-                    .setMessage("Slip gaji berhasil di print, anda dapat melihat dan membagikan slip gaji")
+                    .setMessage("Absensi berhasil di print, anda dapat melihat dan membagikan absensi")
                     .setPositiveButton("Buka", (dialog, which) -> {
                             storage.openFileWith(fileGenerate, Storage.FILE_PDF);
                         })

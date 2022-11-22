@@ -42,6 +42,7 @@ import com.absensi.inuraini.camera.SimilarityClassifier;
 import com.absensi.inuraini.common.AntiMockActivity;
 import com.absensi.inuraini.common.EmailVerificationActivity;
 import com.absensi.inuraini.user.absen.AbsenFragment;
+import com.github.clans.fab.BuildConfig;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -286,10 +287,12 @@ public class Preferences {
         clearData(context);
         if (start) {
             Intent intent = new Intent(context, activity);
+            intent.putExtra("validCtx", true);
             intent.putExtra("relog", true);
             context.startActivity(intent);
         } else {
             Intent intent = new Intent(context, activity);
+            intent.putExtra("validCtx", true);
             context.startActivity(intent);
         }
     }
