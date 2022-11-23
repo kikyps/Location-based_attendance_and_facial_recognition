@@ -1,7 +1,6 @@
 package com.absensi.inuraini.admin.jabatan;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,8 +16,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -65,11 +62,26 @@ public class TambahJabatan extends AppCompatActivity {
             BtnTambahJabatan.setOnClickListener(view -> {
                 String sJabatan = jabatan.getText().toString().trim();
 
-                StoreJabatan storeJabatan = new StoreJabatan(sJabatan);
-                databaseReference.child("DataJabatan").push().setValue(storeJabatan).addOnSuccessListener(aVoid -> {
-                    Toast.makeText(getApplicationContext(), "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show();
-                    finish();
-                }).addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Gagal upload data!", Toast.LENGTH_SHORT).show());
+                databaseReference.child("DataJabatan").orderByChild("sJabatan").equalTo(sJabatan).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            Toast.makeText(context, "Data jabatan dengan nama " + sJabatan + " sudah ada!", Toast.LENGTH_LONG).show();
+                        } else {
+                            StoreJabatan storeJabatan = new StoreJabatan(sJabatan);
+                            databaseReference.child("DataJabatan").push().setValue(storeJabatan).addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getApplicationContext(), "Data berhasil ditambahkan", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }).addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Gagal upload data!", Toast.LENGTH_SHORT).show());
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             });
         }
 
@@ -184,7 +196,7 @@ public class TambahJabatan extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle("Hapus Jabatan")
                             .setMessage("Apakah anda yakin ingin menghapus jabatan \n(" + jabatan.getText() + ")")
-                            .setPositiveButton("Ya", (dialogInterface, i) -> databaseReference.child("DataJabatan").child(idjabatan).removeValue().addOnSuccessListener(aVoid -> {
+                            .setPositiveButton("Ya", (dialogInterface, i) -> databaseReference.child("DataJabatan").child(idjabatan).removeValue().addOnCompleteListener(task -> {
                                 Toast.makeText(getApplicationContext(),"Data berhasil di hapus", Toast.LENGTH_SHORT).show();
                                 finish();
                             }).addOnFailureListener(e -> Toast.makeText(getApplicationContext(),"Terjadi kesalahan saat menghapus data, periksa koneksi internet dan coba lagi!", Toast.LENGTH_LONG).show())).setNegativeButton("Tidak", (dialogInterface, i) -> dialogInterface.cancel());
