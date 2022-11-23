@@ -161,18 +161,6 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
             }
         });
 
-        databaseReference.child("user").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                trialCount = snapshot.child("sTrial").getValue(int.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
         databaseReference.child("user").child(idkaryawan).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

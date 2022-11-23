@@ -1,5 +1,6 @@
 package com.absensi.inuraini.common;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -88,7 +89,9 @@ public class LoginActivity extends AppCompatActivity {
             if (!Preferences.isConnected(context)) {
                 Preferences.dialogNetwork(context);
             } else {
-                Preferences.setProgressDialog();
+                if (!(context instanceof Activity && ((Activity) context).isFinishing())) {
+                    Preferences.setProgressDialog();
+                }
                 turnLoginGoogle();
             }
         });

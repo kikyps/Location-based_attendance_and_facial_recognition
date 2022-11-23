@@ -48,8 +48,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce;
@@ -274,10 +272,8 @@ public class UserActivity extends AppCompatActivity {
                         nav_dashboard.setVisible(false);
                     }
 
-                    if (!trial){
-                        Map<String, Object> postValues = new HashMap<>();
-                        postValues.put("sTrial", 0);
-                        databaseReference.child(firebaseUser.getUid()).updateChildren(postValues);
+                    if (trial){
+                        databaseReference.child(firebaseUser.getUid()).child("sTrial").removeValue();
                     }
 
                 } else {

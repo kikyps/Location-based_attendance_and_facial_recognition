@@ -234,13 +234,21 @@ public class Storage {
         }
     }
 
+    public String getFileExt(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
     public void openFileWith(String path, String fileType){
         if (isFileExist(path)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-            browserIntent.setDataAndType(getUriFromFile(path), fileType);
-            browserIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                    Intent.FLAG_ACTIVITY_NO_HISTORY);
-            mContext.startActivity(browserIntent);
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setDataAndType(getUriFromFile(path), fileType);
+                browserIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        Intent.FLAG_ACTIVITY_NO_HISTORY);
+                mContext.startActivity(browserIntent);
+            } catch (Exception e){
+                Toast.makeText(mContext, "No " + getFileExt(path) + " file reader application found on this device", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(mContext, "InitFile path is incorrect.", Toast.LENGTH_SHORT).show();
         }
@@ -248,12 +256,16 @@ public class Storage {
 
     public void shareFile(String path, String fileType){
         if (isFileExist(path)) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType(fileType);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, getUriFromFile(path));
-            mContext.startActivity(Intent.createChooser(shareIntent, "Share it"));
+            try {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType(fileType);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, getUriFromFile(path));
+                mContext.startActivity(Intent.createChooser(shareIntent, "Share it"));
+            } catch (Exception e){
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(mContext, "InitFile path is incorrect.", Toast.LENGTH_SHORT).show();
         }

@@ -1,13 +1,9 @@
 package com.absensi.inuraini.admin.datapegawai;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
@@ -160,15 +161,41 @@ public class DetailPegawai extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 return true;
+            case R.id.delete_account:
+                onDeletedUser();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void onDeletedUser() {
+        String getName = nama.getText().toString();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Hapus Akun")
+                .setMessage("Apakah anda yakin ingin menghapus akun " + getName + "? \n\njika anda menghapus akun ini semua data yang terekap pada akun ini akan di hapus dan tidak dapat di pulihkan!")
+                .setPositiveButton("Hapus", (dialogInterface, i) -> {
+                    databaseReference.child(idPegawai).removeValue().addOnSuccessListener(unused -> {
+                        Toast.makeText(getApplicationContext(), "Akun berhasil di hapus", Toast.LENGTH_LONG).show();
+                        finish();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_LONG).show();
+                    });
+                }).setNegativeButton("Cancel", (dialogInterface, i) -> {
+                    dialogInterface.cancel();
+                }).setCancelable(true).show();
     }
 
     @Override
