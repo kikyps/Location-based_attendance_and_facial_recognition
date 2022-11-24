@@ -195,7 +195,7 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
             }
         });
 
-        databaseReference.child("user").child(idkaryawan).child("sAbsensi").child(eventDate).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("user").child(idkaryawan).child("sAbsensi").child(eventDate).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {

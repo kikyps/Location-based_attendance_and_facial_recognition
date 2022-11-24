@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!Preferences.isConnected(context)) {
                 Preferences.dialogNetwork(context);
             } else {
-                if (!(context instanceof Activity && ((Activity) context).isFinishing())) {
+                if(!((Activity) context).isFinishing()) {
                     Preferences.setProgressDialog();
                 }
                 turnLoginGoogle();
@@ -146,13 +146,8 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         } else {
-            boolean restart = getIntent().getBooleanExtra("relog", false);
-            if (restart) {
-                Preferences.doRestart(context);
-            } else {
-                if (!Preferences.getUpdateDialog(context)) {
-                    Preferences.checkUpdate(context, this);
-                }
+            if (!Preferences.getUpdateDialog(context)) {
+                Preferences.checkUpdate(context, this);
             }
         }
     }

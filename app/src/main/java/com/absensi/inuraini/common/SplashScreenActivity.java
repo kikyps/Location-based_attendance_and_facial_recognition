@@ -1,5 +1,6 @@
 package com.absensi.inuraini.common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashScreenActivity extends AppCompatActivity {
     FirebaseUser firebaseUser;
     FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
@@ -34,7 +36,12 @@ public class SplashScreenActivity extends AppCompatActivity {
         // Make call to execute AsycTasks<> here
         // This helps avoid the extra step of clicking on a button
         // to take you to the MainActivity
-        new StartMainActivity().execute(this);
+        boolean restart = getIntent().getBooleanExtra("relog", false);
+        if (restart) {
+            Preferences.doRestart(this);
+        } else {
+            new StartMainActivity().execute(this);
+        }
 
 //        new Handler().postDelayed(this::finish, 3000);
     }
