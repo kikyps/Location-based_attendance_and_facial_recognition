@@ -66,7 +66,6 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
     FrameLayout viewLokasi;
     ImageView showMore;
     boolean absenKantor, kehadiran, terlambatMasuk, jamLembur, hasData;
-    int trialCount;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     Bitmap bmpMap;
@@ -146,7 +145,7 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
     }
 
     private void showAbsen() {
-        databaseReference.child("data").child("latlong").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("data").child("latlong").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
@@ -161,7 +160,7 @@ public class DetailAbsen extends AppCompatActivity implements MapsViewFragment.S
             }
         });
 
-        databaseReference.child("user").child(idkaryawan).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("user").child(idkaryawan).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {

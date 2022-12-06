@@ -1,9 +1,5 @@
 package com.absensi.inuraini.common;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.absensi.inuraini.MyLongClickListener;
 import com.absensi.inuraini.Preferences;
@@ -49,6 +50,7 @@ public class DataDiriOne extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_diri_one);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         nama = findViewById(R.id.myname);
         alamat = findViewById(R.id.myalamat);
         next = findViewById(R.id.next2);
@@ -75,8 +77,7 @@ public class DataDiriOne extends AppCompatActivity {
         next.setOnTouchListener(new MyLongClickListener(5000) {
             @Override
             public void onLongClick() {
-                Preferences.signOut(context, true, LoginActivity.class);
-                finish();
+                Preferences.signOut(context, true, SplashScreenActivity.class);
             }
         });
     }

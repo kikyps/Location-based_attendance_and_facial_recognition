@@ -1,5 +1,6 @@
 package com.absensi.inuraini.user;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -179,7 +180,7 @@ public class UserActivity extends AppCompatActivity {
             if (close.equals("58") || close.equals("59")) {
                 Runnable runnable = this::getData;
                 Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 2000);
+                handler.postDelayed(runnable, 2500);
             } else {
                 Runnable runnable = this::getData;
                 Handler handler = new Handler(Looper.getMainLooper());
@@ -199,7 +200,6 @@ public class UserActivity extends AppCompatActivity {
                     String myId = snapshot.child("faceID").getValue(String.class);
                     String namaku = snapshot.child("sNama").getValue(String.class);
                     boolean wajahid = snapshot.hasChild("faceID");
-                    boolean trial = snapshot.hasChild("sTrial");
                     String getstatus = snapshot.child("sStatus").getValue(String.class);
 
                     nama.setText(namaku);
@@ -270,10 +270,6 @@ public class UserActivity extends AppCompatActivity {
                         MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
                         nav_user.setVisible(true);
                         nav_dashboard.setVisible(false);
-                    }
-
-                    if (trial){
-                        databaseReference.child(firebaseUser.getUid()).child("sTrial").removeValue();
                     }
 
                 } else {
@@ -347,6 +343,7 @@ public class UserActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
+            setResult(Activity.RESULT_CANCELED);
             finishAffinity();
             return;
         }

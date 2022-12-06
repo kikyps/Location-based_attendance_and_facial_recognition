@@ -107,15 +107,27 @@ public class SplashScreenActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     if (snapshot.exists()) {
-                                                        String getstatus = snapshot.child("sStatus").getValue(String.class);
-                                                        if (getstatus.equals("user")) {
-                                                            if (getstatus != null) {
-                                                                if (Preferences.getDataStatus(ctx).isEmpty()) {
-                                                                    Preferences.setDataStatus(ctx, getstatus);
+                                                        boolean nohp = snapshot.hasChild("sPhone");
+                                                        if (nohp) {
+                                                            boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
+                                                            if (!checkVerif) {
+                                                                startIntnt(ctx, DoVerifActivity.class);
+                                                            } else {
+                                                                String getstatus = snapshot.child("sStatus").getValue(String.class);
+                                                                if (getstatus != null) {
+                                                                    if (getstatus.equals("user")) {
+                                                                        if (Preferences.getDataStatus(ctx).isEmpty()) {
+                                                                            Preferences.setDataStatus(ctx, getstatus);
+                                                                        }
+                                                                    }
                                                                 }
+                                                                startIntnt(ctx, LoginActivity.class);
                                                             }
+                                                        } else {
+                                                            startIntnt(ctx, DataDiriOne.class);
                                                         }
-                                                        startIntnt(ctx);
+                                                    } else {
+                                                        startIntnt(ctx, DataDiriOne.class);
                                                     }
                                                 }
 
@@ -125,7 +137,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                                                 }
                                             });
                                         } else {
-                                            startIntnt(ctx);
+                                            startIntnt(ctx, LoginActivity.class);
                                         }
                                     });
                         }
@@ -140,42 +152,68 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void getData(Context ctx, String crc) {
         TamperingProtection protection = new TamperingProtection(ctx);
-        protection.setAcceptedPackageNames(Preferences.retriveSec("=kmbpFmc15Wauk2cuV2ciFmLt92Y"));
-        protection.setAcceptedSignatures(Preferences.retriveSec("=UDO6gzM6YTM6E0N6UUR6MEN6MTN6YUN6IUN6MTN6UER6I0N6gjM6MzM6cjR6IkQ"));
-        protection.setAcceptedDexCrcs(Long.parseLong(crc));
-        if (protection.validateAll()) {
-            if (firebaseUser != null) {
-                databaseReference.child("user").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            String getstatus = snapshot.child("sStatus").getValue(String.class);
-                            if (getstatus.equals("user")) {
-                                if (getstatus != null) {
-                                    if (Preferences.getDataStatus(ctx).isEmpty()) {
-                                        Preferences.setDataStatus(ctx, getstatus);
-                                    }
-                                }
-                            }
-                            startIntnt(ctx);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+        if (TamperingProtection.isDebug(ctx)){
+            protection.setAcceptedPackageNames(Preferences.retriveSec("=kmbpFmc15Wauk2cuV2ciFmLt92Y"));
+            protection.setAcceptedSignatures(Preferences.retriveSec("=UDO6gzM6YTM6E0N6UUR6MEN6MTN6YUN6IUN6MTN6UER6I0N6gjM6MzM6cjR6IkQ"));
+            if (protection.validateAll()) {
+                goLogin(ctx);
             } else {
-                startIntnt(ctx);
+                finishAndRemoveTask();
             }
         } else {
-            finishAffinity();
+            protection.setAcceptedPackageNames(Preferences.retriveSec("=kmbpFmc15Wauk2cuV2ciFmLt92Y"));
+            protection.setAcceptedSignatures(Preferences.retriveSec("=UDO6gzM6YTM6E0N6UUR6MEN6MTN6YUN6IUN6MTN6UER6I0N6gjM6MzM6cjR6IkQ"));
+            protection.setAcceptedDexCrcs(Long.parseLong(crc));
+            if (protection.validateAll()) {
+                goLogin(ctx);
+            } else {
+                finishAndRemoveTask();
+            }
         }
     }
 
-    private void startIntnt(Context ctx){
-        Intent intent = new Intent(ctx, LoginActivity.class);
+    private void goLogin(Context ctx){
+        if (firebaseUser != null) {
+            databaseReference.child("user").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        boolean nohp = snapshot.hasChild("sPhone");
+                        if (nohp) {
+                            boolean checkVerif = (boolean) snapshot.child("sVerified").getValue();
+                            if (!checkVerif) {
+                                startIntnt(ctx, DoVerifActivity.class);
+                            } else {
+                                String getstatus = snapshot.child("sStatus").getValue(String.class);
+                                if (getstatus != null) {
+                                    if (getstatus.equals("user")) {
+                                        if (Preferences.getDataStatus(ctx).isEmpty()) {
+                                            Preferences.setDataStatus(ctx, getstatus);
+                                        }
+                                    }
+                                }
+                                startIntnt(ctx, LoginActivity.class);
+                            }
+                        } else {
+                            startIntnt(ctx, DataDiriOne.class);
+                        }
+                    } else {
+                        startIntnt(ctx, DataDiriOne.class);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            startIntnt(ctx, LoginActivity.class);
+        }
+    }
+
+    private void startIntnt(Context ctx, Class activity){
+        Intent intent = new Intent(ctx, activity);
         intent.putExtra("validCtx", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ctx.startActivity(intent);

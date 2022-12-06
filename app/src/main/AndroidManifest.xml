@@ -57,6 +57,7 @@
         <activity
             android:name=".admin.location.maps.MapsActivity"
             android:exported="false"
+            android:hardwareAccelerated="true"
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".user.absen.CalendarAbsenActivity"

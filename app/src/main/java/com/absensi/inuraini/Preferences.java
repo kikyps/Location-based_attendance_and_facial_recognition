@@ -29,6 +29,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -174,7 +175,7 @@ public class Preferences {
     }
 
     public static void emailAndPasswordLogin(Context context, String email, String password, Class activity) {
-        setProgressDialog();
+        setProgressDialog(context).show();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -196,12 +197,12 @@ public class Preferences {
                         // If sign in fails, display a message to the user.
                         Toast.makeText(context, "Email atau password salah", Toast.LENGTH_SHORT).show();
                     }
-                    progressDialog.dismiss();
+                    setProgressDialog(context).dismiss();
                 });
     }
 
     public static void emailAndPasswordRegister(Context context, String email, String password, Class activity){
-        setProgressDialog();
+        setProgressDialog(context).show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                    if (task.isSuccessful()){
@@ -220,12 +221,12 @@ public class Preferences {
                    } else {
                        Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                    }
-                    progressDialog.dismiss();
+                    setProgressDialog(context).dismiss();
                 });
     }
 
     public static void tryChangePassword(Context context, FirebaseUser user, String passLama, String passBaru){
-        setProgressDialog();
+        setProgressDialog(context);
         AuthCredential credential = EmailAuthProvider
                 .getCredential(user.getEmail(), passLama);
 
@@ -244,7 +245,7 @@ public class Preferences {
                     } else {
                         Toast.makeText(context, "Password lama anda salah!", Toast.LENGTH_LONG).show();
                     }
-                    progressDialog.dismiss();
+                    setProgressDialog(context);
                 });
     }
 
@@ -267,7 +268,7 @@ public class Preferences {
     }
 
     public static void firebaseAuthWithGoogle(String idToken, Context context, Class activity) {
-        setProgressDialog();
+        setProgressDialog(context).show();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
@@ -277,22 +278,30 @@ public class Preferences {
                     } else {
                         Toast.makeText(context, "Login Gagal!, Periksa koneksi internet dan coba lagi.", Toast.LENGTH_SHORT).show();
                     }
-                    progressDialog.dismiss();
+                    setProgressDialog(context).show();
                 });
     }
 
     public static void signOut(Context context, Boolean start, Class activity){
         mAuth.signOut();
-        gsc.signOut();
+        if (gsc != null) {
+            gsc.signOut();
+        }
         clearData(context);
         if (start) {
             Intent intent = new Intent(context, activity);
             intent.putExtra("validCtx", true);
             intent.putExtra("relog", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else {
             Intent intent = new Intent(context, activity);
             intent.putExtra("validCtx", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
     }
@@ -308,6 +317,7 @@ public class Preferences {
                 if (pm != null) {
                     // create the intent with the default start activity for your application
                     Intent mStartActivity = pm.getLaunchIntentForPackage(c.getPackageName());
+                    Log.d("restart", String.valueOf(mStartActivity));
                     if (mStartActivity != null) {
                         mStartActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -368,10 +378,10 @@ public class Preferences {
         });
     }
 
-    public static void setProgressDialog(){
+    public static ProgressDialog setProgressDialog(Context context){
         progressDialog.setMessage("Sedang Memproses...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
+        return progressDialog;
     }
 
     public static Dialog customProgresBar(Context context){

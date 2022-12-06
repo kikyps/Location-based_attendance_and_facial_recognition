@@ -158,6 +158,14 @@ public class AbsenFragment extends Fragment {
             setTanggal();
         });
 
+        nxt.setOnTouchListener(new MyLongClickListener(4000) {
+            @Override
+            public void onLongClick() {
+//                throw new RuntimeException("Test Crash"); // Force a crash
+                Preferences.doRestart(mContext);
+            }
+        });
+
         prev.setOnClickListener(v -> {
             calendar.add(Calendar.DATE, -1);
             setTanggal();

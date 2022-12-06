@@ -1,6 +1,5 @@
 package com.absensi.inuraini.common;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     SignInButton signinGoogle;
     FirebaseAuth firebaseAuth;
     Context context = this;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             finishAndRemoveTask();
         }
         Preferences.progressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
+        progressDialog = Preferences.setProgressDialog(context);
         firebaseAuth = Preferences.mAuth;
         emailValid = findViewById(R.id.login_email);
         passwordValid = findViewById(R.id.login_password);
@@ -89,9 +90,8 @@ public class LoginActivity extends AppCompatActivity {
             if (!Preferences.isConnected(context)) {
                 Preferences.dialogNetwork(context);
             } else {
-                if(!((Activity) context).isFinishing()) {
-                    Preferences.setProgressDialog();
-                }
+                hideMyProgresDialog();
+                progressDialog.show();
                 turnLoginGoogle();
             }
         });
@@ -123,6 +123,30 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         onFirst();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        hideMyProgresDialog();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        hideMyProgresDialog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        hideMyProgresDialog();
+    }
+
+    private void hideMyProgresDialog(){
+        if(progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     private void onFirst(){

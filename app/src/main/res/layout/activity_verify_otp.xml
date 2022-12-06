@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".common.VerifyOTP"
-    android:padding="30dp"
     android:background="@color/white">
 
     <LinearLayout
@@ -44,8 +43,33 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:textColor="@color/black"
             android:textSize="20sp" />
+
+        <com.chaos.view.PinView
+            android:id="@+id/firstPinView"
+            style="@style/PinWidget.PinView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:cursorVisible="true"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:inputType="number"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:cursorColor="@color/semi_transparent"
+            app:cursorWidth="2dp"
+            app:hideLineWhenFilled="false"
+            app:itemCount="6"
+            app:itemHeight="48dp"
+            app:itemRadius="5dp"
+            app:itemSpacing="5dp"
+            app:itemWidth="48dp"
+            app:lineColor="@color/colorPrimary"
+            app:lineWidth="2dp"
+            app:viewType="rectangle" />
 
         <RelativeLayout
             android:layout_width="match_parent"

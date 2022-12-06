@@ -16,19 +16,21 @@
             android:src="@drawable/verif"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Akun anda belum terverifikasi"
-            android:gravity="center"
             android:layout_marginTop="50dp"
-            android:textSize="30sp"
+            android:gravity="center"
+            android:text="@string/akun_anda_belum_terverifikasi"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hubungi admin untuk memverifikasi akun anda"
+            android:text="@string/contact_admin_for_verif"
             android:gravity="center"
             android:layout_marginTop="60dp"
             android:textSize="20sp"

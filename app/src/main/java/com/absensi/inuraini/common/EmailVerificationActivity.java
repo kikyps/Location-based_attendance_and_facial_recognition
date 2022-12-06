@@ -1,8 +1,5 @@
 package com.absensi.inuraini.common;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
-
 import android.content.Context;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +10,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.absensi.inuraini.Preferences;
 import com.absensi.inuraini.R;
@@ -30,6 +31,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_verification);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         backLogin = findViewById(R.id.back_login);
         done = findViewById(R.id.icon_done);
         getEmail = findViewById(R.id.getour_email);

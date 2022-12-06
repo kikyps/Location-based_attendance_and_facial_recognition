@@ -51,7 +51,7 @@ public class CollectorActivity extends AppCompatActivity {
 
     private void onClick() {
         restart.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            Intent intent = new Intent(getApplicationContext(), SplashScreenActivity.class);
             CaocConfig config = CustomActivityOnCrash.getConfigFromIntent(getIntent());
             CustomActivityOnCrash.restartApplicationWithIntent(this, intent, config);
         });

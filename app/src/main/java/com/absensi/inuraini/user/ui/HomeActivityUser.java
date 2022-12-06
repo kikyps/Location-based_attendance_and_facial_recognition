@@ -154,7 +154,7 @@ public class HomeActivityUser extends AppCompatActivity {
             if (close.equals("58") || close.equals("59")) {
                 Runnable runnable = this::getData;
                 Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 2000);
+                handler.postDelayed(runnable, 2500);
             } else {
                 Runnable runnable = this::getData;
                 Handler handler = new Handler(Looper.getMainLooper());

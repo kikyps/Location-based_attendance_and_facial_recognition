@@ -16,4 +16,6 @@
     <string name="crc">2978708718</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="google_maps_api">AIzaSyBAZ1tLbqimqzntKJnJYQY1g_tynUgtM9w</string>
+    <string name="akun_anda_belum_terverifikasi">Akun anda belum terverifikasi</string>
+    <string name="contact_admin_for_verif">Hubungi admin untuk memverifikasi akun anda</string>
 </resources>
