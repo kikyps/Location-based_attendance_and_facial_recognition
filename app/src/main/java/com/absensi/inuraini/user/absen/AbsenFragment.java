@@ -64,7 +64,7 @@ public class AbsenFragment extends Fragment {
     AnimatedVectorDrawable avd2;
     LinearLayout absenIn, absenOut;
 
-    boolean sudahAbsen, isToday, izinAcc, konfirmAdmin, kehadiran;
+    boolean sudahAbsen, isToday, izinAcc, konfirmAdmin, kehadiran, isSetTimeTr;
     public static boolean setTimeTr = false;
 
     @SuppressLint("StaticFieldLeak")
@@ -142,18 +142,24 @@ public class AbsenFragment extends Fragment {
             Preferences.getMyLocation(mContext, getActivity());
         });
 
+        // Tombol absen di kantor
         outKantor.setOnClickListener(v -> {
             doAbsen = true;
             doAbsenKeluar = false;
             atOffice = false;
             progressBar.setVisibility(View.VISIBLE);
+
+            // check lokasi
             Preferences.getMyLocation(mContext, getActivity());
         });
 
+        // Tombol absen di luar kantor
         absenKel.setOnClickListener(v -> {
             doAbsen = false;
             doAbsenKeluar = true;
             progressBar.setVisibility(View.VISIBLE);
+
+            // check lokasi
             Preferences.getMyLocation(mContext, getActivity());
         });
 
@@ -217,16 +223,12 @@ public class AbsenFragment extends Fragment {
 
 
         jam.setOnLongClickListener(v -> {
-            String curentDate = dateFormat.format(calendar.getTime());
-            String tgglNow = dateFormat.format(timeNow.getTime());
-            if (curentDate.equals(tgglNow)) {
-                if (!sudahAbsen) {
+                if (isSetTimeTr) {
                     if (Preferences.getDataStatus(mContext).equals("admin") ||
                             Preferences.getDataStatus(mContext).equals(Preferences.retriveSec("yVGdzFWb"))) {
                         setTimeTrav();
                     }
                 }
-            }
             return true;
         });
     }
@@ -243,9 +245,7 @@ public class AbsenFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 String hour = String.valueOf(timePick.getHour()).length() < 2 ? "0" + timePick.getHour() : String.valueOf(timePick.getHour());
                 String minute = String.valueOf(timePick.getMinute()).length() < 2 ? "0" + timePick.getMinute() : String.valueOf(timePick.getMinute());
-
                 traveler = hour + ":" + minute;
-                Toast.makeText(mContext, traveler, Toast.LENGTH_SHORT).show();
                 setTimeTr = true;
                 jam.setTextColor(ContextCompat.getColor(mContext, R.color.red));
             }
@@ -502,6 +502,7 @@ public class AbsenFragment extends Fragment {
         Toast.makeText(mContext, (CharSequence) myLatLong[1][12], Toast.LENGTH_LONG).show();
     }
 
+    // Check absensi di kantor atau di luar kantor
     public static void checkAbsenKantor(){
         if (atOffice) {
             if (!inLocation()) {
@@ -654,6 +655,7 @@ public class AbsenFragment extends Fragment {
             absenKeluar.setText("-");
             done.setVisibility(View.VISIBLE);
             done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_access_time_24));
+            isSetTimeTr = true;
         } else {
             absenKeluar.setText(jamKeluar);
             done.setVisibility(View.VISIBLE);
@@ -667,6 +669,7 @@ public class AbsenFragment extends Fragment {
                 avd2 = (AnimatedVectorDrawable) drawable;
                 avd2.start();
             }
+            isSetTimeTr = false;
         }
 
         inhere.setText("Absen di kantor");
@@ -683,6 +686,7 @@ public class AbsenFragment extends Fragment {
             absenKeluar.setText("-");
             done.setVisibility(View.VISIBLE);
             done.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_access_time_24));
+            isSetTimeTr = true;
         } else {
             absenKeluar.setText(jamKeluar);
             done.setVisibility(View.VISIBLE);
@@ -696,6 +700,7 @@ public class AbsenFragment extends Fragment {
                 avd2 = (AnimatedVectorDrawable) drawable;
                 avd2.start();
             }
+            isSetTimeTr = false;
         }
 
         inhere.setText("Absen di luar kantor");
@@ -781,6 +786,7 @@ public class AbsenFragment extends Fragment {
         String tgglNow = dateFormat.format(timeNow.getTime());
         if (curentDate.equals(tgglNow)) {
             isToday = true;
+            isSetTimeTr = true;
             kehadiranTxt.setText("Anda belum absen hari ini!");
             nxt.setEnabled(false);
             nxt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_next_disabled));
@@ -792,7 +798,12 @@ public class AbsenFragment extends Fragment {
             lemburId.setText("-");
             inhere.setText("-");
         } else {
+            absenNow.setVisibility(View.GONE);
+            absenOut.setVisibility(View.GONE);
             isToday = false;
+            setTimeTr = false;
+            isSetTimeTr = false;
+            jam.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
             kehadiranTxt.setText("Tidak Hadir!");
             nxt.setEnabled(true);
             nxt.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_next));

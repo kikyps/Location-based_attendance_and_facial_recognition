@@ -33,8 +33,8 @@ android {
         applicationId "com.absensi.inuraini"
         minSdk 21
         targetSdk 33
-        versionCode 153071222
-        versionName '1.5.3'
+        versionCode 154081222
+        versionName '1.5.4'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,7 +61,7 @@ android {
     // Configuration
     BlackObfuscator {
         // Enabled state
-        enabled true
+        enabled false
         // Obfuscation depth
         depth 3
         // The classes which need to be obfuscated

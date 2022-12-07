@@ -37,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -58,6 +60,7 @@ public class HomeActivityUser extends AppCompatActivity {
     DateFormat jamSec = new SimpleDateFormat("HH:mm:ss");
 
     FirebaseUser firebaseUser;
+    FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
 
     @Override
@@ -152,15 +155,28 @@ public class HomeActivityUser extends AppCompatActivity {
             String curentSec = jamSec.format(new Date().getTime());
             String close = curentSec.substring(6, 8);
 
-            if (close.equals("58") || close.equals("59")) {
-                Runnable runnable = this::getData;
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 2500);
-            } else {
-                Runnable runnable = this::getData;
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 1000);
-            }
+            FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(5)
+                    .build();
+            remoteConfig.setConfigSettingsAsync(configSettings);
+            remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    final boolean debug_mode = remoteConfig.getBoolean("debug_mode");
+                    if (debug_mode) {
+                        getData();
+                    } else {
+                        if (close.equals("58") || close.equals("59")) {
+                            Runnable runnable = this::getData;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.postDelayed(runnable, 2500);
+                        } else {
+                            Runnable runnable = this::getData;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.postDelayed(runnable, 1000);
+                        }
+                    }
+                }
+            });
         }
     }
 

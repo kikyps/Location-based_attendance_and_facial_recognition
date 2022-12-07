@@ -535,6 +535,7 @@ public class Preferences {
         });
     }
 
+    // Untuk check lokasi
     public static Object[][] getMyLocation(Context context, Activity activity) {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

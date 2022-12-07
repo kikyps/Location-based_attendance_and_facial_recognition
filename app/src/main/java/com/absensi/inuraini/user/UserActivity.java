@@ -45,6 +45,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -61,6 +63,7 @@ public class UserActivity extends AppCompatActivity {
     public static boolean firstExit = false;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
+    FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.getInstance();
     DateFormat dateNow = new SimpleDateFormat("MM/dd/yyyy");
     DateFormat jamNow = new SimpleDateFormat("HH:mm");
     DateFormat jamSec = new SimpleDateFormat("HH:mm:ss");
@@ -100,11 +103,11 @@ public class UserActivity extends AppCompatActivity {
         contentListeners(headerView);
     }
 
-    private void contentListeners(View view){
+    private void contentListeners(View view) {
         nama = view.findViewById(R.id.name_txt);
         infouser = view.findViewById(R.id.info_user);
         boolean getValidity = getIntent().getBooleanExtra("validCtx", false);
-        if (!getValidity){
+        if (!getValidity) {
             finishAndRemoveTask();
             System.exit(0);
         }
@@ -119,7 +122,7 @@ public class UserActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.signout){
+        if (item.getItemId() == R.id.signout) {
             onSignOut();
             return true;
         }
@@ -129,11 +132,11 @@ public class UserActivity extends AppCompatActivity {
     private void onSignOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Sign Out")
-                        .setMessage("Apakah anda yakin ingin keluar?")
-                                .setPositiveButton("Iya", (dialog, which) -> {
-                                    Preferences.signOut(context, firstExit, LoginActivity.class);
-                                    finish();
-                                })
+                .setMessage("Apakah anda yakin ingin keluar?")
+                .setPositiveButton("Iya", (dialog, which) -> {
+                    Preferences.signOut(context, firstExit, LoginActivity.class);
+                    finish();
+                })
                 .setNegativeButton("Tidak", (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(true);
@@ -146,13 +149,13 @@ public class UserActivity extends AppCompatActivity {
         readUserData();
     }
 
-    private void showMyProgresDialog(){
+    private void showMyProgresDialog() {
         hideMyProgresDialog();
         progressDialog = Preferences.customProgresBar(context);
     }
 
-    private void hideMyProgresDialog(){
-        if(progressDialog != null && progressDialog.isShowing()) {
+    private void hideMyProgresDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
         progressDialog = null;
@@ -178,19 +181,32 @@ public class UserActivity extends AppCompatActivity {
             String curentSec = jamSec.format(new Date().getTime());
             String close = curentSec.substring(6, 8);
 
-            if (close.equals("58") || close.equals("59")) {
-                Runnable runnable = this::getData;
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 2500);
-            } else {
-                Runnable runnable = this::getData;
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(runnable, 1000);
-            }
+            FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(5)
+                    .build();
+            remoteConfig.setConfigSettingsAsync(configSettings);
+            remoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    final boolean debug_mode = remoteConfig.getBoolean("debug_mode");
+                    if (debug_mode) {
+                        getData();
+                    } else {
+                        if (close.equals("58") || close.equals("59")) {
+                            Runnable runnable = this::getData;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.postDelayed(runnable, 2500);
+                        } else {
+                            Runnable runnable = this::getData;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.postDelayed(runnable, 1000);
+                        }
+                    }
+                }
+            });
         }
     }
 
-    private void getData(){
+    private void getData() {
         GetServerTime serverTime = new GetServerTime(this);
         databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -259,7 +275,7 @@ public class UserActivity extends AppCompatActivity {
                         MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
                         nav_user.setVisible(false);
                         nav_admin.setVisible(true);
-                    } else if (Preferences.getDataStatus(context).equals("admin")){
+                    } else if (Preferences.getDataStatus(context).equals("admin")) {
                         Menu menu = navigationView.getMenu();
                         MenuItem nav_admin = menu.findItem(R.id.admin_akses);
                         MenuItem nav_user = menu.findItem(R.id.pengajuanUser);
@@ -297,17 +313,17 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Preferences.REQUEST_PERMISSION_CODE){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-                if (Environment.isExternalStorageManager()){
+        if (requestCode == Preferences.REQUEST_PERMISSION_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
 //                    Toast.makeText(this, "Permission granted in android 11 and above", Toast.LENGTH_SHORT).show();
                     Preferences.downloadUpdate(context);
                 }
             }
         }
 
-        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
-            if (resultCode == RESULT_OK){
+        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (resultCode == RESULT_OK) {
                 Preferences.getMyLocation(context, UserActivity.this);
             } else {
                 AbsenFragment.progressBar.setVisibility(View.INVISIBLE);
@@ -330,7 +346,7 @@ public class UserActivity extends AppCompatActivity {
             }
         }
 
-        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION){
+        if (requestCode == Preferences.REQUEST_CODE_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Preferences.getMyLocation(context, this);
             } else {

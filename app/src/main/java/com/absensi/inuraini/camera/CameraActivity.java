@@ -140,7 +140,7 @@ public class CameraActivity extends AppCompatActivity {
 
         //Load model
         try {
-            tfLite = new Interpreter(loadModelFile(CameraActivity.this,modelFile));
+            tfLite = new Interpreter(loadModelFile(CameraActivity.this, modelFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -267,6 +267,7 @@ public class CameraActivity extends AppCompatActivity {
             }
 
             //Process acquired image to detect faces
+            //Proses mengakusisi gambar ke deteksi wajah
                     detector.process(image)
                             .addOnSuccessListener(faces -> {
                                 if(faces.size()!=0) {
@@ -416,6 +417,7 @@ public class CameraActivity extends AppCompatActivity {
         tfLite.runForMultipleInputsOutputs(inputArray, outputMap); //Run model
     }
 
+    // Scan wajah untuk absen
     public void recognizeImage(Face face) {
         databaseReference.child(firebaseUser.getUid()).child("faceID").addValueEventListener(new ValueEventListener() {
             @Override
@@ -495,6 +497,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
+    //Untuk mendaftarkan wajah
     public void scanWajah(Face face) {
         float left = face.getLeftEyeOpenProbability();
         float right = face.getRightEyeOpenProbability();
