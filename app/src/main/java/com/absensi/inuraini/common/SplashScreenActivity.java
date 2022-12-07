@@ -159,6 +159,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 goLogin(ctx);
             } else {
                 finishAndRemoveTask();
+                System.exit(0);
             }
         } else {
             protection.setAcceptedPackageNames(Preferences.retriveSec("=kmbpFmc15Wauk2cuV2ciFmLt92Y"));
@@ -168,6 +169,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 goLogin(ctx);
             } else {
                 finishAndRemoveTask();
+                System.exit(0);
             }
         }
     }

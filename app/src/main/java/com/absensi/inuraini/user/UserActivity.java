@@ -106,6 +106,7 @@ public class UserActivity extends AppCompatActivity {
         boolean getValidity = getIntent().getBooleanExtra("validCtx", false);
         if (!getValidity){
             finishAndRemoveTask();
+            System.exit(0);
         }
     }
 

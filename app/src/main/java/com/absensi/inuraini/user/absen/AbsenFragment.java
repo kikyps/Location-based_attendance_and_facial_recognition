@@ -65,13 +65,13 @@ public class AbsenFragment extends Fragment {
     LinearLayout absenIn, absenOut;
 
     boolean sudahAbsen, isToday, izinAcc, konfirmAdmin, kehadiran;
-    static boolean  setTimeTr = false;
+    public static boolean setTimeTr = false;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
     String userLogin, eventDate, jamKeluar, ketHadir;
-    static String traveler;
+    public static String traveler;
 
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
@@ -217,9 +217,15 @@ public class AbsenFragment extends Fragment {
 
 
         jam.setOnLongClickListener(v -> {
-            if (Preferences.getDataStatus(mContext).equals("admin") ||
-                    Preferences.getDataStatus(mContext).equals(Preferences.retriveSec("yVGdzFWb"))) {
-                setTimeTrav();
+            String curentDate = dateFormat.format(calendar.getTime());
+            String tgglNow = dateFormat.format(timeNow.getTime());
+            if (curentDate.equals(tgglNow)) {
+                if (!sudahAbsen) {
+                    if (Preferences.getDataStatus(mContext).equals("admin") ||
+                            Preferences.getDataStatus(mContext).equals(Preferences.retriveSec("yVGdzFWb"))) {
+                        setTimeTrav();
+                    }
+                }
             }
             return true;
         });
@@ -235,7 +241,11 @@ public class AbsenFragment extends Fragment {
         timePick.setIs24HourView(true);
         builder.setPositiveButton("Set", (dialog, which) -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                traveler = timePick.getHour() + ":" + timePick.getMinute();
+                String hour = String.valueOf(timePick.getHour()).length() < 2 ? "0" + timePick.getHour() : String.valueOf(timePick.getHour());
+                String minute = String.valueOf(timePick.getMinute()).length() < 2 ? "0" + timePick.getMinute() : String.valueOf(timePick.getMinute());
+
+                traveler = hour + ":" + minute;
+                Toast.makeText(mContext, traveler, Toast.LENGTH_SHORT).show();
                 setTimeTr = true;
                 jam.setTextColor(ContextCompat.getColor(mContext, R.color.red));
             }
@@ -505,8 +515,6 @@ public class AbsenFragment extends Fragment {
                 intent.putExtra("atOffice", true);
                 intent.putExtra("telat", telat);
                 intent.putExtra("lembur", lembur);
-                intent.putExtra("setTimeTr", setTimeTr);
-                intent.putExtra("traveler", traveler);
                 mContext.startActivity(intent);
             }
             progressBar.setVisibility(View.INVISIBLE);

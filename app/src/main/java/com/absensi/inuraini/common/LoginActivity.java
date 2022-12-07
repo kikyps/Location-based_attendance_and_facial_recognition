@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         getValidity = getIntent().getBooleanExtra("validCtx", false);
         if (!getValidity){
             finishAndRemoveTask();
+            System.exit(0);
         }
         Preferences.progressDialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
         progressDialog = Preferences.setProgressDialog(context);

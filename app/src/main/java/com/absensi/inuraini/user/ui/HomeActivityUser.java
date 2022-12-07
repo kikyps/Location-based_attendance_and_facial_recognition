@@ -72,6 +72,7 @@ public class HomeActivityUser extends AppCompatActivity {
         boolean getValidity = getIntent().getBooleanExtra("validCtx", false);
         if (!getValidity){
             finishAndRemoveTask();
+            System.exit(0);
         }
 
         MeowBottomNavigation bottomNavigation = findViewById(R.id.myNavigation);
