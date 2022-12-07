@@ -186,7 +186,6 @@ public class VerifyOTP extends AppCompatActivity {
     }
 
     private void otpListeners(){
-        Toast.makeText(context, pinView.getText().toString(), Toast.LENGTH_SHORT).show();
         if (updatePhone) {
             Map<String, Object> postValues = new HashMap<>();
             postValues.put("sPhone", nomorku.getText().toString());

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -84,7 +83,7 @@ public class DataPengajuanAdapter extends RecyclerView.Adapter<DataPengajuanAdap
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
                     jabatan = snapshot.child("sJabatan").getValue(String.class);
-                    holder.tv_ketizin.setText(jabatan);
+                    holder.tv_jabatan.setText(jabatan);
                 }
             }
 
@@ -104,7 +103,7 @@ public class DataPengajuanAdapter extends RecyclerView.Adapter<DataPengajuanAdap
             Intent intent = new Intent(context, ApprovalActivity.class);
             intent.putExtra("idIzin", storeUser.getKey());
             intent.putExtra("getNama", storeUser.getsNama());
-            intent.putExtra("getJabatan", jabatan);
+            intent.putExtra("getJabatan", holder.tv_jabatan.getText().toString().trim());
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivities(new Intent[]{intent});
         });
@@ -172,14 +171,14 @@ public class DataPengajuanAdapter extends RecyclerView.Adapter<DataPengajuanAdap
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tv_nama, tv_ketizin, tv_izin;
+        TextView tv_nama, tv_jabatan, tv_izin;
         CardView card_view;
 
         public MyViewHolder(@NonNull View iteView){
             super(iteView);
 
             tv_nama = iteView.findViewById(R.id.txt_nama);
-            tv_ketizin = iteView.findViewById(R.id.txt_jabatan);
+            tv_jabatan = iteView.findViewById(R.id.txt_jabatan);
             tv_izin = iteView.findViewById(R.id.izin_txt);
             card_view = iteView.findViewById(R.id.card_view);
         }

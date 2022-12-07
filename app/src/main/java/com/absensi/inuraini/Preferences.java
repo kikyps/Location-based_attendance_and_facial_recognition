@@ -112,7 +112,7 @@ public class Preferences {
 
     public static void setDataStatus(Context context, String data){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(DATA_STATUS,data);
+        editor.putString(DATA_STATUS, data);
         editor.apply();
     }
 

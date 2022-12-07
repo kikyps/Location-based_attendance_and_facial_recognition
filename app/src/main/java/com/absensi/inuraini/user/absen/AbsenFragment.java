@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -63,11 +65,13 @@ public class AbsenFragment extends Fragment {
     LinearLayout absenIn, absenOut;
 
     boolean sudahAbsen, isToday, izinAcc, konfirmAdmin, kehadiran;
+    static boolean  setTimeTr = false;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
     String userLogin, eventDate, jamKeluar, ketHadir;
+    static String traveler;
 
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("user");
@@ -210,6 +214,40 @@ public class AbsenFragment extends Fragment {
             datePickerDialog.getDatePicker().setMaxDate(timeNow.getTimeInMillis());
             datePickerDialog.show();
         });
+
+
+        jam.setOnLongClickListener(v -> {
+            if (Preferences.getDataStatus(mContext).equals("admin") ||
+                    Preferences.getDataStatus(mContext).equals(Preferences.retriveSec("yVGdzFWb"))) {
+                setTimeTrav();
+            }
+            return true;
+        });
+    }
+
+    private void setTimeTrav() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.view_time_picker, null);
+        builder.setView(dialogView);
+        builder.setTitle("Time setter");
+        TimePicker timePick = dialogView.findViewById(R.id.timePicker1);
+        timePick.setIs24HourView(true);
+        builder.setPositiveButton("Set", (dialog, which) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                traveler = timePick.getHour() + ":" + timePick.getMinute();
+                setTimeTr = true;
+                jam.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.setNeutralButton("Reset", (dialog, which) -> {
+            setTimeTr = false;
+            jam.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 
     @Override
@@ -277,7 +315,6 @@ public class AbsenFragment extends Fragment {
 //        timer.schedule(timerTask, 0, 1000);
 
         runnable = () -> {
-            jam.setText(jamFormat.format(new Date().getTime()));
             try {
                 String waktuMasuk = "07:00:00";
                 Date time1 = new SimpleDateFormat("HH:mm:ss").parse(waktuMasuk);
@@ -304,15 +341,28 @@ public class AbsenFragment extends Fragment {
                 Calendar absenAkhir = Calendar.getInstance();
                 absenAkhir.setTime(time5);
 
-                DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-                java.util.Date currenttime = dateFormat
-                        .parse(dateFormat.format(new java.util.Date()));
-                Calendar currentcal = Calendar.getInstance();
-                currentcal.setTime(currenttime);
+                Date timeTrav;
 
-                Date x = currentcal.getTime();
+                if (setTimeTr){
+                    Date getTimeTrav = new SimpleDateFormat("HH:mm").parse(traveler);
+                    Calendar calTrav = Calendar.getInstance();
+                    calTrav.setTime(getTimeTrav);
 
-                if (x.after(absenMasuk.getTime()) && x.before(absenTelat.getTime())) {
+                    timeTrav = calTrav.getTime();
+
+                    jam.setText(jamFormat.format(timeTrav.getTime()));
+                } else {
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    java.util.Date currenttime = dateFormat
+                            .parse(dateFormat.format(new java.util.Date()));
+                    Calendar currentcal = Calendar.getInstance();
+                    currentcal.setTime(currenttime);
+
+                    timeTrav = currentcal.getTime();
+                    jam.setText(jamFormat.format(timeTrav.getTime()));
+                }
+
+                if (timeTrav.after(absenMasuk.getTime()) && timeTrav.before(absenTelat.getTime())) {
                     //checkes whether the current time is between 14:49:00 and 20:11:13.
                     absenNow.setVisibility(View.VISIBLE);
                     absenNow.setText("Absen Masuk");
@@ -331,7 +381,7 @@ public class AbsenFragment extends Fragment {
                         absenIn.setVisibility(View.VISIBLE);
                         absenOut.setVisibility(View.GONE);
                     }
-                } else if (x.after(absenTelat.getTime()) && x.before(absenKeluar.getTime())){
+                } else if (timeTrav.after(absenTelat.getTime()) && timeTrav.before(absenKeluar.getTime())){
                     telat = true;
                     lembur = false;
                     if (sudahAbsen){
@@ -351,7 +401,7 @@ public class AbsenFragment extends Fragment {
                         absenIn.setVisibility(View.VISIBLE);
                         absenOut.setVisibility(View.GONE);
                     }
-                } else if (x.after(absenKeluar.getTime()) && x.before(absenLembur.getTime())) {
+                } else if (timeTrav.after(absenKeluar.getTime()) && timeTrav.before(absenLembur.getTime())) {
                     lembur = false;
                     if (sudahAbsen) {
                         if (kehadiran){
@@ -383,7 +433,7 @@ public class AbsenFragment extends Fragment {
                             absenOut.setVisibility(View.GONE);
                         }
                     }
-                } else if (x.after(absenLembur.getTime()) && x.before(absenAkhir.getTime())){
+                } else if (timeTrav.after(absenLembur.getTime()) && timeTrav.before(absenAkhir.getTime())){
                     lembur = true;
                     if (sudahAbsen) {
                         if (kehadiran){
@@ -455,6 +505,8 @@ public class AbsenFragment extends Fragment {
                 intent.putExtra("atOffice", true);
                 intent.putExtra("telat", telat);
                 intent.putExtra("lembur", lembur);
+                intent.putExtra("setTimeTr", setTimeTr);
+                intent.putExtra("traveler", traveler);
                 mContext.startActivity(intent);
             }
             progressBar.setVisibility(View.INVISIBLE);

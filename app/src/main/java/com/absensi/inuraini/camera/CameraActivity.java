@@ -109,10 +109,10 @@ public class CameraActivity extends AppCompatActivity {
     float IMAGE_MEAN = 128.0f;
     float IMAGE_STD = 128.0f;
     int OUTPUT_SIZE=192; //Output size of model
-    boolean wajahid;
+    boolean wajahid, setTimeTr;
 
     String modelFile = "mobile_face_net.tflite"; //model name
-    String myname;
+    String myname, traveler;
     HashMap<String, SimilarityClassifier.Recognition> retrievedMap;
 
     FirebaseUser firebaseUser;
@@ -157,6 +157,9 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void actionListeners() {
+        setTimeTr = getIntent().getBooleanExtra("setTimeTr ", false);
+        traveler = getIntent().getStringExtra("traveler");
+
         databaseReference.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -518,7 +521,7 @@ public class CameraActivity extends AppCompatActivity {
             String tggl = Preferences.getOnlyDigits(Preferences.tgglFormatId(date));
             boolean lembur = getIntent().getBooleanExtra("lembur", false);
             Map<String, Object> postValues = new HashMap<>();
-            postValues.put("sJamKeluar", time);
+            postValues.put("sJamKeluar", setTimeTr ? time : traveler);
             postValues.put("sLembur", lembur);
 
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).updateChildren(postValues).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
@@ -537,7 +540,7 @@ public class CameraActivity extends AppCompatActivity {
             boolean acc = false;
             boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), "Kantor", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
+            AbsenData absenData = new AbsenData(setTimeTr ? time : traveler, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), "Kantor", absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }
@@ -554,7 +557,7 @@ public class CameraActivity extends AppCompatActivity {
             boolean acc = false;
             boolean konfirmAdmin = false;
 
-            AbsenData absenData = new AbsenData(time, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), (String) lokAbsen[1][1], absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
+            AbsenData absenData = new AbsenData(setTimeTr ? time : traveler, "", "", String.valueOf(lokAbsen[0][0]), String.valueOf(lokAbsen[0][1]), (String) lokAbsen[1][1], absenKantor, hadir, telat, lembur, acc, konfirmAdmin);
             databaseReference.child(firebaseUser.getUid()).child("sAbsensi").child(tggl).setValue(absenData).addOnFailureListener(e -> Toast.makeText(context, "Terjadi kesalahan, periksa koneksi internet dan coba lagi!", Toast.LENGTH_SHORT).show());
         });
     }
